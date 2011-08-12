@@ -8,120 +8,87 @@ import java.util.List;
 
 import org.dtangler.core.analysisresult.AnalysisResult;
 import org.dtangler.core.analysisresult.Violation.Severity;
-import org.dtangler.core.dependencies.DependencyGraph;
 import org.dtangler.core.dsm.Dsm;
 import org.dtangler.core.dsm.DsmCell;
 import org.dtangler.core.dsm.DsmRow;
-import org.dtangler.core.textui.Writer;
 
+/**
+ * @author yuriy
+ * 
+ */
 public class DsmHtmlWriter {
 
+	/**
+	 * 
+	 */
 	private StringBuilder htmlContent = new StringBuilder();
+	/**
+	 * 
+	 */
 	private int nextRow = 0;
 
+	/**
+	 * 
+	 */
 	public DsmHtmlWriter() {
 	}
 
+	/**
+	 * @param aPackageNames
+	 */
 	public void printNavigateDsmPackages(List<String> aPackageNames) {
 		htmlContent = new StringBuilder();
-		htmlContent
-				.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">"
-						+ "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">"
-						+ "<head>"
-						+ "<title></title>"
-						+ "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\" />"
-						+ "<meta name=\"ROBOTS\" content=\"index,follow\" />"
-						+ "<meta name=\"TITLE\" content=\"\" />"
-						+ "<meta name=\"DESCRIPTION\" content=\"\" />"
-						+ "<meta name=\"KEYWORDS\" content=\"\" />"
-						+ "<meta name=\"AUTHOR\" content=\"\" />"
-						+ "<meta name=\"Copyright\" content=\"\" />"
-						+ "<meta http-equiv=\"Content-Language\" content=\"en\" />"
-						+ "<style type=\"text/css\"> @import url(css/style.css);</style>"
-						+ "</head>" + "<body>");
-		htmlContent.append("<b>Packages:</b><br/><ul>");
-		htmlContent
-				.append("<li><a target=\"summary\" href=\"./all_packages.html\">"
-						+ "{icon_menu_all_pack} " + "All</a></li>");
+		htmlContent.append(DsmSiteTemplate.documentNavigationHeader);
+		htmlContent.append(DsmSiteTemplate.documentPackageNavigationBodyStart);
 		for (int index = 0; index < aPackageNames.size(); index++) {
 			String packageName = aPackageNames.get(index);
-			packageName = "<li>" 
-					+ "<a target=\"summary\" href=\"./" + packageName
-					+ ".html\">" + "{icon_menu_pack} " + packageName + "</a></li>";
+			packageName = DsmSiteTemplate.documentPackegeNavigationElement
+					.replace("{package_name}", packageName);
 			htmlContent.append(packageName);
 		}
-		htmlContent.append("</ul>");
-		htmlContent.append("</body>");
-		//String filePath = "/home/yuriy/workspace2/UIRS/site/packages.html";
+		htmlContent.append(DsmSiteTemplate.documentPackageNavigationBodyEnd);
+		// String filePath = "/home/yuriy/workspace2/UIRS/site/packages.html";
 		printToHTML("packages");
-		//writeToFile(filePath, stringBuilder.toString());
 	}
 
+	/**
+	 * @param dsm
+	 * @param analysisResult
+	 * @param aPackageName
+	 */
 	public void printDsmPackages(Dsm dsm, AnalysisResult analysisResult,
 			String aPackageName) {
-		htmlContent = new StringBuilder();
-		htmlContent
-				.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">"
-						+ "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">"
-						+ "<head>"
-						+ "<title></title>"
-						+ "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\" />"
-						+ "<meta name=\"ROBOTS\" content=\"index,follow\" />"
-						+ "<meta name=\"TITLE\" content=\"\" />"
-						+ "<meta name=\"DESCRIPTION\" content=\"\" />"
-						+ "<meta name=\"KEYWORDS\" content=\"\" />"
-						+ "<meta name=\"AUTHOR\" content=\"\" />"
-						+ "<meta name=\"Copyright\" content=\"\" />"
-						+ "<meta http-equiv=\"Content-Language\" content=\"en\" />"
-						+ "<style type=\"text/css\"> @import url(css/style.css);</style>"
-						+ "</head>" + "<body>");
-
-		htmlContent
-				.append("<h1><a target=\"summary\" href=\"./all_packages.html\">DSM Report</a> - "
-						+ "{icon_all_pack} " + aPackageName + "</h1>");
-		htmlContent
-				.append("<table Cellpadding=\"0\" Cellspacing=\"0\" >\n<tr><td>");
-
 		nextRow = 0;
-		printColumnHeaders(dsm.getRows().size());
 		int i = 1;
+		htmlContent = new StringBuilder();
+		htmlContent.append(DsmSiteTemplate.documentPackagesHeader);
+		htmlContent.append(DsmSiteTemplate.documentPackagesBodyStart.replace(
+				"{aPackageName}", aPackageName));
+
+		printColumnHeaders(dsm.getRows().size());
 		for (DsmRow row : dsm.getRows()) {
 			nextRow++;
 			printPackage(i++, row, analysisResult);
 		}
 
-		htmlContent.append("</table>");
-		htmlContent.append("</body>");
-
+		htmlContent.append(DsmSiteTemplate.documentPackagesBodyEnd);
 		printToHTML(aPackageName);
 	}
 
+	/**
+	 * @param dsm
+	 * @param analysisResult
+	 * @param aPackageName
+	 */
 	public void printDsm(Dsm dsm, AnalysisResult analysisResult,
 			String aPackageName) {
-		htmlContent = new StringBuilder();
-		htmlContent
-				.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">"
-						+ "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">"
-						+ "<head>"
-						+ "<title></title>"
-						+ "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\" />"
-						+ "<meta name=\"ROBOTS\" content=\"index,follow\" />"
-						+ "<meta name=\"TITLE\" content=\"\" />"
-						+ "<meta name=\"DESCRIPTION\" content=\"\" />"
-						+ "<meta name=\"KEYWORDS\" content=\"\" />"
-						+ "<meta name=\"AUTHOR\" content=\"\" />"
-						+ "<meta name=\"Copyright\" content=\"\" />"
-						+ "<meta http-equiv=\"Content-Language\" content=\"en\" />"
-						+ "<style type=\"text/css\"> @import url(css/style.css);</style>"
-						+ "</head>" + "<body>");
-
-		htmlContent
-				.append("<h1><a target=\"summary\" href=\"./all_packages.html\">DSM Report</a> - "
-						+ "{icon_pack} " + aPackageName + "</h1>");
-		htmlContent
-				.append("<table Cellpadding=\"0\" Cellspacing=\"0\" >\n<tr><td>");
-
 		nextRow = 0;
+
+		htmlContent = new StringBuilder();
+		htmlContent.append(DsmSiteTemplate.documentDsmHeader);
+		htmlContent.append(DsmSiteTemplate.documentDsmBodyStart.replace(
+				"{aPackageName}", aPackageName));
+
 		printColumnHeaders(dsm.getRows().size());
 		int i = 1;
 		for (DsmRow row : dsm.getRows()) {
@@ -129,9 +96,7 @@ public class DsmHtmlWriter {
 			printClasses(i++, row, analysisResult);
 		}
 
-		htmlContent.append("</table>");
-		htmlContent.append("</body>");
-
+		htmlContent.append(DsmSiteTemplate.documentDsmBodyEnd);
 		printToHTML(aPackageName);
 	}
 
@@ -179,8 +144,8 @@ public class DsmHtmlWriter {
 	}
 
 	private void printEmptyRowHeader() {
-		// print(String.format("%51s", ""));
-		htmlContent.append(String.format("%3s</td> <td>%46s ", "", ""));
+		htmlContent.append(String.format(
+				"%3s" + DsmSiteTemplate.trTd + "%46s ", "", ""));
 	}
 
 	private void printRowHeader(int rowId, String aName, int pkgCount,
@@ -216,16 +181,7 @@ public class DsmHtmlWriter {
 	}
 
 	private void nextRow() {
-		// println("|");
 		htmlContent.append("</td></tr>\n");
-	}
-
-	private void print(String s) {
-		System.out.print(s);
-	}
-
-	private void println(String s) {
-		System.out.println(s);
 	}
 
 	private void printToHTML(String aPackageName) {
@@ -240,8 +196,12 @@ public class DsmHtmlWriter {
 				"<img src=\"./images/package.png\" alt=\"\" />");
 		sHtmlContent = sHtmlContent.replace("{icon_all_pack}",
 				"<img src=\"./images/packages.png\" alt=\"\" />");
-		String filePath = "/home/yuriy/workspace2/UIRS/site/" + aPackageName
-				+ ".html";
+
+		// String filePath = "/home/yuriy/workspace2/UIRS/site/" + aPackageName
+		// + ".html";
+		String filePath = System.getProperty("user.dir") + "/site/"
+				+ aPackageName + ".html";
+		System.out.println();
 		System.out.println(sHtmlContent);
 		writeToFile(filePath, sHtmlContent);
 	}
