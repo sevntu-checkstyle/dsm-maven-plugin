@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <!-- TODO, if we are targeting at puting this plugin in maven-central, maybe this is 
+  <parent>
+    	<artifactId>oss-parent</artifactId>
+    	<groupId>org.sonatype.oss</groupId>
+    	<version>5</version>
+  </parent>
+-->
+
+  <modelVersion>4.0.0</modelVersion>
+  <!-- TODO what group should be?-->
+  <groupId>com.github.sevntu-checkstyle</groupId>
+  <artifactId>maven-dsm-plugin</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>maven-plugin</packaging>
+  <name>DSM maven plugin</name>
+  <url>https://github.com/sevntu-checkstyle/maven-dsm-report</url>
+  <issueManagement>
+    	<system>GitHub</system>
+    	<url>https://github.com/sevntu-checkstyle/maven-dsm-report/issues</url>
+  </issueManagement>
+  <inceptionYear>2011</inceptionYear>
+
+  <description>Tool for generating report containing Dependency Structure Matrix for the maven site</description>
+
+  <licenses>
+    	<license>
+		<!-- TODO EPL - is the license of dtangler itself. We may choose any other license.-->
+      		<name>Eclipse Public License</name>
+      		<url>http://www.eclipse.org/legal/epl-v10.html</url>
+    	</license>
+  </licenses>
+
+  <scm>
+    	<connection>git://github.com/sevntu-checkstyle/maven-dsm-report.git</connection>
+    	<url>https://github.com/sevntu-checkstyle/maven-dsm-report</url>
+  </scm>
+
+  <!-- TODO 
+  <developers>
+    
+  </developers>
+-->
+
+  <dependencies>
+	<dependency>
+    		<groupId>dtangler</groupId>
+    		<artifactId>dtangler-core</artifactId>
+    		<version>2.0.0</version>
+	</dependency>
+
+    	<dependency>
+    		<groupId>org.apache.maven.reporting</groupId>
+    		<artifactId>maven-reporting-api</artifactId>
+    		<version>2.0.8</version>
+	</dependency>
+
+	<dependency>
+    		<groupId>org.apache.maven.reporting</groupId>
+    		<artifactId>maven-reporting-impl</artifactId>
+    		<version>2.0.4.3</version>
+	</dependency>
+
+	<dependency>
+    		<groupId>org.codehaus.plexus</groupId>
+    		<artifactId>plexus-utils</artifactId>
+    		<version>2.0.1</version>
+	</dependency>
+  </dependencies>
+
+  <build>
+    	<plugins>
+	      <plugin>
+        		<groupId>org.apache.maven.plugins</groupId>
+		        <artifactId>maven-compiler-plugin</artifactId>
+		        <version>2.3.2</version>
+		        <configuration>
+			          <source>1.6</source>
+			          <target>1.6</target>
+		        </configuration>
+	      </plugin>
+	</plugins>
+  </build>
+
+
+  <!-- TODO publish dtangler to maven-central -->
+  <repositories>
+        <repository>
+                <id>lib-repo</id>
+                <name>lib-repository</name>
+                <url>file://${basedir}/lib</url>                
+                <releases>
+  	              <checksumPolicy>ignore</checksumPolicy>
+                </releases>
+        </repository>
+  </repositories>
+
+
+
+</project>
