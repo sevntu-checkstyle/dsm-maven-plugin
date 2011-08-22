@@ -199,10 +199,13 @@ public class DsmHtmlWriter {
 
 		// String filePath = "/home/yuriy/workspace2/UIRS/site/" + aPackageName
 		// + ".html";
-		String filePath = System.getProperty("user.dir") + "/site/"
+		String filePath = System.getProperty("user.dir") + "/target/site/DSM/"
 				+ aPackageName + ".html";
+
+		System.out.println("File paths:" + filePath);
+		
 		System.out.println();
-		System.out.println(sHtmlContent);
+		//System.out.println(sHtmlContent);
 		writeToFile(filePath, sHtmlContent);
 	}
 

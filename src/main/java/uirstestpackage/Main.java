@@ -1,5 +1,12 @@
 package uirstestpackage;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -21,7 +28,6 @@ import org.dtangler.core.dsm.DsmRow;
 import org.dtangler.core.dsmengine.DsmEngine;
 import org.dtangler.core.input.ArgumentBuilder;
 
-
 /**
  * This class begins dependency analysis of input files
  * 
@@ -33,12 +39,11 @@ public class Main {
 	/**
 	 * Link to dtangler DSM class
 	 */
-	Dsm				dsm;
+	Dsm dsm;
 	/**
 	 * Create the exemplar of DsmHtmlWriter class
 	 */
-	DsmHtmlWriter	textUI	= new DsmHtmlWriter();
-
+	DsmHtmlWriter textUI = new DsmHtmlWriter();
 
 	// List<Integer> selectedCols = Collections.EMPTY_LIST;
 	// List<Integer> selectedRows = new ArrayList<Integer>();
@@ -53,14 +58,12 @@ public class Main {
 		run(args);
 	}
 
-
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		new Main(args);
 	}
-
 
 	/**
 	 * Parse dependencies from target Program arguments. Example:
@@ -72,7 +75,8 @@ public class Main {
 		List<String> packageNames = new ArrayList<String>();
 
 		Arguments arguments = new ArgumentBuilder().build(args);
-		DependencyEngine engine = new DependencyEngineFactory().getDependencyEngine(arguments);
+		DependencyEngine engine = new DependencyEngineFactory()
+				.getDependencyEngine(arguments);
 
 		Dependencies dependencies = engine.getDependencies(arguments);
 		DependencyGraph dependencyGraph = dependencies.getDependencyGraph();
@@ -80,18 +84,23 @@ public class Main {
 		dsm = new DsmEngine(dependencyGraph).createDsm();
 		packageNames = getPackageNames(dsm);
 
+		moveSource();
+
 		printPackagesNavigationMenu(packageNames);
-		analisisAndPrintDsmPackages(dependencies, arguments, dependencyGraph, "all_packages");
+		analisisAndPrintDsmPackages(dependencies, arguments, dependencyGraph,
+				"all_packages");
 
 		for (int packageIndex = 0; packageIndex < dsm.getRows().size(); packageIndex++) {
 			// selectedRows.add(new Integer(packageIndex));
 
 			Dependencies dependencies2 = engine.getDependencies(arguments);
-			Scope scope = dependencies2.getChildScope(dependencies2.getDefaultScope());
+			Scope scope = dependencies2.getChildScope(dependencies2
+					.getDefaultScope());
 			Set<Dependable> dep = getSelectionDependables(packageIndex);
 
-			DependencyGraph dependencyGraph2 = dependencies2.getDependencyGraph(scope, dep,
-					Dependencies.DependencyFilter.none);
+			DependencyGraph dependencyGraph2 = dependencies2
+					.getDependencyGraph(scope, dep,
+							Dependencies.DependencyFilter.none);
 
 			analisisAndPrintDsm(dependencies2, arguments, dependencyGraph2,
 					packageNames.get(packageIndex));
@@ -99,6 +108,73 @@ public class Main {
 		return true;
 	}
 
+	private void moveSource() {
+		// Copy index.html
+		File outFile = new File(System.getProperty("user.dir")
+				+ "/target/site/DSM/index.html");
+		InputStream in = getClass().getResourceAsStream("/index.html");
+		System.out.println(outFile+" and "+ in);
+		CopyFilesToSite(in, outFile);
+
+		String strDirectoy = System.getProperty("user.dir")
+				+ "/target/site/DSM/images";
+		new File(strDirectoy).mkdir();
+		
+		// Copy class.png
+		outFile = new File(System.getProperty("user.dir")
+				+ "/target/site/DSM/images/class.png");
+		in = getClass().getResourceAsStream("/class.png");
+		System.out.println(outFile+" and "+ in);
+		CopyFilesToSite(in, outFile);
+
+		// Copy package.png
+		outFile = new File(System.getProperty("user.dir")
+				+ "/target/site/DSM/images/package.png");
+		in = getClass().getResourceAsStream("/package.png");
+		System.out.println(outFile+" and "+ in);
+		CopyFilesToSite(in, outFile);
+
+		// Copy packages.png
+		outFile = new File(System.getProperty("user.dir")
+				+ "/target/site/DSM/images/packages.png");
+		in = getClass().getResourceAsStream("/packages.png");
+		System.out.println(outFile+" and "+ in);
+		CopyFilesToSite(in, outFile);
+
+		// Copy style.css
+		strDirectoy = System.getProperty("user.dir")
+				+ "/target/site/DSM/css";
+		new File(strDirectoy).mkdir();
+		
+		outFile = new File(System.getProperty("user.dir")
+				+ "/target/site/DSM/css/style.css");
+		in = getClass().getResourceAsStream("/style.css");
+		System.out.println(outFile+" and "+ in);
+		CopyFilesToSite(in, outFile);
+
+	}
+
+	private boolean CopyFilesToSite(InputStream in, File outFile) {
+		try {
+			OutputStream out = new FileOutputStream(outFile);
+
+			byte[] buf = new byte[1024];
+			int len;
+			while ((len = in.read(buf)) > 0) {
+				out.write(buf, 0, len);
+			}
+			in.close();
+			out.close();
+			System.out.println("File copied.");
+		} catch (FileNotFoundException ex) {
+			System.out
+					.println(ex.getMessage() + " in the specified directory.");
+			System.exit(0);
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+		}
+		return true;
+	}
 
 	/**
 	 * @param aDsm
@@ -115,33 +191,34 @@ public class Main {
 		return packageNames;
 	}
 
-
 	/**
 	 * @param aDependencies
 	 * @param aArguments
 	 * @param aDependencyGraph
 	 * @param aPackageName
 	 */
-	public void analisisAndPrintDsm(Dependencies aDependencies, Arguments aArguments,
-			DependencyGraph aDependencyGraph, String aPackageName) {
-		AnalysisResult analysisResult = getAnalysisResult(aArguments, aDependencies);
+	public void analisisAndPrintDsm(Dependencies aDependencies,
+			Arguments aArguments, DependencyGraph aDependencyGraph,
+			String aPackageName) {
+		AnalysisResult analysisResult = getAnalysisResult(aArguments,
+				aDependencies);
 		printDsm(aDependencyGraph, analysisResult, aPackageName);
 	}
 
-
 	/**
 	 * @param aDependencies
 	 * @param aArguments
 	 * @param aDependencyGraph
 	 * @param aPackageName
 	 */
-	public void analisisAndPrintDsmPackages(Dependencies aDependencies, Arguments aArguments,
-			DependencyGraph aDependencyGraph, String aPackageName) {
-		AnalysisResult analysisResult = getAnalysisResult(aArguments, aDependencies);
-		textUI.printDsmPackages(new DsmEngine(aDependencyGraph).createDsm(), analysisResult,
-				aPackageName);
+	public void analisisAndPrintDsmPackages(Dependencies aDependencies,
+			Arguments aArguments, DependencyGraph aDependencyGraph,
+			String aPackageName) {
+		AnalysisResult analysisResult = getAnalysisResult(aArguments,
+				aDependencies);
+		textUI.printDsmPackages(new DsmEngine(aDependencyGraph).createDsm(),
+				analysisResult, aPackageName);
 	}
-
 
 	/**
 	 * @param aRow
@@ -154,7 +231,6 @@ public class Main {
 		result.add(getDsmCell(0, 0).getDependency());
 		return result;
 	}
-
 
 	/**
 	 * @param aRow
@@ -179,22 +255,21 @@ public class Main {
 		return result;
 	}
 
-
 	private DsmCell getDsmCell(final int row, final int col) {
 		return dsm.getRows().get(row).getCells().get(col);
 	}
 
-
-	private AnalysisResult getAnalysisResult(Arguments arguments, Dependencies dependencies) {
-		return new ConfigurableDependencyAnalyzer(arguments).analyze(dependencies);
+	private AnalysisResult getAnalysisResult(Arguments arguments,
+			Dependencies dependencies) {
+		return new ConfigurableDependencyAnalyzer(arguments)
+				.analyze(dependencies);
 	}
 
-
-	private void printDsm(DependencyGraph aDependencies, AnalysisResult aAnalysisResult,
-			String aPackageName) {
-		textUI.printDsm(new DsmEngine(aDependencies).createDsm(), aAnalysisResult, aPackageName);
+	private void printDsm(DependencyGraph aDependencies,
+			AnalysisResult aAnalysisResult, String aPackageName) {
+		textUI.printDsm(new DsmEngine(aDependencies).createDsm(),
+				aAnalysisResult, aPackageName);
 	}
-
 
 	private void printPackagesNavigationMenu(List<String> aPackageNames) {
 		textUI.printNavigateDsmPackages(aPackageNames);

@@ -19,7 +19,11 @@ public class DsmMavenReport extends AbstractMavenReport {
      * @readonly
      */
     protected MavenProject project;
-
+    
+    public static void main(String [] arg){
+    	new DsmMavenReport().getOutputName();
+    }
+    
     @Override
     protected MavenProject getProject() {
         return project;
@@ -40,8 +44,7 @@ public class DsmMavenReport extends AbstractMavenReport {
 
     // Abused by Maven site plugin, a '/' denotes a directory path!
     public String getOutputName() {
-
-        String path = "someDirectoryInTargetSite/canHaveSubdirectory/OrMore";
+        String path = "DSM";
         String outputFilename = "some-file";
 
         // The site plugin will make the directory (and regognize the '/') in the path,
@@ -78,6 +81,11 @@ public class DsmMavenReport extends AbstractMavenReport {
         sink.body_();
         sink.flush();
         sink.close();
+        
+
+    	String[] arg = new String[1];
+    	arg[0] = "-input=/home/yuriy/programming/Java/checkstyle-5.3-all.jar;";
+    	new Main(arg);
 
     }
 }
