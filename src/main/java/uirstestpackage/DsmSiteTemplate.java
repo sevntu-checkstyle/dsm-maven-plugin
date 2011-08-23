@@ -1,7 +1,7 @@
 package uirstestpackage;
 
 /**
- * @author 
+ * @author
  * 
  */
 public class DsmSiteTemplate {
@@ -102,4 +102,11 @@ public class DsmSiteTemplate {
 	 * 
 	 */
 	public static String trTd = "</td> <td>";
+
+	public static String DSMindexContent = "<frameset cols=\"25%,75%\">"
+			+ "<frameset>"
+			+ "<frame src=\"./packages.html\" name=\"packageList\" title=\"All Packages\">"
+			+ "</frameset>"
+			+ "<frame src=\"./all_packages.html\" name=\"summary\" title=\"Package, class and interface descriptions\" scrolling=\"yes\">"
+			+ "</frameset>";
 }

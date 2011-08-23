@@ -7,10 +7,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import org.dtangler.core.analysis.configurableanalyzer.ConfigurableDependencyAnalyzer;
 import org.dtangler.core.analysisresult.AnalysisResult;
@@ -55,7 +61,10 @@ public class Main {
 	 * @param args
 	 */
 	public Main(String[] args) {
-		run(args);
+		String[] arg = new String[1];
+		arg[0] = "-input=" + System.getProperty("user.dir") + "/target/classes";
+		System.out.println("[DSM] getDescription "+ arg[0]);
+		run(arg);
 	}
 
 	/**
@@ -84,8 +93,6 @@ public class Main {
 		dsm = new DsmEngine(dependencyGraph).createDsm();
 		packageNames = getPackageNames(dsm);
 
-		moveSource();
-
 		printPackagesNavigationMenu(packageNames);
 		analisisAndPrintDsmPackages(dependencies, arguments, dependencyGraph,
 				"all_packages");
@@ -105,73 +112,70 @@ public class Main {
 			analisisAndPrintDsm(dependencies2, arguments, dependencyGraph2,
 					packageNames.get(packageIndex));
 		}
+		moveSource();
 		return true;
 	}
 
 	private void moveSource() {
-		// Copy index.html
-		File outFile = new File(System.getProperty("user.dir")
-				+ "/target/site/DSM/index.html");
-		InputStream in = getClass().getResourceAsStream("/index.html");
-		System.out.println(outFile+" and "+ in);
-		CopyFilesToSite(in, outFile);
-
-		String strDirectoy = System.getProperty("user.dir")
-				+ "/target/site/DSM/images";
-		new File(strDirectoy).mkdir();
-		
-		// Copy class.png
-		outFile = new File(System.getProperty("user.dir")
-				+ "/target/site/DSM/images/class.png");
-		in = getClass().getResourceAsStream("/class.png");
-		System.out.println(outFile+" and "+ in);
-		CopyFilesToSite(in, outFile);
-
-		// Copy package.png
-		outFile = new File(System.getProperty("user.dir")
-				+ "/target/site/DSM/images/package.png");
-		in = getClass().getResourceAsStream("/package.png");
-		System.out.println(outFile+" and "+ in);
-		CopyFilesToSite(in, outFile);
-
-		// Copy packages.png
-		outFile = new File(System.getProperty("user.dir")
-				+ "/target/site/DSM/images/packages.png");
-		in = getClass().getResourceAsStream("/packages.png");
-		System.out.println(outFile+" and "+ in);
-		CopyFilesToSite(in, outFile);
-
-		// Copy style.css
-		strDirectoy = System.getProperty("user.dir")
-				+ "/target/site/DSM/css";
-		new File(strDirectoy).mkdir();
-		
-		outFile = new File(System.getProperty("user.dir")
-				+ "/target/site/DSM/css/style.css");
-		in = getClass().getResourceAsStream("/style.css");
-		System.out.println(outFile+" and "+ in);
-		CopyFilesToSite(in, outFile);
-
+		CopyFilesToSite("images");
+		CopyFilesToSite("css");
+		CopyFilesToSite("index.html");
 	}
 
-	private boolean CopyFilesToSite(InputStream in, File outFile) {
+	private boolean CopyFilesToSite(String directoryOrFileName) {
+		String targetPath = "/target/site/DSM/";
 		try {
-			OutputStream out = new FileOutputStream(outFile);
+			URL dirURL = getClass().getResource("/" + directoryOrFileName);
+			File outputFile = new File(System.getProperty("user.dir")
+					+ targetPath + directoryOrFileName);
 
-			byte[] buf = new byte[1024];
-			int len;
-			while ((len = in.read(buf)) > 0) {
-				out.write(buf, 0, len);
+			if (directoryOrFileName.indexOf(".") == -1) {
+
+				if (!outputFile.exists()) {
+					outputFile.mkdir();
+				}
+				if (dirURL.getProtocol().equals("jar")) {
+					String jarPath = dirURL.getPath().substring(5,
+							dirURL.getPath().indexOf("!"));
+					JarFile jar = new JarFile(URLDecoder.decode(jarPath,
+							"UTF-8"));
+					Enumeration<JarEntry> entries = jar.entries();
+					directoryOrFileName = directoryOrFileName + "/";
+
+					while (entries.hasMoreElements()) {
+						String name = entries.nextElement().getName();
+
+						if (name.startsWith(directoryOrFileName)) {
+							String entry = name.substring(directoryOrFileName
+									.length());
+							int checkSubdir = entry.indexOf("/");
+							if (checkSubdir >= 0) {
+								CopyFilesToSite(directoryOrFileName + entry);
+							} else
+								CopyFilesToSite(directoryOrFileName + entry);
+						}
+					}
+				}
+			} else {
+				InputStream inputStream = getClass().getResourceAsStream(
+						"/" + directoryOrFileName);
+				OutputStream outputStream = new FileOutputStream(outputFile);
+				byte[] buf = new byte[1024];
+				int len;
+
+				while ((len = inputStream.read(buf)) > 0) {
+					outputStream.write(buf, 0, len);
+				}
+				inputStream.close();
+				outputStream.close();
 			}
-			in.close();
-			out.close();
-			System.out.println("File copied.");
 		} catch (FileNotFoundException ex) {
 			System.out
 					.println(ex.getMessage() + " in the specified directory.");
-			System.exit(0);
+			ex.printStackTrace();
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
+			e.printStackTrace();
 		}
 		return true;
 	}

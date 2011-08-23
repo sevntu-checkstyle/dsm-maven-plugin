@@ -1,8 +1,8 @@
 package uirstestpackage;
-import java.util.Locale;
 
-import org.apache.maven.doxia.sink.Sink;
+import java.util.Locale;
 import org.apache.maven.doxia.siterenderer.Renderer;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
@@ -13,79 +13,59 @@ import org.apache.maven.reporting.MavenReportException;
  */
 public class DsmMavenReport extends AbstractMavenReport {
 
-    /**
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
-     */
-    protected MavenProject project;
-    
-    public static void main(String [] arg){
-    	new DsmMavenReport().getOutputName();
-    }
-    
-    @Override
-    protected MavenProject getProject() {
-        return project;
-    }
+	/**
+	 * @parameter expression="${project}"
+	 * @required
+	 * @readonly
+	 */
+	protected MavenProject project;
 
-    // Not used by Maven site plugin but required by API!
-    @Override
-    protected Renderer getSiteRenderer() {
-        return null; // Nobody calls this!
-    }
+	public static void main(String[] arg) {
+		new DsmMavenReport().getOutputName();
+	}
 
-    // Not used by Maven site plugin but required by API!
-    // (The site plugin is only calling getOutputName(), the output dir is fixed!)
-    @Override
-    protected String getOutputDirectory() {
-        return null; // Nobody calls this!
-    }
+	@Override
+	public void execute() throws MojoExecutionException {
+		System.out.println("[DSM] exucete ");
+	}
 
-    // Abused by Maven site plugin, a '/' denotes a directory path!
-    public String getOutputName() {
-        String path = "DSM";
-        String outputFilename = "some-file";
+	@Override
+	protected MavenProject getProject() {
+		return project;
+	}
 
-        // The site plugin will make the directory (and regognize the '/') in the path,
-        // it will also append '.html' onto the filename and there is nothing (yes, I tried)
-        // you can do about that. Feast your eyes on the code that instantiates 
-        // this (good luck finding it):
-        // org.apache.maven.doxia.module.xhtml.decoration.render.RenderingContext
+	// Not used by Maven site plugin but required by API!
+	@Override
+	protected Renderer getSiteRenderer() {
+		return null; // Nobody calls this!
+	}
 
-        return path + "/" + outputFilename;
-    }
+	// Not used by Maven site plugin but required by API!
+	// (The site plugin is only calling getOutputName(), the output dir is
+	// fixed!)
+	@Override
+	protected String getOutputDirectory() {
+		return null; // Nobody calls this!
+	}
 
-    public String getName(Locale locale) {
-        return "My Report";
-    }
+	// Abused by Maven site plugin, a '/' denotes a directory path!
+	public String getOutputName() {
+		String path = "DSM";
+		String outputFilename = "index";
+		return path + "/" + outputFilename;
+	}
 
-    public String getDescription(Locale locale) {
-        return "A description of whatever MyReport generates.";
-    }
+	public String getName(Locale locale) {
+		return "My Report";
+	}
 
-    @Override
-    protected void executeReport(Locale locale) throws MavenReportException {
+	public String getDescription(Locale locale) {
+		new Main(null);
+		return "A description of whatever MyReport generates.";
+	}
 
-        Sink sink = getSink();
-        sink.head();
-        sink.title();
-        sink.text("DSM Report");
-        sink.title_();
-        sink.head_();
+	@Override
+	protected void executeReport(Locale locale) throws MavenReportException {
+	}
 
-        sink.body();
-        
-        sink.rawText("Still nothing here!");
-
-        sink.body_();
-        sink.flush();
-        sink.close();
-        
-
-    	String[] arg = new String[1];
-    	arg[0] = "-input=/home/yuriy/programming/Java/checkstyle-5.3-all.jar;";
-    	new Main(arg);
-
-    }
 }
