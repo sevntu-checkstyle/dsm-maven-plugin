@@ -25,11 +25,6 @@ public class DsmMavenReport extends AbstractMavenReport {
 	}
 
 	@Override
-	public void execute() throws MojoExecutionException {
-		System.out.println("[DSM] exucete ");
-	}
-
-	@Override
 	protected MavenProject getProject() {
 		return project;
 	}
@@ -56,7 +51,7 @@ public class DsmMavenReport extends AbstractMavenReport {
 	}
 
 	public String getName(Locale locale) {
-		return "My Report";
+		return "DSM";
 	}
 
 	public String getDescription(Locale locale) {

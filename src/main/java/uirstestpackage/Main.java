@@ -1,22 +1,15 @@
 package uirstestpackage;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 import org.dtangler.core.analysis.configurableanalyzer.ConfigurableDependencyAnalyzer;
 import org.dtangler.core.analysisresult.AnalysisResult;
@@ -51,6 +44,8 @@ public class Main {
 	 */
 	DsmHtmlWriter textUI = new DsmHtmlWriter();
 
+	String targetPath = "/target/site/DSM/";
+
 	// List<Integer> selectedCols = Collections.EMPTY_LIST;
 	// List<Integer> selectedRows = new ArrayList<Integer>();
 
@@ -63,7 +58,7 @@ public class Main {
 	public Main(String[] args) {
 		String[] arg = new String[1];
 		arg[0] = "-input=" + System.getProperty("user.dir") + "/target/classes";
-		System.out.println("[DSM] getDescription "+ arg[0]);
+		System.out.println("[DSM] getDescription " + arg[0]);
 		run(arg);
 	}
 
@@ -117,67 +112,55 @@ public class Main {
 	}
 
 	private void moveSource() {
-		CopyFilesToSite("images");
-		CopyFilesToSite("css");
+		CreateTheDirectories();
 		CopyFilesToSite("index.html");
+		CopyFilesToSite("css/style.css");
+		CopyFilesToSite("images/class.png");
+		CopyFilesToSite("images/package.png");
+		CopyFilesToSite("images/packages.png");
+	}
+
+	private void CreateTheDirectories() {
+		String[] dirs = { "images", "css" };
+		for (String dir : dirs) {
+			File outputFile = new File(System.getProperty("user.dir")
+					+ targetPath + dir);
+			if (!outputFile.exists()) {
+				outputFile.mkdir();
+				System.out.println("[CopyFilesToSite] new Folder '" + dir
+						+ "' created");
+			}
+
+		}
 	}
 
 	private boolean CopyFilesToSite(String directoryOrFileName) {
-		String targetPath = "/target/site/DSM/";
 		try {
-			URL dirURL = getClass().getResource("/" + directoryOrFileName);
+			System.out.println(String.format(
+					"[CopyFilesToSite] Copy %s started", directoryOrFileName));
 			File outputFile = new File(System.getProperty("user.dir")
 					+ targetPath + directoryOrFileName);
 
-			if (directoryOrFileName.indexOf(".") == -1) {
+			InputStream inputStream = getClass().getResourceAsStream(
+					"/" + directoryOrFileName);
+			OutputStream outputStream = new FileOutputStream(outputFile);
+			byte[] buf = new byte[1024];
+			int len;
 
-				if (!outputFile.exists()) {
-					outputFile.mkdir();
-				}
-				if (dirURL.getProtocol().equals("jar")) {
-					String jarPath = dirURL.getPath().substring(5,
-							dirURL.getPath().indexOf("!"));
-					JarFile jar = new JarFile(URLDecoder.decode(jarPath,
-							"UTF-8"));
-					Enumeration<JarEntry> entries = jar.entries();
-					directoryOrFileName = directoryOrFileName + "/";
-
-					while (entries.hasMoreElements()) {
-						String name = entries.nextElement().getName();
-
-						if (name.startsWith(directoryOrFileName)) {
-							String entry = name.substring(directoryOrFileName
-									.length());
-							int checkSubdir = entry.indexOf("/");
-							if (checkSubdir >= 0) {
-								CopyFilesToSite(directoryOrFileName + entry);
-							} else
-								CopyFilesToSite(directoryOrFileName + entry);
-						}
-					}
-				}
-			} else {
-				InputStream inputStream = getClass().getResourceAsStream(
-						"/" + directoryOrFileName);
-				OutputStream outputStream = new FileOutputStream(outputFile);
-				byte[] buf = new byte[1024];
-				int len;
-
-				while ((len = inputStream.read(buf)) > 0) {
-					outputStream.write(buf, 0, len);
-				}
-				inputStream.close();
-				outputStream.close();
+			while ((len = inputStream.read(buf)) > 0) {
+				outputStream.write(buf, 0, len);
 			}
+			inputStream.close();
+			outputStream.close();
+
+			System.out.println("[CopyFilesToSite] " + directoryOrFileName
+					+ " successfully copied ");
 		} catch (FileNotFoundException ex) {
-			System.out
-					.println(ex.getMessage() + " in the specified directory.");
 			ex.printStackTrace();
 		} catch (IOException e) {
-			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
-		return true;
+		return false;
 	}
 
 	/**
