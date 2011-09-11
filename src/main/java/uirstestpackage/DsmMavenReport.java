@@ -1,13 +1,15 @@
 package uirstestpackage;
 
+import java.io.File;
 import java.util.Locale;
 import org.apache.maven.doxia.siterenderer.Renderer;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
 
 /**
+ * Initialising DSM plugin.
+ * 
  * @goal dsm
  * @phase site
  */
@@ -18,42 +20,47 @@ public class DsmMavenReport extends AbstractMavenReport {
 	 * @required
 	 * @readonly
 	 */
-	protected MavenProject project;
-
-	public static void main(String[] arg) {
-		new DsmMavenReport().getOutputName();
-	}
+	private MavenProject project;
+	/**
+	 * Specifies the directory where the report will be generated
+	 * 
+	 * @parameter default-value="${project.build.directory}"
+	 * @required
+	 */
+	private File outputDirectory;
+	private String siteFolderName = "DSM";
 
 	@Override
 	protected MavenProject getProject() {
+		if (project == null) {
+			throw new IllegalStateException("This value can not be null");
+		}
 		return project;
 	}
 
-	// Not used by Maven site plugin but required by API!
 	@Override
 	protected Renderer getSiteRenderer() {
-		return null; // Nobody calls this!
+		throw new IllegalStateException("This method is not expected to be called");
 	}
 
-	// Not used by Maven site plugin but required by API!
-	// (The site plugin is only calling getOutputName(), the output dir is
-	// fixed!)
 	@Override
 	protected String getOutputDirectory() {
-		return null; // Nobody calls this!
+		return outputDirectory.getAbsolutePath();
 	}
 
-	// Abused by Maven site plugin, a '/' denotes a directory path!
+	@Override
 	public String getOutputName() {
-		String path = "DSM";
+		System.setProperty("project.build.directory", getOutputDirectory());
 		String outputFilename = "index";
-		return path + "/" + outputFilename;
+		return siteFolderName + "/" + outputFilename;
 	}
 
+	@Override
 	public String getName(Locale locale) {
-		return "DSM";
+		return siteFolderName;
 	}
 
+	@Override
 	public String getDescription(Locale locale) {
 		new Main(null);
 		return "A description of whatever MyReport generates.";

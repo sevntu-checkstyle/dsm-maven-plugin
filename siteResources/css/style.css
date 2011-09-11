@@ -48,11 +48,13 @@ td {
 	min-width: 18px;
 }
 
+
 .packageName_rows {
 	color: black;
 	background-color: #ddd;
 	text-align: left;
 	font-weight: bold;
+	border: 0px;
 	border-top: solid 1px #000000;
 	border-right:solid 1px #000000;
 	white-space: nowrap;
@@ -60,11 +62,21 @@ td {
 	font-size: 11px;
 }
 
+tr td {
+	color: black;
+	background-color: #ddd;
+	border-left:solid 1px #ffffff;
+	border-bottom:solid 1px #ffffff;
+	font-weight: bold;
+	text-align: center;
+}
+
 .packageNumber_rows {
 	color: black;
 	background-color: #bbd;
 	text-align: center;
 	font-weight: bold;
+	border: 0px;
 	border-top: solid 1px #000000;
 	border-right: solid 1px #000000;
 }
@@ -74,26 +86,9 @@ td {
 	background-color: #bbd;
 	text-align: center;
 	font-weight: bold;
+	border: 0px;
 	border-left:solid 1px #000000;
 	border-bottom:solid 1px #000000;
-}
-
-.element_1 {
-	color: black;
-	background-color: #ddd;
-	border-left:solid 1px #ffffff;
-	border-bottom:solid 1px #ffffff;
-	font-weight: bold;
-	text-align: center;
-}
-
-.element_1:hover {
-	color: black;
-	background-color: #ddd;
-	border:solid 1px #000000;
-	font-weight: bold;
-	min-height: 16px;
-	min-width: 16px;
 }
 
 

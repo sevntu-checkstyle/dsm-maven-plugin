@@ -34,48 +34,39 @@ import org.dtangler.core.input.ArgumentBuilder;
  * 
  */
 public class Main {
+	private Dsm dsm;
+	private DsmHtmlWriter dsmHtmlWriter = new DsmHtmlWriter();
+	private String targetPath = "/site/DSM/";
+	private String projectBuildDirectory = "project.build.directory";
 
 	/**
-	 * Link to dtangler DSM class
-	 */
-	Dsm dsm;
-	/**
-	 * Create the exemplar of DsmHtmlWriter class
-	 */
-	DsmHtmlWriter textUI = new DsmHtmlWriter();
-
-	String targetPath = "/target/site/DSM/";
-
-	// List<Integer> selectedCols = Collections.EMPTY_LIST;
-	// List<Integer> selectedRows = new ArrayList<Integer>();
-
-	/**
-	 * Program arguments. Example:
-	 * -input=/home/yuriy/programming/Java/checkstyle-5.3-all.jar;
+	 * Constructor.
 	 * 
 	 * @param args
+	 *            Example:-input=/home/yuriy/checkstyle-5.3-all.jar;
 	 */
 	public Main(String[] args) {
 		String[] arg = new String[1];
-		arg[0] = "-input=" + System.getProperty("user.dir") + "/target/classes";
-		System.out.println("[DSM] getDescription " + arg[0]);
+		arg[0] = "-input=" + System.getProperty(projectBuildDirectory)
+				+ "/classes";
+		System.out.println("[DSM] StartMain " + arg[0]);
 		run(arg);
 	}
 
 	/**
-	 * @param args
+	 * @param args Arguments
 	 */
 	public static void main(String[] args) {
 		new Main(args);
 	}
 
 	/**
-	 * Parse dependencies from target Program arguments. Example:
-	 * -input=/home/yuriy/programming/Java/checkstyle-5.3-all.jar;
+	 * Parse dependencies from target.
 	 * 
 	 * @param args
+	 *            Arguments
 	 */
-	public boolean run(String[] args) {
+	public void run(String[] args) {
 		List<String> packageNames = new ArrayList<String>();
 
 		Arguments arguments = new ArgumentBuilder().build(args);
@@ -108,69 +99,89 @@ public class Main {
 					packageNames.get(packageIndex));
 		}
 		moveSource();
-		return true;
 	}
 
+	/**
+	 * Move sourc files from project source folder to the site folder.
+	 */
 	private void moveSource() {
-		CreateTheDirectories();
-		CopyFilesToSite("index.html");
-		CopyFilesToSite("css/style.css");
-		CopyFilesToSite("images/class.png");
-		CopyFilesToSite("images/package.png");
-		CopyFilesToSite("images/packages.png");
+		createTheDirectories();
+		copyFileToSiteFolder("index.html");
+		copyFileToSiteFolder("css/style.css");
+		copyFileToSiteFolder("images/class.png");
+		copyFileToSiteFolder("images/package.png");
+		copyFileToSiteFolder("images/packages.png");
 	}
 
-	private void CreateTheDirectories() {
+	/**
+	 * Create the folders in a site directory.
+	 */
+	private void createTheDirectories() {
 		String[] dirs = { "images", "css" };
 		for (String dir : dirs) {
-			File outputFile = new File(System.getProperty("user.dir")
-					+ targetPath + dir);
+			File outputFile = new File(
+					System.getProperty(projectBuildDirectory) + targetPath
+							+ dir);
 			if (!outputFile.exists()) {
 				outputFile.mkdir();
-				System.out.println("[CopyFilesToSite] new Folder '" + dir
+				System.out.println("[copyFileToSiteFolder] new Folder '" + dir
 						+ "' created");
 			}
 
 		}
 	}
 
-	private boolean CopyFilesToSite(String directoryOrFileName) {
+	/**
+	 * Copy file to the site directory
+	 * 
+	 * @param directoryOrFileName
+	 *            Directory or File name
+	 */
+	private void copyFileToSiteFolder(String directoryOrFileName) {
+		InputStream inputStream = null;
+		OutputStream outputStream = null;
 		try {
-			System.out.println(String.format(
-					"[CopyFilesToSite] Copy %s started", directoryOrFileName));
-			File outputFile = new File(System.getProperty("user.dir")
-					+ targetPath + directoryOrFileName);
-
-			InputStream inputStream = getClass().getResourceAsStream(
-					"/" + directoryOrFileName);
-			OutputStream outputStream = new FileOutputStream(outputFile);
-			byte[] buf = new byte[1024];
 			int len;
+			byte[] buf = new byte[1024];
+			File outputFile = new File(
+					System.getProperty(projectBuildDirectory) + targetPath
+							+ directoryOrFileName);
+			inputStream = getClass().getResourceAsStream(
+					"/" + directoryOrFileName);
+			outputStream = new FileOutputStream(outputFile);
 
 			while ((len = inputStream.read(buf)) > 0) {
 				outputStream.write(buf, 0, len);
 			}
-			inputStream.close();
-			outputStream.close();
 
-			System.out.println("[CopyFilesToSite] " + directoryOrFileName
+			System.out.println("[copyFileToSiteFolder] " + directoryOrFileName
 					+ " successfully copied ");
-		} catch (FileNotFoundException ex) {
-			ex.printStackTrace();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				if (inputStream != null) {
+					inputStream.close();
+				}
+				if (outputStream != null) {
+					outputStream.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
-		return false;
 	}
 
 	/**
 	 * @param aDsm
-	 * @return
+	 *            DSM structure
+	 * @return List of Package Names
 	 */
 	private List<String> getPackageNames(Dsm aDsm) {
 		List<DsmRow> dsmRowList = aDsm.getRows();
 		List<String> packageNames = new ArrayList<String>();
-
 		for (int index = 0; index < dsmRowList.size(); index++) {
 			DsmRow dsmRow = dsmRowList.get(index);
 			packageNames.add(dsmRow.getDependee().toString());
@@ -179,10 +190,16 @@ public class Main {
 	}
 
 	/**
+	 * Analysin and print DSM of Class from package
+	 * 
 	 * @param aDependencies
+	 *            Package dependensies
 	 * @param aArguments
+	 *            Arguments
 	 * @param aDependencyGraph
+	 *            Dependency graph
 	 * @param aPackageName
+	 *            Package name
 	 */
 	public void analisisAndPrintDsm(Dependencies aDependencies,
 			Arguments aArguments, DependencyGraph aDependencyGraph,
@@ -193,45 +210,50 @@ public class Main {
 	}
 
 	/**
+	 * Analysin and print DSM of package from project
+	 * 
 	 * @param aDependencies
+	 *            Project dependensies
 	 * @param aArguments
+	 *            Arguments
 	 * @param aDependencyGraph
-	 * @param aPackageName
+	 *            Dependency graph
+	 * @param aAllPackages
+	 *            "all_packages"
 	 */
 	public void analisisAndPrintDsmPackages(Dependencies aDependencies,
 			Arguments aArguments, DependencyGraph aDependencyGraph,
-			String aPackageName) {
+			String aAllPackages) {
 		AnalysisResult analysisResult = getAnalysisResult(aArguments,
 				aDependencies);
-		textUI.printDsmPackages(new DsmEngine(aDependencyGraph).createDsm(),
-				analysisResult, aPackageName);
+		dsmHtmlWriter.printDsmPackages(new DsmEngine(aDependencyGraph).createDsm(),
+				analysisResult, aAllPackages);
 	}
 
 	/**
+	 * Get Set of dependencies.
+	 * 
 	 * @param aRow
-	 * @return
+	 *            Index of row wich analysing
+	 * @return Set of Dependencies
 	 */
 	public Set<Dependency> getSelectionDependencies(final int aRow) {
 		Set<Dependency> result = new HashSet<Dependency>();
-		// for (Integer col : selectedCols)
-		// for (Integer row : selectedRows)
 		result.add(getDsmCell(0, 0).getDependency());
 		return result;
 	}
 
 	/**
+	 * Get Set of dependables.
+	 * 
 	 * @param aRow
-	 * @return
+	 *            Index of row wich analysing
+	 * @return Set of Dependables
 	 */
 	public Set<Dependable> getSelectionDependables(final int aRow) {
-		// if (selectedRows.isEmpty())
-		// return Collections.EMPTY_SET;
-		// Set<Dependency> selectionDependencies =
-		// getSelectionDependencies(aRow);
 		Set<Dependency> selectionDependencies = new HashSet<Dependency>();
 		Set<Dependable> result = new HashSet<Dependable>();
 		if (selectionDependencies.isEmpty()) {
-			// for (int row : selectedRows)
 			result.add(dsm.getRows().get(aRow).getDependee());
 		} else {
 			for (Dependency dependency : selectionDependencies) {
@@ -242,23 +264,57 @@ public class Main {
 		return result;
 	}
 
-	private DsmCell getDsmCell(final int row, final int col) {
-		return dsm.getRows().get(row).getCells().get(col);
+	/**
+	 * Get DSMCell by row and coll indexes
+	 * 
+	 * @param aRow
+	 *            Row index
+	 * @param aCol
+	 *            Col index
+	 * @return DSMCell structure
+	 */
+	private DsmCell getDsmCell(final int aRow, final int aCol) {
+		return dsm.getRows().get(aRow).getCells().get(aCol);
 	}
 
+	/**
+	 * Analisyng dependencies by arguments
+	 * 
+	 * @param arguments
+	 *            Arguments
+	 * @param dependencies
+	 *            Dependencies structure
+	 * @return AnalysisResult structure
+	 */
 	private AnalysisResult getAnalysisResult(Arguments arguments,
 			Dependencies dependencies) {
 		return new ConfigurableDependencyAnalyzer(arguments)
 				.analyze(dependencies);
 	}
 
+	/**
+	 * Print DSM
+	 * 
+	 * @param aDependencies
+	 *            Dependencies structure
+	 * @param aAnalysisResult
+	 *            AnalysisResult structure
+	 * @param aPackageName
+	 *            Package name
+	 */
 	private void printDsm(DependencyGraph aDependencies,
 			AnalysisResult aAnalysisResult, String aPackageName) {
-		textUI.printDsm(new DsmEngine(aDependencies).createDsm(),
+		dsmHtmlWriter.printDsm(new DsmEngine(aDependencies).createDsm(),
 				aAnalysisResult, aPackageName);
 	}
 
+	/**
+	 * Print site navigation menu by packages
+	 * 
+	 * @param aPackageNames
+	 *            List of package names
+	 */
 	private void printPackagesNavigationMenu(List<String> aPackageNames) {
-		textUI.printNavigateDsmPackages(aPackageNames);
+		dsmHtmlWriter.printNavigateDsmPackages(aPackageNames);
 	}
 }
