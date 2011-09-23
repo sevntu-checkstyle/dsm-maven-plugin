@@ -259,7 +259,7 @@ public class DsmHtmlWriter implements DsmSiteTemplate {
 	 * @return Truncated name
 	 */
 	private String formatName(String name, int length) {
-		if (name.length() <= length) {
+		if (name.length() - 2 <= length) {
 			return name;
 		}
 		return ".." + name.substring(name.length() - length - 2);
