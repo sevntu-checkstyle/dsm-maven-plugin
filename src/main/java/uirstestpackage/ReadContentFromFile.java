@@ -1,13 +1,7 @@
 package uirstestpackage;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
+import java.util.Scanner;
 
 /**
  * Read content from file in source folder of project
@@ -36,6 +30,16 @@ public class ReadContentFromFile {
 	 *            input stream of source file
 	 * @return content from template file
 	 */
+	String convertStreamToString(InputStream input) {
+		Scanner s = new Scanner(input);
+		StringBuilder builder = new StringBuilder();
+		while (s.hasNextLine()) {
+			builder.append(s.nextLine() + "\n");
+		}
+		return builder.toString();
+	}
+
+	/*
 	public String convertStreamToString(InputStream is) {
 		if (is != null) {
 			Writer writer = new StringWriter();
@@ -63,7 +67,7 @@ public class ReadContentFromFile {
 			return "";
 		}
 	}
-
+	*/
 	/**
 	 * Get content of template
 	 * 

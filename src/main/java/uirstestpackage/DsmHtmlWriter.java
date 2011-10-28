@@ -6,11 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
-import org.dtangler.core.analysisresult.AnalysisResult;
-import org.dtangler.core.analysisresult.Violation.Severity;
-import org.dtangler.core.dsm.Dsm;
-import org.dtangler.core.dsm.DsmCell;
-import org.dtangler.core.dsm.DsmRow;
+import javax.print.attribute.standard.Severity;
 
 /**
  * Generate site content and write to HTML file.
@@ -31,6 +27,32 @@ public class DsmHtmlWriter implements DsmSiteTemplate {
 	private String classIconpath = "./images/class.png";
 	private StringBuilder htmlContent = new StringBuilder();
 	private int nextRow = 0;
+
+	private String DOCUMENT_PACKAGE_NAVIGATION_BODY_START = "<body><b>Packages:</b><br/>"
+			+ "<ul><li><a target=\"summary\" href=\"%s\">" + "%s All</a></li>";
+
+	private String DOCUMENT_PACKEGE_NAVIGATION_ELEMENT = "<li><a target=\"summary\" href=\"./%s.html\">"
+			+ "%s %s</a></li>";
+
+	private String DOCUMENT_PACKAGE_NAVIGATION_BODY_END = "</ul></body>";
+
+	private String DOCUMENT_BODY_START = "<body>"
+			+ "<h1><a target=\"summary\" href=\"%s\">DSM Report</a> - "
+			+ "%s %s</h1><table Cellpadding=\"0\" Cellspacing=\"0\" ><tr><td>";
+
+	private String LINK_TAG_A = "<a class=\"%s\" href=\"%s\" title=\"%s\">%s</a>";
+
+	private String PACKAGE_ROW = "<tr><td class=\"packageName_rows\">%40s (%3s)</td><td class=\"packageNumber_rows\">%3s ";
+
+	private String END_TABLE_END_BODY = "</table></body>";
+
+	private String TR_TD = "</td><td>";
+
+	private String END_TD_END_TR = "</td></tr>";
+
+	private String END_TD_TD_PACKAGENAMECOLS = "</td><td class=\"packageName_cols\">";
+
+	private String IMG_TAG = "<img src=\"%s\" alt=\"%s\" />";
 
 	/**
 	 * Constructor
@@ -75,7 +97,7 @@ public class DsmHtmlWriter implements DsmSiteTemplate {
 		ReadContentFromFile contentFromFile = new ReadContentFromFile(path);
 		return contentFromFile.getTemplate();
 	}
-
+	DOCUMENT_PACKAGE_NAVIGATION_BODY_START
 	/**
 	 * Print all packages
 	 * 
