@@ -6,7 +6,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
-import javax.print.attribute.standard.Severity;
+import org.dtangler.core.analysisresult.AnalysisResult;
+import org.dtangler.core.analysisresult.Violation.Severity;
+import org.dtangler.core.dsm.Dsm;
+import org.dtangler.core.dsm.DsmCell;
+import org.dtangler.core.dsm.DsmRow;
 
 /**
  * Generate site content and write to HTML file.
@@ -15,17 +19,17 @@ import javax.print.attribute.standard.Severity;
  * 
  */
 public class DsmHtmlWriter implements DsmSiteTemplate {
-	private String siteHeaders = "SiteHeaders.html";
-	private String documentPackagesHeader = "documentPackagesHeader.html";
-	private String documentDSMHeader = "documentDSMHeader.html";
-	private String htmlFormat = ".html";
-	private String allPackagesFilePath = "./all_packages.html";
-	private String packageIconPath = "./images/package.png";
-	private String menuPackageIconPath = "./images/package.png";
-	private String packagesIconPath = "./images/packages.png";
-	private String allPackageIconPath = "./images/packages.png";
-	private String classIconpath = "./images/class.png";
-	private StringBuilder htmlContent = new StringBuilder();
+	private static final String siteHeaders = "SiteHeaders.html";
+	private static final String documentPackagesHeader = "documentPackagesHeader.html";
+	private static final String documentDSMHeader = "documentDSMHeader.html";
+	private static final String htmlFormat = ".html";
+	private static final String allPackagesFilePath = "./all_packages.html";
+	private static final String packageIconPath = "./images/package.png";
+	private static final String menuPackageIconPath = "./images/package.png";
+	private static final String packagesIconPath = "./images/packages.png";
+	private static final String allPackageIconPath = "./images/packages.png";
+	private static final String classIconpath = "./images/class.png";
+	private static StringBuilder htmlContent = new StringBuilder();
 	private int nextRow = 0;
 
 	private String DOCUMENT_PACKAGE_NAVIGATION_BODY_START = "<body><b>Packages:</b><br/>"
@@ -97,7 +101,7 @@ public class DsmHtmlWriter implements DsmSiteTemplate {
 		ReadContentFromFile contentFromFile = new ReadContentFromFile(path);
 		return contentFromFile.getTemplate();
 	}
-	DOCUMENT_PACKAGE_NAVIGATION_BODY_START
+
 	/**
 	 * Print all packages
 	 * 

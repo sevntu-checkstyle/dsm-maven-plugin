@@ -2,6 +2,7 @@ package uirstestpackage;
 
 import java.io.File;
 import java.util.Locale;
+
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
@@ -62,12 +63,12 @@ public class DsmMavenReport extends AbstractMavenReport {
 
 	@Override
 	public String getDescription(Locale locale) {
-		new Main(null);
 		return "A description of whatever MyReport generates.";
 	}
 
 	@Override
 	protected void executeReport(Locale locale) throws MavenReportException {
+		new Main(null);
 	}
 
 }

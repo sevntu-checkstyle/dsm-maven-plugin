@@ -37,7 +37,19 @@
 	<!-- <url>https://github.com/sevntu-checkstyle/maven-dsm-report</url> -->
 	<!-- </scm> -->
 
-	<!-- TODO <developers> </developers> -->
+	<developers>
+		<developer>
+			<name>Yuri Balakhonov</name>
+		</developer>
+		<developer>
+			<name>Roman Ivanov</name>
+		</developer>
+		<developer>
+			<name>Ivan Sopov</name>
+			<email>sopov.ivan@gmail.com</email>
+			<url>http://moradanen.sopovs.com</url>
+		</developer> 
+	</developers>
 
 	<dependencies>
 		<dependency>
@@ -91,7 +103,7 @@
 			</plugin>
 		</plugins>
 	</build>
-
+	
 	<reporting>
 		<plugins>
 			<plugin>
@@ -106,6 +118,13 @@
 					</reportSet>
 				</reportSets>
 			</plugin>
+			
+		<plugin>
+           <groupId>org.codehaus.mojo</groupId> 
+           <artifactId>findbugs-maven-plugin</artifactId> 
+           <version>2.3</version> 
+        </plugin>
+			
 		</plugins>
 	</reporting>
 

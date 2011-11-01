@@ -14,8 +14,8 @@ import java.util.Set;
 import org.dtangler.core.analysis.configurableanalyzer.ConfigurableDependencyAnalyzer;
 import org.dtangler.core.analysisresult.AnalysisResult;
 import org.dtangler.core.configuration.Arguments;
-import org.dtangler.core.dependencies.Dependencies;
 import org.dtangler.core.dependencies.Dependable;
+import org.dtangler.core.dependencies.Dependencies;
 import org.dtangler.core.dependencies.Dependency;
 import org.dtangler.core.dependencies.DependencyGraph;
 import org.dtangler.core.dependencies.Scope;
@@ -54,13 +54,6 @@ public class Main {
 	}
 
 	/**
-	 * @param args Arguments
-	 */
-	public static void main(String[] args) {
-		new Main(args);
-	}
-
-	/**
 	 * Parse dependencies from target.
 	 * 
 	 * @param args
@@ -92,8 +85,7 @@ public class Main {
 			Set<Dependable> dep = getSelectionDependables(packageIndex);
 
 			DependencyGraph dependencyGraph2 = dependencies2
-					.getDependencyGraph(scope, dep,
-							Dependencies.DependencyFilter.none);
+					.getDependencyGraph(scope, dep, Dependencies.DependencyFilter.none);
 
 			analisisAndPrintDsm(dependencies2, arguments, dependencyGraph2,
 					packageNames.get(packageIndex));
