@@ -1,4 +1,4 @@
-package uirstestpackage;
+package com.sevntu.maven.plugin.dsm;
 
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
@@ -18,7 +18,42 @@ import org.dtangler.core.dsm.DsmRow;
  * @author yuriy
  * 
  */
-public class DsmHtmlWriter implements DsmSiteTemplate {
+public class DsmHtmlWriter {
+
+	// private static final String DOCUMENT_PACKAGE_NAVIGATION_BODY_START =
+	// "<body><b>Packages:</b><br/>"
+	// + "<ul><li><a target=\"summary\" href=\"%s\">" + "%s All</a></li>";
+	// templ.body("")+templ.b("")+"Packages:"+templ.b_()+templ.ul("")+templ.li("")+templ.a("","","","summary")
+	// + "%s All"+ templ.a_()+templ.li_()
+	// private static final String DOCUMENT_PACKEGE_NAVIGATION_ELEMENT =
+	// "<li><a target=\"summary\" href=\"./%s.html\">"
+	// + "%s %s</a></li>";
+	// templ.li("")+templ.a("","./%s.html","","summary") + "%s %s" +
+	// templ.a_()+templ.li_()
+	// private static final String DOCUMENT_PACKAGE_NAVIGATION_BODY_END =
+	// "</ul></body>";
+	// templ.ul_()+ templ.body_()
+	// private static final String DOCUMENT_BODY_START = "<body>"
+	// + "<h1><a target=\"summary\" href=\"%s\">DSM Report</a> - "
+	// + "%s %s</h1><table Cellpadding=\"0\" Cellspacing=\"0\" ><tr><td>";
+	// templ.body("")+templ.h1("")+templ.a("","%s","","summary")+"DSM Report"+templ.a_()+" - %s %s"+templ.h1_()+templ.table("")+templ.tr("")+templ.td("")
+	// private static final String LINK_TAG_A =
+	// "<a class=\"%s\" href=\"%s\" title=\"%s\">%s</a>";
+	// templ.a("%s","%s","%s","")+"%s"+templ.a_()
+	// private static final String PACKAGE_ROW =
+	// "<tr><td class=\"packageName_rows\">%40s (%3s)</td><td class=\"packageNumber_rows\">%3s ";
+	// private static final String END_TABLE_END_BODY = "</table></body>";
+
+	// private static final String TR_TD = "</td><td>";
+
+	// private static final String END_TD_END_TR = "</td></tr>";
+
+	// private static final String END_TD_TD_PACKAGENAMECOLS =
+	// "</td><td class=\"packageName_cols\">";
+	// private static final String IMG_TAG = "<img src=\"%s\" alt=\"%s\" />";
+	// templ.img("","","")
+	private TemplateEngine templ = new TemplateEngine();
+
 	private String siteHeaders = "SiteHeaders.html";
 	private String documentPackagesHeader = "documentPackagesHeader.html";
 	private String documentDSMHeader = "documentDSMHeader.html";
@@ -49,18 +84,20 @@ public class DsmHtmlWriter implements DsmSiteTemplate {
 		/* Add headers */
 		htmlContent.append(addHeaderContent(siteHeaders));
 		/* Add Body */
-		htmlContent.append(String.format(
-				DOCUMENT_PACKAGE_NAVIGATION_BODY_START, allPackagesFilePath,
-				String.format(IMG_TAG, packagesIconPath, "")));
+		htmlContent.append(templ.body("") + templ.b("") + "Packages:"
+				+ templ.b_() + templ.ul("") + templ.li("")
+				+ templ.a("", allPackagesFilePath, "", "summary")
+				+ templ.img("", packagesIconPath, "") + " All" + templ.a_()
+				+ templ.li_());
 		for (int index = 0; index < aPackageNames.size(); index++) {
 			String packageName = aPackageNames.get(index);
-			packageName = String.format(DOCUMENT_PACKEGE_NAVIGATION_ELEMENT,
-					packageName,
-					String.format(IMG_TAG, menuPackageIconPath, ""),
-					packageName);
+			packageName = String.format(
+					templ.li("") + templ.a("", "./%s.html", "", "summary")
+							+ "%s %s" + templ.a_() + templ.li_(), packageName,
+					templ.img("", menuPackageIconPath, ""), packageName);
 			htmlContent.append(packageName);
 		}
-		htmlContent.append(DOCUMENT_PACKAGE_NAVIGATION_BODY_END);
+		htmlContent.append(templ.ul_() + templ.body_());
 		writeHtml("packages");
 	}
 
@@ -92,9 +129,13 @@ public class DsmHtmlWriter implements DsmSiteTemplate {
 		int i = 1;
 		htmlContent = new StringBuilder();
 		htmlContent.append(addHeaderContent(documentPackagesHeader));
-		htmlContent.append(String.format(DOCUMENT_BODY_START,
-				allPackagesFilePath,
-				String.format(IMG_TAG, allPackageIconPath, ""), aPackageName));
+		htmlContent.append(String.format(
+				templ.body("") + templ.h1("")
+						+ templ.a("", "%s", "", "summary") + "DSM Report"
+						+ templ.a_() + " - %s %s" + templ.h1_()
+						+ templ.table("") + templ.tr("") + templ.td(""),
+				allPackagesFilePath, templ.img("", allPackageIconPath, ""),
+				aPackageName));
 
 		printColumnHeaders(dsm.getRows().size());
 
@@ -103,7 +144,7 @@ public class DsmHtmlWriter implements DsmSiteTemplate {
 			printPackage(i++, row, analysisResult);
 		}
 
-		htmlContent.append(DOCUMENT_PACKAGE_NAVIGATION_BODY_END);
+		htmlContent.append(templ.ul_() + templ.body_());
 		writeHtml(aPackageName);
 	}
 
@@ -123,15 +164,19 @@ public class DsmHtmlWriter implements DsmSiteTemplate {
 		nextRow = 0;
 		htmlContent = new StringBuilder();
 		htmlContent.append(addHeaderContent(documentDSMHeader));
-		htmlContent.append(String.format(DOCUMENT_BODY_START,
-				allPackagesFilePath,
-				String.format(IMG_TAG, packageIconPath, ""), aPackageName));
+		htmlContent.append(String.format(
+				templ.body("") + templ.h1("")
+						+ templ.a("", "%s", "", "summary") + "DSM Report"
+						+ templ.a_() + " - %s %s" + templ.h1_()
+						+ templ.table("") + templ.tr("") + templ.td(""),
+				allPackagesFilePath, templ.img("", packageIconPath, ""),
+				aPackageName));
 		printColumnHeaders(dsm.getRows().size());
 		for (DsmRow row : dsm.getRows()) {
 			nextRow++;
 			printClasses(i++, row, analysisResult);
 		}
-		htmlContent.append(END_TABLE_END_BODY);
+		htmlContent.append(templ.table_() + templ.body_());
 		writeHtml(aPackageName);
 	}
 
@@ -220,7 +265,8 @@ public class DsmHtmlWriter implements DsmSiteTemplate {
 	 * Print Title of matrix
 	 */
 	private void printEmptyMatrixTitle() {
-		htmlContent.append(String.format("%3s" + TR_TD + "%46s ", "", ""));
+		htmlContent.append(String.format("%3s" + templ.td_() + templ.td("")
+				+ "%46s ", "", ""));
 	}
 
 	/**
@@ -239,14 +285,18 @@ public class DsmHtmlWriter implements DsmSiteTemplate {
 			boolean aIsPackages) {
 		String linkTag;
 		if (aIsPackages) {
-			linkTag = String.format(LINK_TAG_A, "", aName + htmlFormat, aName,
-					formatName(aName, 40));
-			linkTag = String.format(IMG_TAG, packageIconPath, "") + linkTag;
+			linkTag = templ.a("", aName + htmlFormat, aName, "")
+					+ formatName(aName, 40) + templ.a_();
+			linkTag = templ.img("", packageIconPath, "") + linkTag;
 		} else {
-			linkTag = String.format(IMG_TAG, classIconpath, "") + aName;
+			linkTag = templ.img("", classIconpath, "") + aName;
 		}
-		htmlContent.append(String.format(PACKAGE_ROW, new Object[] { linkTag,
-				pkgCount, rowId }));
+		htmlContent
+				.append(String.format(
+						templ.tr("") + templ.td("packageName_rows")
+								+ "%40s (%3s)" + templ.td_()
+								+ templ.td("packageNumber_rows") + "%3s ",
+						new Object[] { linkTag, pkgCount, rowId }));
 	}
 
 	/**
@@ -273,9 +323,9 @@ public class DsmHtmlWriter implements DsmSiteTemplate {
 	 */
 	private void printCell(String aCellContent) {
 		if (nextRow == 0) {
-			htmlContent.append(END_TD_TD_PACKAGENAMECOLS);
+			htmlContent.append(templ.td_() + templ.td("packageName_cols"));
 		} else {
-			htmlContent.append(TR_TD);
+			htmlContent.append(templ.td_() + templ.td(""));
 		}
 		htmlContent.append(String.format("%4s", aCellContent));
 	}
@@ -284,7 +334,7 @@ public class DsmHtmlWriter implements DsmSiteTemplate {
 	 * Print end row
 	 */
 	private void printEndRow() {
-		htmlContent.append(END_TD_END_TR);
+		htmlContent.append(templ.td_() + templ.tr_());
 	}
 
 	/**
@@ -300,7 +350,6 @@ public class DsmHtmlWriter implements DsmSiteTemplate {
 		writeToFile(filePath, sHtmlContent);
 	}
 
-	@Override
 	public void writeToFile(String aFilePath, String aHtmlContent) {
 		BufferedWriter bufferedWriter = null;
 		try {

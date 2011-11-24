@@ -1,4 +1,4 @@
-package uirstestpackage;
+package com.sevntu.maven.plugin.dsm;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -35,29 +35,25 @@ import org.dtangler.core.input.ArgumentBuilder;
  */
 public class Main {
 	private Dsm dsm;
-	private DsmHtmlWriter dsmHtmlWriter = new DsmHtmlWriter();
-	private String targetPath = "/site/DSM/";
-	private String projectBuildDirectory = "project.build.directory";
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param args
-	 *            Example:-input=/home/yuriy/checkstyle-5.3-all.jar;
-	 */
-	public Main(String[] args) {
-		String[] arg = new String[1];
-		arg[0] = "-input=" + System.getProperty(projectBuildDirectory)
-				+ "/classes";
-		System.out.println("[DSM] StartMain " + arg[0]);
-		run(arg);
+	private DsmHtmlWriter dsmHtmlWriter = new DsmHtmlWriter();
+
+	private String dsmReportSiteDirectory;
+
+	private String outputDirectory;
+
+	public void setOutputDirectory(final String aOutputDirectory) {
+		outputDirectory = aOutputDirectory;
 	}
 
-	/**
-	 * @param args Arguments
-	 */
-	public static void main(String[] args) {
-		new Main(args);
+	public void setDSMReportSiteDirectory(final String aDSMDirectory) {
+		dsmReportSiteDirectory = "/site/" + aDSMDirectory + "/";
+	}
+
+	public void startReport() {
+		String[] arg = { "-input=" + outputDirectory + "/classes" };
+		startReport(arg);
+		copySource();
 	}
 
 	/**
@@ -66,7 +62,7 @@ public class Main {
 	 * @param args
 	 *            Arguments
 	 */
-	public void run(String[] args) {
+	private void startReport(final String[] args) {
 		List<String> packageNames = new ArrayList<String>();
 
 		Arguments arguments = new ArgumentBuilder().build(args);
@@ -84,8 +80,6 @@ public class Main {
 				"all_packages");
 
 		for (int packageIndex = 0; packageIndex < dsm.getRows().size(); packageIndex++) {
-			// selectedRows.add(new Integer(packageIndex));
-
 			Dependencies dependencies2 = engine.getDependencies(arguments);
 			Scope scope = dependencies2.getChildScope(dependencies2
 					.getDefaultScope());
@@ -98,13 +92,12 @@ public class Main {
 			analisisAndPrintDsm(dependencies2, arguments, dependencyGraph2,
 					packageNames.get(packageIndex));
 		}
-		moveSource();
 	}
 
 	/**
 	 * Move sourc files from project source folder to the site folder.
 	 */
-	private void moveSource() {
+	private void copySource() {
 		createTheDirectories();
 		copyFileToSiteFolder("index.html");
 		copyFileToSiteFolder("css/style.css");
@@ -117,15 +110,12 @@ public class Main {
 	 * Create the folders in a site directory.
 	 */
 	private void createTheDirectories() {
-		String[] dirs = { "images", "css" };
-		for (String dir : dirs) {
-			File outputFile = new File(
-					System.getProperty(projectBuildDirectory) + targetPath
-							+ dir);
+		String[] pluginDirectories = { "images", "css" };
+		for (String dir : pluginDirectories) {
+			File outputFile = new File(outputDirectory + dsmReportSiteDirectory
+					+ dir);
 			if (!outputFile.exists()) {
 				outputFile.mkdir();
-				System.out.println("[copyFileToSiteFolder] new Folder '" + dir
-						+ "' created");
 			}
 
 		}
@@ -137,25 +127,21 @@ public class Main {
 	 * @param directoryOrFileName
 	 *            Directory or File name
 	 */
-	private void copyFileToSiteFolder(String directoryOrFileName) {
+	private void copyFileToSiteFolder(final String directoryOrFileName) {
 		InputStream inputStream = null;
 		OutputStream outputStream = null;
 		try {
-			int len;
-			byte[] buf = new byte[1024];
-			File outputFile = new File(
-					System.getProperty(projectBuildDirectory) + targetPath
-							+ directoryOrFileName);
+			int numberOfBytes;
+			byte[] buffer = new byte[1024];
+			File outputFile = new File(outputDirectory + dsmReportSiteDirectory
+					+ directoryOrFileName);
 			inputStream = getClass().getResourceAsStream(
 					"/" + directoryOrFileName);
 			outputStream = new FileOutputStream(outputFile);
 
-			while ((len = inputStream.read(buf)) > 0) {
-				outputStream.write(buf, 0, len);
+			while ((numberOfBytes = inputStream.read(buffer)) > 0) {
+				outputStream.write(buffer, 0, numberOfBytes);
 			}
-
-			System.out.println("[copyFileToSiteFolder] " + directoryOrFileName
-					+ " successfully copied ");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -179,7 +165,7 @@ public class Main {
 	 *            DSM structure
 	 * @return List of Package Names
 	 */
-	private List<String> getPackageNames(Dsm aDsm) {
+	private List<String> getPackageNames(final Dsm aDsm) {
 		List<DsmRow> dsmRowList = aDsm.getRows();
 		List<String> packageNames = new ArrayList<String>();
 		for (int index = 0; index < dsmRowList.size(); index++) {
@@ -201,9 +187,9 @@ public class Main {
 	 * @param aPackageName
 	 *            Package name
 	 */
-	public void analisisAndPrintDsm(Dependencies aDependencies,
-			Arguments aArguments, DependencyGraph aDependencyGraph,
-			String aPackageName) {
+	public void analisisAndPrintDsm(final Dependencies aDependencies,
+			final Arguments aArguments, final DependencyGraph aDependencyGraph,
+			final String aPackageName) {
 		AnalysisResult analysisResult = getAnalysisResult(aArguments,
 				aDependencies);
 		printDsm(aDependencyGraph, analysisResult, aPackageName);
@@ -221,13 +207,14 @@ public class Main {
 	 * @param aAllPackages
 	 *            "all_packages"
 	 */
-	public void analisisAndPrintDsmPackages(Dependencies aDependencies,
-			Arguments aArguments, DependencyGraph aDependencyGraph,
-			String aAllPackages) {
+	public void analisisAndPrintDsmPackages(final Dependencies aDependencies,
+			final Arguments aArguments, final DependencyGraph aDependencyGraph,
+			final String aAllPackages) {
 		AnalysisResult analysisResult = getAnalysisResult(aArguments,
 				aDependencies);
-		dsmHtmlWriter.printDsmPackages(new DsmEngine(aDependencyGraph).createDsm(),
-				analysisResult, aAllPackages);
+		dsmHtmlWriter.printDsmPackages(
+				new DsmEngine(aDependencyGraph).createDsm(), analysisResult,
+				aAllPackages);
 	}
 
 	/**
@@ -286,8 +273,8 @@ public class Main {
 	 *            Dependencies structure
 	 * @return AnalysisResult structure
 	 */
-	private AnalysisResult getAnalysisResult(Arguments arguments,
-			Dependencies dependencies) {
+	private AnalysisResult getAnalysisResult(final Arguments arguments,
+			final Dependencies dependencies) {
 		return new ConfigurableDependencyAnalyzer(arguments)
 				.analyze(dependencies);
 	}
@@ -302,8 +289,8 @@ public class Main {
 	 * @param aPackageName
 	 *            Package name
 	 */
-	private void printDsm(DependencyGraph aDependencies,
-			AnalysisResult aAnalysisResult, String aPackageName) {
+	private void printDsm(final DependencyGraph aDependencies,
+			final AnalysisResult aAnalysisResult, final String aPackageName) {
 		dsmHtmlWriter.printDsm(new DsmEngine(aDependencies).createDsm(),
 				aAnalysisResult, aPackageName);
 	}
@@ -314,7 +301,7 @@ public class Main {
 	 * @param aPackageNames
 	 *            List of package names
 	 */
-	private void printPackagesNavigationMenu(List<String> aPackageNames) {
+	private void printPackagesNavigationMenu(final List<String> aPackageNames) {
 		dsmHtmlWriter.printNavigateDsmPackages(aPackageNames);
 	}
 }

@@ -66,19 +66,6 @@
 	</dependencies>
 
 	<build>
-		<resources>
-			<resource>
-				<directory>${basedir}/siteResources</directory>
-				<includes>
-					<include>index.html</include>
-					<include>**/*.png</include>
-					<include>**/*.css</include>
-					<include>**/*.*</include>
-					<include>**/*</include>
-				</includes>
-			</resource>
-		</resources>
-
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
