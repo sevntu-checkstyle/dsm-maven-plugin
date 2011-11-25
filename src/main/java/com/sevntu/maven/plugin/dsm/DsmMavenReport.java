@@ -8,7 +8,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
 
-
 /**
  * Initialising DSM plugin.
  * 
@@ -23,6 +22,7 @@ public class DsmMavenReport extends AbstractMavenReport {
 	 * @readonly
 	 */
 	private MavenProject project;
+
 	/**
 	 * Specifies the directory where the report will be generated
 	 * 
@@ -30,6 +30,7 @@ public class DsmMavenReport extends AbstractMavenReport {
 	 * @required
 	 */
 	private File outputDirectory;
+
 	private String dsmDirectory = "DSM";
 
 	@Override
@@ -49,7 +50,8 @@ public class DsmMavenReport extends AbstractMavenReport {
 	@Override
 	protected String getOutputDirectory() {
 		if (outputDirectory == null) {
-			throw new IllegalStateException("The outputDirectory can not be null");
+			throw new IllegalStateException(
+					"The outputDirectory can not be null");
 		}
 		return outputDirectory.getAbsolutePath();
 	}
