@@ -42,14 +42,25 @@ public class Main {
 
 	private String outputDirectory;
 
+	/**
+	 * 
+	 * @param aOutputDirectory Full output directory path
+	 */
 	public void setOutputDirectory(final String aOutputDirectory) {
 		outputDirectory = aOutputDirectory;
 	}
 
+	/**
+	 * 
+	 * @param aDSMDirectory Namr of DSM report folder
+	 */
 	public void setDSMReportSiteDirectory(final String aDSMDirectory) {
 		dsmReportSiteDirectory = "/site/" + aDSMDirectory + "/";
 	}
 
+	/**
+	 * 
+	 */
 	public void startReport() {
 		String[] arg = { "-input=" + outputDirectory + "/classes" };
 		startReport(arg);

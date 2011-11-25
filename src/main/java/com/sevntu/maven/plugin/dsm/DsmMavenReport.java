@@ -31,6 +31,9 @@ public class DsmMavenReport extends AbstractMavenReport {
 	 */
 	private File outputDirectory;
 
+	/**
+	 * Folder name of DSM report
+	 */
 	private String dsmDirectory = "DSM";
 
 	@Override

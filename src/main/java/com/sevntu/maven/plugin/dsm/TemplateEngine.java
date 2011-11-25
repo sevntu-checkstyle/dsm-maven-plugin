@@ -13,8 +13,10 @@ public class TemplateEngine {
 
 	/**
 	 * 
-	 * @param className
-	 *            Name of some class from CSS file
+	 * @param name
+	 *            Name of attribute
+	 * @param value
+	 *            Value fo attribute
 	 * @return Sting of class attribute
 	 */
 	private String addAttribute(final String name, final String value) {
@@ -25,8 +27,8 @@ public class TemplateEngine {
 	 * 
 	 * @param tagName
 	 *            Name of tag
-	 * @param tagClassName
-	 *            Name of some class from CSS file
+	 * @param attributes
+	 *            Some attributes for tag
 	 * @return Sting of tag
 	 */
 	private String createTag(final String tagName,
@@ -211,6 +213,12 @@ public class TemplateEngine {
 	 * 
 	 * @param className
 	 *            Name of some class from CSS file
+	 * @param href
+	 *            Link
+	 * @param title
+	 *            Title of link
+	 * @param target
+	 *            Frame name where link will be open
 	 * @return String of tag
 	 */
 	public String a(final String className, final String href,
@@ -235,6 +243,10 @@ public class TemplateEngine {
 	 * 
 	 * @param className
 	 *            Name of some class from CSS file
+	 * @param src
+	 *            Link
+	 * @param alt
+	 *            Title of link
 	 * @return String of tag
 	 */
 	public String img(final String className, final String src, final String alt) {
