@@ -33,7 +33,7 @@ import org.dtangler.core.input.ArgumentBuilder;
  * @author Yuri Balakhonov
  * 
  */
-public class Main {
+public class DSMReport {
 	private Dsm dsm;
 
 	private DsmHtmlWriter dsmHtmlWriter = new DsmHtmlWriter();
@@ -44,7 +44,8 @@ public class Main {
 
 	/**
 	 * 
-	 * @param aOutputDirectory Full output directory path
+	 * @param aOutputDirectory
+	 *            Full output directory path
 	 */
 	public void setOutputDirectory(final String aOutputDirectory) {
 		outputDirectory = aOutputDirectory;
@@ -52,7 +53,8 @@ public class Main {
 
 	/**
 	 * 
-	 * @param aDSMDirectory Namr of DSM report folder
+	 * @param aDSMDirectory
+	 *            Namr of DSM report folder
 	 */
 	public void setDSMReportSiteDirectory(final String aDSMDirectory) {
 		dsmReportSiteDirectory = "/site/" + aDSMDirectory + "/";
@@ -64,7 +66,6 @@ public class Main {
 	public void startReport() {
 		String[] arg = { "-input=" + outputDirectory + "/classes" };
 		startReport(arg);
-		copySource();
 	}
 
 	/**
@@ -74,8 +75,6 @@ public class Main {
 	 *            Arguments
 	 */
 	private void startReport(final String[] args) {
-		List<String> packageNames = new ArrayList<String>();
-
 		Arguments arguments = new ArgumentBuilder().build(args);
 		DependencyEngine engine = new DependencyEngineFactory()
 				.getDependencyEngine(arguments);
@@ -84,12 +83,21 @@ public class Main {
 		DependencyGraph dependencyGraph = dependencies.getDependencyGraph();
 
 		dsm = new DsmEngine(dependencyGraph).createDsm();
-		packageNames = getPackageNames(dsm);
+
+		List<String> packageNames = getPackageNames(dsm);
 
 		printPackagesNavigationMenu(packageNames);
-		analisisAndPrintDsmPackages(dependencies, arguments, dependencyGraph,
+
+		printDSMForPackages(dependencies, arguments, dependencyGraph,
 				"all_packages");
 
+		printDSMForClasses(engine, arguments, packageNames);
+
+		copySource();
+	}
+
+	public void printDSMForClasses(DependencyEngine engine,
+			Arguments arguments, List<String> packageNames) {
 		for (int packageIndex = 0; packageIndex < dsm.getRows().size(); packageIndex++) {
 			Dependencies dependencies2 = engine.getDependencies(arguments);
 			Scope scope = dependencies2.getChildScope(dependencies2
@@ -218,7 +226,7 @@ public class Main {
 	 * @param aAllPackages
 	 *            "all_packages"
 	 */
-	public void analisisAndPrintDsmPackages(final Dependencies aDependencies,
+	public void printDSMForPackages(final Dependencies aDependencies,
 			final Arguments aArguments, final DependencyGraph aDependencyGraph,
 			final String aAllPackages) {
 		AnalysisResult analysisResult = getAnalysisResult(aArguments,

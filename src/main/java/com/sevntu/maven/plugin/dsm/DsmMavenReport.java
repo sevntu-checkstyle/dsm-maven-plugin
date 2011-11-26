@@ -77,7 +77,7 @@ public class DsmMavenReport extends AbstractMavenReport {
 
 	@Override
 	protected void executeReport(Locale locale) throws MavenReportException {
-		Main dsmReport = new Main();
+		DSMReport dsmReport = new DSMReport();
 		dsmReport.setOutputDirectory(getOutputDirectory());
 		dsmReport.setDSMReportSiteDirectory(dsmDirectory);
 		dsmReport.startReport();
