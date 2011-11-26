@@ -96,6 +96,16 @@ public class DSMReport {
 		copySource();
 	}
 
+	/**
+	 * Print DSM for all packages.
+	 * 
+	 * @param engine
+	 *            DependencyEngine
+	 * @param arguments
+	 *            Input arguments
+	 * @param packageNames
+	 *            List of the package names
+	 */
 	public void printDSMForClasses(DependencyEngine engine,
 			Arguments arguments, List<String> packageNames) {
 		for (int packageIndex = 0; packageIndex < dsm.getRows().size(); packageIndex++) {

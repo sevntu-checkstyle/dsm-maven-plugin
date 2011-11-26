@@ -5,11 +5,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class TemplateEngine {
-	/**
-	 * 
-	 */
-	public TemplateEngine() {
-	}
 
 	/**
 	 * 
