@@ -93,7 +93,7 @@ public class TagFactory {
 	 *            Name of some class from CSS file
 	 * @return String of tag
 	 */
-	public static String td(final String className) {
+	public final static String td(final String className) {
 		return createTag("td", Attributes.CLASS.attributeName, className);
 	}
 
@@ -101,7 +101,7 @@ public class TagFactory {
 	 * 
 	 * @return String of tag
 	 */
-	public static String tdEnd() {
+	public final static String tdEnd() {
 		return createTag("/td", null);
 	}
 
@@ -111,7 +111,7 @@ public class TagFactory {
 	 *            Name of some class from CSS file
 	 * @return String of tag
 	 */
-	public static String tr(final String className) {
+	public final static String tr(final String className) {
 		return createTag("tr", Attributes.CLASS.attributeName, className);
 	}
 
@@ -119,7 +119,7 @@ public class TagFactory {
 	 * 
 	 * @return String of tag
 	 */
-	public static String trEnd() {
+	public final static String trEnd() {
 		return createTag("/tr", null);
 	}
 
@@ -129,7 +129,7 @@ public class TagFactory {
 	 *            Name of some class from CSS file
 	 * @return String of tag
 	 */
-	public static String h1(final String className) {
+	public final static String h1(final String className) {
 		return createTag("h1", Attributes.CLASS.attributeName, className);
 	}
 
@@ -137,7 +137,7 @@ public class TagFactory {
 	 * 
 	 * @return String of tag
 	 */
-	public static String h1End() {
+	public final static String h1End() {
 		return createTag("/h1", null);
 	}
 
@@ -147,7 +147,7 @@ public class TagFactory {
 	 *            Name of some class from CSS file
 	 * @return String of tag
 	 */
-	public static String ul(final String className) {
+	public final static String ul(final String className) {
 		return createTag("ul", Attributes.CLASS.attributeName, className);
 	}
 
@@ -155,7 +155,7 @@ public class TagFactory {
 	 * 
 	 * @return String of tag
 	 */
-	public static String ulEnd() {
+	public final static String ulEnd() {
 		return createTag("/ul", null);
 	}
 
@@ -165,7 +165,7 @@ public class TagFactory {
 	 *            Name of some class from CSS file
 	 * @return String of tag
 	 */
-	public static String li(final String className) {
+	public final static String li(final String className) {
 		return createTag("li", Attributes.CLASS.attributeName, className);
 	}
 
@@ -173,7 +173,7 @@ public class TagFactory {
 	 * 
 	 * @return String of tag
 	 */
-	public static String liEnd() {
+	public final static String liEnd() {
 		return createTag("/li", null);
 	}
 
@@ -183,7 +183,7 @@ public class TagFactory {
 	 *            Name of some class from CSS file
 	 * @return String of tag
 	 */
-	public static String body(final String className) {
+	public final static String body(final String className) {
 		return createTag("body", Attributes.CLASS.attributeName, className);
 	}
 
@@ -191,7 +191,7 @@ public class TagFactory {
 	 * 
 	 * @return String of tag
 	 */
-	public static String bodyEnd() {
+	public final static String bodyEnd() {
 		return createTag("/body", null);
 	}
 
@@ -201,7 +201,7 @@ public class TagFactory {
 	 *            Name of some class from CSS file
 	 * @return String of tag
 	 */
-	public static String table(final String className) {
+	public final static String table(final String className) {
 		return createTag("table", Attributes.CLASS.attributeName, className);
 	}
 
@@ -209,7 +209,7 @@ public class TagFactory {
 	 * 
 	 * @return String of tag
 	 */
-	public static String tableEnd() {
+	public final static String tableEnd() {
 		return createTag("/table", null);
 	}
 
@@ -219,7 +219,7 @@ public class TagFactory {
 	 *            Name of some class from CSS file
 	 * @return String of tag
 	 */
-	public static String b(final String className) {
+	public final static String b(final String className) {
 		return createTag("b", Attributes.CLASS.attributeName, className);
 	}
 
@@ -227,7 +227,7 @@ public class TagFactory {
 	 * 
 	 * @return String of tag
 	 */
-	public static String bEnd() {
+	public final static String bEnd() {
 		return createTag("/b", null);
 	}
 
@@ -243,7 +243,7 @@ public class TagFactory {
 	 *            Frame name where link will be open
 	 * @return String of tag
 	 */
-	public static String a(final String className, final String href,
+	public final static String a(final String className, final String href,
 			final String title, final String target) {
 		HashMap<Attributes, String> attributes = new HashMap<Attributes, String>();
 		attributes.put(Attributes.CLASS, className);
@@ -257,7 +257,7 @@ public class TagFactory {
 	 * 
 	 * @return String of tag
 	 */
-	public static String aEnd() {
+	public final static String aEnd() {
 		return createTag("/a", null);
 	}
 
@@ -271,7 +271,7 @@ public class TagFactory {
 	 *            Title of link
 	 * @return String of tag
 	 */
-	public static String img(final String className, final String src,
+	public final static String img(final String className, final String src,
 			final String alt) {
 		HashMap<Attributes, String> attributes = new HashMap<Attributes, String>();
 		attributes.put(Attributes.CLASS, className);
@@ -280,7 +280,7 @@ public class TagFactory {
 		return createTag("img", attributes);
 	}
 
-	public static boolean textHasContent(String aText) {
+	public final static boolean textHasContent(String aText) {
 		String emptyString = "";
 		return (aText != null) && (!aText.trim().equals(emptyString));
 	}
