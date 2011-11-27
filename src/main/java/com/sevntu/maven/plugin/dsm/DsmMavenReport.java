@@ -62,7 +62,7 @@ public class DsmMavenReport extends AbstractMavenReport {
 	@Override
 	public String getOutputName() {
 		System.setProperty("project.build.directory", getOutputDirectory());
-		return dsmDirectory + "/index";
+		return dsmDirectory + File.separator + "index";
 	}
 
 	@Override
@@ -77,9 +77,9 @@ public class DsmMavenReport extends AbstractMavenReport {
 
 	@Override
 	protected void executeReport(Locale locale) throws MavenReportException {
-		DSMReport dsmReport = new DSMReport();
+		DsmReport dsmReport = new DsmReport();
 		dsmReport.setOutputDirectory(getOutputDirectory());
-		dsmReport.setDSMReportSiteDirectory(dsmDirectory);
+		dsmReport.setDsmReportSiteDirectory(dsmDirectory);
 		dsmReport.startReport();
 	}
 
