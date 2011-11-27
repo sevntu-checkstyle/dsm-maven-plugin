@@ -170,7 +170,7 @@ public class DsmReport {
 			File outputFile = new File(outputDirectory + dsmReportSiteDirectory
 					+ directoryOrFileName);
 			inputStream = getClass().getResourceAsStream(
-					"/" + directoryOrFileName);
+					File.separator + directoryOrFileName);
 			outputStream = new FileOutputStream(outputFile);
 
 			while ((numberOfBytes = inputStream.read(buffer)) > 0) {
