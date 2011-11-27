@@ -292,7 +292,7 @@ public class DsmReport {
 	 *            Row index
 	 * @param aCol
 	 *            Col index
-	 * @return DSMCell structure
+	 * @return DsmCell structure
 	 */
 	private DsmCell getDsmCell(final int aRow, final int aCol) {
 		return dsm.getRows().get(aRow).getCells().get(aCol);

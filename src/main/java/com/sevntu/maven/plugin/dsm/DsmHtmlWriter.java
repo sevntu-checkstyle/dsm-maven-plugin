@@ -21,8 +21,8 @@ import org.dtangler.core.dsm.DsmRow;
  */
 public class DsmHtmlWriter {
 	private final String siteHeaders = "SiteHeaders.html";
-	private final String documentPackagesHeader = "documentPackagesHeader.html";
-	private final String documentDSMHeader = "documentDSMHeader.html";
+	private final String documentPackagesHeader = siteHeaders;
+	private final String documentDSMHeader = siteHeaders;
 	private final String htmlFormat = ".html";
 	private final String linkTarget = "summary";
 	private final String allPackagesFilePath = "." + File.separator
@@ -35,7 +35,6 @@ public class DsmHtmlWriter {
 	private final String classIconpath = "." + File.separator + "images"
 			+ File.separator + "class.png";
 
-	private TagFactory templ = new TagFactory();
 
 	private int nextRow = 0;
 
@@ -52,36 +51,36 @@ public class DsmHtmlWriter {
 		htmlContent.append(addHeaderContent(siteHeaders));
 
 		// Body start 
-		htmlContent.append(templ.body(""));
+		htmlContent.append(TagFactory.body(""));
 
 		// Title of menu 
-		htmlContent.append(templ.b("") + "Packages:" + templ.bEnd());
+		htmlContent.append(TagFactory.b("") + "Packages:" + TagFactory.bEnd());
 
 		// Packages menu start
-		htmlContent.append(templ.ul(""));
+		htmlContent.append(TagFactory.ul(""));
 
 		// First link in packages menu. Link to DSM of all packages.
-		htmlContent.append(templ.li("")
-				+ templ.a("", allPackagesFilePath, "", linkTarget)
-				+ templ.img("", packagesIconPath, "") + " All" + templ.aEnd()
-				+ templ.liEnd());
+		htmlContent.append(TagFactory.li("")
+				+ TagFactory.a("", allPackagesFilePath, "", linkTarget)
+				+ TagFactory.img("", packagesIconPath, "") + " All" + TagFactory.aEnd()
+				+ TagFactory.liEnd());
 
 		for (int index = 0; index < aPackageNames.size(); index++) {
 			String packageName = aPackageNames.get(index);
 
 			// Next link to DSM of some package
-			htmlContent.append(templ.li("")
-					+ templ.a("", "." + File.separator + packageName
+			htmlContent.append(TagFactory.li("")
+					+ TagFactory.a("", "." + File.separator + packageName
 							+ htmlFormat, "", linkTarget)
-					+ templ.img("", menuPackageIconPath, "") + " "
-					+ packageName + templ.aEnd() + templ.liEnd());
+					+ TagFactory.img("", menuPackageIconPath, "") + " "
+					+ packageName + TagFactory.aEnd() + TagFactory.liEnd());
 		}
 
 		// Packages menu end
-		htmlContent.append(templ.ulEnd());
+		htmlContent.append(TagFactory.ulEnd());
 
 		// Body end
-		htmlContent.append(templ.bodyEnd());
+		htmlContent.append(TagFactory.bodyEnd());
 
 		// Write content to file and save it
 		writeHtml("packages", htmlContent);
@@ -118,17 +117,17 @@ public class DsmHtmlWriter {
 		htmlContent.append(addHeaderContent(documentPackagesHeader));
 
 		// Body start
-		htmlContent.append(templ.body(""));
+		htmlContent.append(TagFactory.body(""));
 
 		// Add DSM Title
-		htmlContent.append(templ.h1("")
-				+ templ.a("", allPackagesFilePath, "", linkTarget)
-				+ "DSM Report" + templ.aEnd() + " - "
-				+ templ.img("", allPackageIconPath, "") + " " + aPackageName
-				+ templ.h1End());
+		htmlContent.append(TagFactory.h1("")
+				+ TagFactory.a("", allPackagesFilePath, "", linkTarget)
+				+ "DSM Report" + TagFactory.aEnd() + " - "
+				+ TagFactory.img("", allPackageIconPath, "") + " " + aPackageName
+				+ TagFactory.h1End());
 
 		// Start table of DSM
-		htmlContent.append(templ.table(""));
+		htmlContent.append(TagFactory.table(""));
 
 		printColumnHeaders(dsm.getRows().size(), htmlContent);
 
@@ -139,10 +138,10 @@ public class DsmHtmlWriter {
 		}
 
 		// End table of DSM
-		htmlContent.append(templ.tableEnd());
+		htmlContent.append(TagFactory.tableEnd());
 
 		// Body end
-		htmlContent.append(templ.bodyEnd());
+		htmlContent.append(TagFactory.bodyEnd());
 
 		// Write content to file and save it
 		writeHtml(aPackageName, htmlContent);
@@ -165,17 +164,17 @@ public class DsmHtmlWriter {
 
 		htmlContent.append(addHeaderContent(documentDSMHeader));
 		// Body start
-		htmlContent.append(templ.body(""));
+		htmlContent.append(TagFactory.body(""));
 
 		// Add DSM Title
-		htmlContent.append(templ.h1("")
-				+ templ.a("", allPackagesFilePath, "", linkTarget)
-				+ "DSM Report" + templ.aEnd() + " - "
-				+ templ.img("", packageIconPath, "") + " " + aPackageName
-				+ templ.h1End());
+		htmlContent.append(TagFactory.h1("")
+				+ TagFactory.a("", allPackagesFilePath, "", linkTarget)
+				+ "DSM Report" + TagFactory.aEnd() + " - "
+				+ TagFactory.img("", packageIconPath, "") + " " + aPackageName
+				+ TagFactory.h1End());
 
 		// Start table of DSM
-		htmlContent.append(templ.table(""));
+		htmlContent.append(TagFactory.table(""));
 
 		printColumnHeaders(dsm.getRows().size(), htmlContent);
 
@@ -186,10 +185,10 @@ public class DsmHtmlWriter {
 		}
 
 		// End table of DSM
-		htmlContent.append(templ.tableEnd());
+		htmlContent.append(TagFactory.tableEnd());
 
 		// Body end
-		htmlContent.append(templ.bodyEnd());
+		htmlContent.append(TagFactory.bodyEnd());
 
 		// Write content to file and save it
 		writeHtml(aPackageName, htmlContent);
@@ -204,16 +203,16 @@ public class DsmHtmlWriter {
 	private void printColumnHeaders(final int size,
 			final StringBuilder htmlContent) {
 		// start row
-		htmlContent.append(templ.tr(""));
+		htmlContent.append(TagFactory.tr(""));
 
-		htmlContent.append(templ.td("") + templ.tdEnd());
-		htmlContent.append(templ.td("") + templ.tdEnd());
+		htmlContent.append(TagFactory.td("") + TagFactory.tdEnd());
+		htmlContent.append(TagFactory.td("") + TagFactory.tdEnd());
 
 		for (int i = 1; i <= size; i++) {
 			printCell(Integer.toString(i), htmlContent);
 		}
 
-		htmlContent.append(templ.tdEnd() + templ.trEnd());
+		htmlContent.append(TagFactory.tdEnd() + TagFactory.trEnd());
 	}
 
 	/**
@@ -229,7 +228,7 @@ public class DsmHtmlWriter {
 	private void printClasses(final int index, final DsmRow row,
 			final AnalysisResult analysisResult, final StringBuilder htmlContent) {
 
-		htmlContent.append(templ.tr(""));
+		htmlContent.append(TagFactory.tr(""));
 
 		printRowHeader(index, row.getDependee().getDisplayName(), row
 				.getDependee().getContentCount(), false, htmlContent);
@@ -238,7 +237,7 @@ public class DsmHtmlWriter {
 			printCell(formatDependency(dep, analysisResult), htmlContent);
 		}
 
-		htmlContent.append(templ.trEnd());
+		htmlContent.append(TagFactory.trEnd());
 	}
 
 	/**
@@ -256,7 +255,7 @@ public class DsmHtmlWriter {
 		String packageName = row.getDependee().getDisplayName();
 
 		// start row
-		htmlContent.append(templ.tr(""));
+		htmlContent.append(TagFactory.tr(""));
 
 		// print name of package
 		printRowHeader(index, packageName, row.getDependee().getContentCount(),
@@ -268,7 +267,7 @@ public class DsmHtmlWriter {
 		}
 
 		// end row
-		htmlContent.append(templ.trEnd());
+		htmlContent.append(TagFactory.trEnd());
 	}
 
 	/**
@@ -310,27 +309,27 @@ public class DsmHtmlWriter {
 	private void printRowHeader(int rowId, String aName, int pkgCount,
 			boolean aIsPackages, final StringBuilder htmlContent) {
 
-		htmlContent.append(templ.td("packageName_rows"));
+		htmlContent.append(TagFactory.td("packageName_rows"));
 
 		if (aIsPackages) {
 
-			htmlContent.append(templ.img("", packageIconPath, ""));
+			htmlContent.append(TagFactory.img("", packageIconPath, ""));
 
-			htmlContent.append(templ.a("", aName + htmlFormat, aName, "")
-					+ formatName(aName, 40) + templ.aEnd());
+			htmlContent.append(TagFactory.a("", aName + htmlFormat, aName, "")
+					+ formatName(aName, 40) + TagFactory.aEnd());
 		} else {
 
-			htmlContent.append(templ.img("", classIconpath, ""));
+			htmlContent.append(TagFactory.img("", classIconpath, ""));
 
 			htmlContent.append(aName);
 		}
 
 		htmlContent.append(" (" + pkgCount + ")");
 
-		htmlContent.append(templ.tdEnd());
+		htmlContent.append(TagFactory.tdEnd());
 
 		htmlContent
-				.append(templ.td("packageNumber_rows") + rowId + templ.tdEnd());
+				.append(TagFactory.td("packageNumber_rows") + rowId + TagFactory.tdEnd());
 	}
 
 	/**
@@ -357,10 +356,10 @@ public class DsmHtmlWriter {
 	 */
 	private void printCell(String aCellContent, final StringBuilder htmlContent) {
 		if (nextRow == 0) {
-			htmlContent.append(templ.td("packageName_cols") + aCellContent
-					+ templ.tdEnd());
+			htmlContent.append(TagFactory.td("packageName_cols") + aCellContent
+					+ TagFactory.tdEnd());
 		} else {
-			htmlContent.append(templ.td("") + aCellContent + templ.tdEnd());
+			htmlContent.append(TagFactory.td("") + aCellContent + TagFactory.tdEnd());
 		}
 	}
 
