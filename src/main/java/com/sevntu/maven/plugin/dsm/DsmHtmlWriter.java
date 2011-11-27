@@ -1,6 +1,7 @@
 package com.sevntu.maven.plugin.dsm;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -24,12 +25,15 @@ public class DsmHtmlWriter {
 	private final String documentDSMHeader = "documentDSMHeader.html";
 	private final String htmlFormat = ".html";
 	private final String linkTarget = "summary";
-	private final String allPackagesFilePath = "./all_packages.html";
-	private final String packageIconPath = "./images/package.png";
+	private final String allPackagesFilePath = "." + File.separator
+			+ "all_packages.html";
+	private final String packageIconPath = "." + File.separator
+			+ "images/package.png";
 	private final String menuPackageIconPath = packageIconPath;
 	private final String packagesIconPath = packageIconPath;
 	private final String allPackageIconPath = packageIconPath;
-	private final String classIconpath = "./images/class.png";
+	private final String classIconpath = "." + File.separator + "images"
+			+ File.separator + "class.png";
 
 	private TemplateEngine templ = new TemplateEngine();
 
@@ -67,8 +71,8 @@ public class DsmHtmlWriter {
 
 			/* Next link to DSM of some package */
 			htmlContent.append(templ.li("")
-					+ templ.a("", "./" + packageName + htmlFormat, "",
-							linkTarget)
+					+ templ.a("", "." + File.separator + packageName
+							+ htmlFormat, "", linkTarget)
 					+ templ.img("", menuPackageIconPath, "") + " "
 					+ packageName + templ.a_() + templ.li_());
 		}
@@ -369,7 +373,8 @@ public class DsmHtmlWriter {
 	private void writeHtml(String aPackageName, StringBuilder htmlContent) {
 		String sHtmlContent = htmlContent.toString();
 		String filePath = System.getProperty("project.build.directory")
-				+ "/site/DSM/" + aPackageName + htmlFormat;
+				+ File.separator + "site" + File.separator + "DSM"
+				+ File.separator + aPackageName + htmlFormat;
 		writeToFile(filePath, sHtmlContent);
 	}
 
