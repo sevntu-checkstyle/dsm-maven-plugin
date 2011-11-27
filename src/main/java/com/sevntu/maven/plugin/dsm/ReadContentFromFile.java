@@ -1,6 +1,7 @@
 package com.sevntu.maven.plugin.dsm;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -21,11 +22,14 @@ public class ReadContentFromFile {
 	/**
 	 * Constructor. Read content from template file.
 	 * 
-	 * @param path
+	 * @param aPath
 	 *            Path to input file
 	 */
-	public ReadContentFromFile(String path) {
-		InputStream inputStream = getClass().getResourceAsStream("/" + path);
+	public ReadContentFromFile(String aPath) {
+		if (!TagFactory.textHasContent(aPath)) {
+			throw new IllegalArgumentException("Has no path to input file");
+		}
+		InputStream inputStream = getClass().getResourceAsStream(File.separator + aPath);
 		template = convertStreamToString(inputStream);
 	}
 
@@ -36,7 +40,7 @@ public class ReadContentFromFile {
 	 *            input stream of source file
 	 * @return content from template file
 	 */
-	public String convertStreamToString(InputStream is) {
+	private String convertStreamToString(InputStream is) {
 		if (is != null) {
 			Writer writer = new StringWriter();
 			char[] buffer = new char[1024];
@@ -71,15 +75,5 @@ public class ReadContentFromFile {
 	 */
 	public String getTemplate() {
 		return template;
-	}
-
-	/**
-	 * Set template content
-	 * 
-	 * @param template
-	 *            Add content
-	 */
-	public void setTemplate(String template) {
-		this.template = template;
 	}
 }

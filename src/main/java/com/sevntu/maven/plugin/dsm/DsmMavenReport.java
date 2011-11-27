@@ -39,7 +39,7 @@ public class DsmMavenReport extends AbstractMavenReport {
 	@Override
 	protected MavenProject getProject() {
 		if (project == null) {
-			throw new IllegalStateException("The project can not be null");
+			throw new IllegalArgumentException("The project can not be null");
 		}
 		return project;
 	}
@@ -53,7 +53,7 @@ public class DsmMavenReport extends AbstractMavenReport {
 	@Override
 	protected String getOutputDirectory() {
 		if (outputDirectory == null) {
-			throw new IllegalStateException(
+			throw new IllegalArgumentException(
 					"The outputDirectory can not be null");
 		}
 		return outputDirectory.getAbsolutePath();

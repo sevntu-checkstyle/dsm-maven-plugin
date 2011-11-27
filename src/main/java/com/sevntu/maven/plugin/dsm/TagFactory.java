@@ -4,41 +4,75 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class TemplateEngine {
+public class TagFactory {
 
 	/**
 	 * 
-	 * @param name
+	 * @param aAttributeName
 	 *            Name of attribute
-	 * @param value
+	 * @param aAttributeValue
 	 *            Value fo attribute
 	 * @return Sting of class attribute
 	 */
-	private String addAttribute(final String name, final String value) {
-		return " " + name + "=\"" + value + "\"";
+	private String createTagAttribute(final String aAttributeName,
+			final String aAttributeValue) {
+		if (!textHasContent(aAttributeName)) {
+			throw new IllegalArgumentException("Attribute name has no content.");
+		}
+		if (aAttributeValue == null) {
+			throw new IllegalArgumentException(
+					"Attribute value should not be null.");
+		}
+		return " " + aAttributeName + "=\"" + aAttributeValue + "\"";
 	}
 
 	/**
 	 * 
-	 * @param tagName
+	 * @param aTagName
 	 *            Name of tag
-	 * @param attributes
+	 * @param aAttributes
 	 *            Some attributes for tag
 	 * @return Sting of tag
 	 */
-	private String createTag(final String tagName,
-			final HashMap<Attributes, String> attributes) {
-		if (tagName == null) {
-			throw new IllegalStateException();
+	private String createTag(final String aTagName,
+			final HashMap<Attributes, String> aAttributes) {
+		if (!textHasContent(aTagName)) {
+			throw new IllegalArgumentException("Tag name has no content.");
 		}
-		String tagContent = tagName;
-		if (attributes != null) {
-			for (Iterator<Map.Entry<Attributes, String>> it = attributes
+		String tagContent = aTagName;
+		if (aAttributes != null) {
+			for (Iterator<Map.Entry<Attributes, String>> it = aAttributes
 					.entrySet().iterator(); it.hasNext();) {
 				Map.Entry<Attributes, String> attr = it.next();
-				tagContent += addAttribute(attr.getKey().attributeName,
+				tagContent += createTagAttribute(attr.getKey().attributeName,
 						attr.getValue());
 			}
+		}
+
+		return "<" + tagContent + ">";
+	}
+
+	/**
+	 * 
+	 * @param aTagName
+	 *            Name of tag
+	 * @param aAttributeName
+	 *            Name of tag attribute
+	 * @param aAttributeValue
+	 *            Value of tag attribute
+	 * @return
+	 */
+	private String createTag(final String aTagName,
+			final String aAttributeName, final String aAttributeValue) {
+		if (!textHasContent(aTagName)) {
+			throw new IllegalArgumentException("Tag name has no content.");
+		}
+		if (!textHasContent(aAttributeName)) {
+			throw new IllegalArgumentException("Attribute name has no content.");
+		}
+		String tagContent = aTagName;
+		if (textHasContent(aAttributeValue)) {
+			tagContent += createTagAttribute(aAttributeName, aAttributeValue);
 		}
 
 		return "<" + tagContent + ">";
@@ -51,16 +85,14 @@ public class TemplateEngine {
 	 * @return String of tag
 	 */
 	public String td(final String className) {
-		HashMap<Attributes, String> attributes = new HashMap<Attributes, String>();
-		attributes.put(Attributes.CLASS, className);
-		return createTag("td", attributes);
+		return createTag("td", Attributes.CLASS.attributeName, className);
 	}
 
 	/**
 	 * 
 	 * @return String of tag
 	 */
-	public String td_() {
+	public String tdEnd() {
 		return createTag("/td", null);
 	}
 
@@ -71,16 +103,14 @@ public class TemplateEngine {
 	 * @return String of tag
 	 */
 	public String tr(final String className) {
-		HashMap<Attributes, String> attributes = new HashMap<Attributes, String>();
-		attributes.put(Attributes.CLASS, className);
-		return createTag("tr", attributes);
+		return createTag("tr", Attributes.CLASS.attributeName, className);
 	}
 
 	/**
 	 * 
 	 * @return String of tag
 	 */
-	public String tr_() {
+	public String trEnd() {
 		return createTag("/tr", null);
 	}
 
@@ -91,16 +121,14 @@ public class TemplateEngine {
 	 * @return String of tag
 	 */
 	public String h1(final String className) {
-		HashMap<Attributes, String> attributes = new HashMap<Attributes, String>();
-		attributes.put(Attributes.CLASS, className);
-		return createTag("h1", attributes);
+		return createTag("h1", Attributes.CLASS.attributeName, className);
 	}
 
 	/**
 	 * 
 	 * @return String of tag
 	 */
-	public String h1_() {
+	public String h1End() {
 		return createTag("/h1", null);
 	}
 
@@ -111,16 +139,14 @@ public class TemplateEngine {
 	 * @return String of tag
 	 */
 	public String ul(final String className) {
-		HashMap<Attributes, String> attributes = new HashMap<Attributes, String>();
-		attributes.put(Attributes.CLASS, className);
-		return createTag("ul", attributes);
+		return createTag("ul", Attributes.CLASS.attributeName, className);
 	}
 
 	/**
 	 * 
 	 * @return String of tag
 	 */
-	public String ul_() {
+	public String ulEnd() {
 		return createTag("/ul", null);
 	}
 
@@ -131,16 +157,14 @@ public class TemplateEngine {
 	 * @return String of tag
 	 */
 	public String li(final String className) {
-		HashMap<Attributes, String> attributes = new HashMap<Attributes, String>();
-		attributes.put(Attributes.CLASS, className);
-		return createTag("li", attributes);
+		return createTag("li", Attributes.CLASS.attributeName, className);
 	}
 
 	/**
 	 * 
 	 * @return String of tag
 	 */
-	public String li_() {
+	public String liEnd() {
 		return createTag("/li", null);
 	}
 
@@ -151,16 +175,14 @@ public class TemplateEngine {
 	 * @return String of tag
 	 */
 	public String body(final String className) {
-		HashMap<Attributes, String> attributes = new HashMap<Attributes, String>();
-		attributes.put(Attributes.CLASS, className);
-		return createTag("body", attributes);
+		return createTag("body", Attributes.CLASS.attributeName, className);
 	}
 
 	/**
 	 * 
 	 * @return String of tag
 	 */
-	public String body_() {
+	public String bodyEnd() {
 		return createTag("/body", null);
 	}
 
@@ -171,16 +193,14 @@ public class TemplateEngine {
 	 * @return String of tag
 	 */
 	public String table(final String className) {
-		HashMap<Attributes, String> attributes = new HashMap<Attributes, String>();
-		attributes.put(Attributes.CLASS, className);
-		return createTag("table", attributes);
+		return createTag("table", Attributes.CLASS.attributeName, className);
 	}
 
 	/**
 	 * 
 	 * @return String of tag
 	 */
-	public String table_() {
+	public String tableEnd() {
 		return createTag("/table", null);
 	}
 
@@ -191,16 +211,14 @@ public class TemplateEngine {
 	 * @return String of tag
 	 */
 	public String b(final String className) {
-		HashMap<Attributes, String> attributes = new HashMap<Attributes, String>();
-		attributes.put(Attributes.CLASS, className);
-		return createTag("b", attributes);
+		return createTag("b", Attributes.CLASS.attributeName, className);
 	}
 
 	/**
 	 * 
 	 * @return String of tag
 	 */
-	public String b_() {
+	public String bEnd() {
 		return createTag("/b", null);
 	}
 
@@ -230,7 +248,7 @@ public class TemplateEngine {
 	 * 
 	 * @return String of tag
 	 */
-	public String a_() {
+	public String aEnd() {
 		return createTag("/a", null);
 	}
 
@@ -250,6 +268,11 @@ public class TemplateEngine {
 		attributes.put(Attributes.SRC, src);
 		attributes.put(Attributes.ALT, alt);
 		return createTag("img", attributes);
+	}
+
+	public static boolean textHasContent(String aText) {
+		String emptyString = "";
+		return (aText != null) && (!aText.trim().equals(emptyString));
 	}
 
 	public enum Attributes {
