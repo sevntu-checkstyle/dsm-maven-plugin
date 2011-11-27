@@ -48,19 +48,19 @@ public class DsmHtmlWriter {
 	public void printNavigateDsmPackages(List<String> aPackageNames) {
 		StringBuilder htmlContent = new StringBuilder();
 
-		/* Add headers */
+		// Add headers 
 		htmlContent.append(addHeaderContent(siteHeaders));
 
-		/* Body start */
+		// Body start 
 		htmlContent.append(templ.body(""));
 
-		/* Title of menu */
+		// Title of menu 
 		htmlContent.append(templ.b("") + "Packages:" + templ.b_());
 
-		/* Packages menu start */
+		// Packages menu start
 		htmlContent.append(templ.ul(""));
 
-		/* First link in packages menu. Link to DSM of all packages. */
+		// First link in packages menu. Link to DSM of all packages.
 		htmlContent.append(templ.li("")
 				+ templ.a("", allPackagesFilePath, "", linkTarget)
 				+ templ.img("", packagesIconPath, "") + " All" + templ.a_()
@@ -69,7 +69,7 @@ public class DsmHtmlWriter {
 		for (int index = 0; index < aPackageNames.size(); index++) {
 			String packageName = aPackageNames.get(index);
 
-			/* Next link to DSM of some package */
+			// Next link to DSM of some package
 			htmlContent.append(templ.li("")
 					+ templ.a("", "." + File.separator + packageName
 							+ htmlFormat, "", linkTarget)
@@ -77,13 +77,13 @@ public class DsmHtmlWriter {
 					+ packageName + templ.a_() + templ.li_());
 		}
 
-		/* Packages menu end */
+		// Packages menu end
 		htmlContent.append(templ.ul_());
 
-		/* Body end */
+		// Body end
 		htmlContent.append(templ.body_());
 
-		/* Write content to file and save it */
+		// Write content to file and save it
 		writeHtml("packages", htmlContent);
 	}
 
@@ -114,20 +114,20 @@ public class DsmHtmlWriter {
 		nextRow = 0;
 		StringBuilder htmlContent = new StringBuilder();
 
-		/* Add headers */
+		// Add headers
 		htmlContent.append(addHeaderContent(documentPackagesHeader));
 
-		/* Body start */
+		// Body start
 		htmlContent.append(templ.body(""));
 
-		/* Add DSM Title */
+		// Add DSM Title
 		htmlContent.append(templ.h1("")
 				+ templ.a("", allPackagesFilePath, "", linkTarget)
 				+ "DSM Report" + templ.a_() + " - "
 				+ templ.img("", allPackageIconPath, "") + " " + aPackageName
 				+ templ.h1_());
 
-		/* Start table of DSM */
+		// Start table of DSM
 		htmlContent.append(templ.table(""));
 
 		printColumnHeaders(dsm.getRows().size(), htmlContent);
@@ -138,13 +138,13 @@ public class DsmHtmlWriter {
 			printPackage(packageIndex++, row, analysisResult, htmlContent);
 		}
 
-		/* End table of DSM */
+		// End table of DSM
 		htmlContent.append(templ.table_());
 
-		/* Body end */
+		// Body end
 		htmlContent.append(templ.body_());
 
-		/* Write content to file and save it */
+		// Write content to file and save it
 		writeHtml(aPackageName, htmlContent);
 	}
 
@@ -165,17 +165,17 @@ public class DsmHtmlWriter {
 		StringBuilder htmlContent = new StringBuilder();
 
 		htmlContent.append(addHeaderContent(documentDSMHeader));
-		/* Body start */
+		// Body start
 		htmlContent.append(templ.body(""));
 
-		/* Add DSM Title */
+		// Add DSM Title
 		htmlContent.append(templ.h1("")
 				+ templ.a("", allPackagesFilePath, "", linkTarget)
 				+ "DSM Report" + templ.a_() + " - "
 				+ templ.img("", packageIconPath, "") + " " + aPackageName
 				+ templ.h1_());
 
-		/* Start table of DSM */
+		// Start table of DSM
 		htmlContent.append(templ.table(""));
 
 		printColumnHeaders(dsm.getRows().size(), htmlContent);
@@ -185,13 +185,13 @@ public class DsmHtmlWriter {
 			printClasses(i++, row, analysisResult, htmlContent);
 		}
 
-		/* End table of DSM */
+		// End table of DSM
 		htmlContent.append(templ.table_());
 
-		/* Body end */
+		// Body end
 		htmlContent.append(templ.body_());
 
-		/* Write content to file and save it */
+		// Write content to file and save it
 		writeHtml(aPackageName, htmlContent);
 	}
 
@@ -203,7 +203,7 @@ public class DsmHtmlWriter {
 	 */
 	private void printColumnHeaders(final int size,
 			final StringBuilder htmlContent) {
-		/* start row */
+		// start row
 		htmlContent.append(templ.tr(""));
 
 		htmlContent.append(templ.td("") + templ.td_());
@@ -255,19 +255,19 @@ public class DsmHtmlWriter {
 			final AnalysisResult analysisResult, final StringBuilder htmlContent) {
 		String packageName = row.getDependee().getDisplayName();
 
-		/* start row */
+		// start row
 		htmlContent.append(templ.tr(""));
 
-		/* print name of package */
+		// print name of package
 		printRowHeader(index, packageName, row.getDependee().getContentCount(),
 				true, htmlContent);
 
-		/* print count of dependency */
+		// print count of dependency
 		for (DsmCell dep : row.getCells()) {
 			printCell(formatDependency(dep, analysisResult), htmlContent);
 		}
 
-		/* end row */
+		// end row
 		htmlContent.append(templ.tr_());
 	}
 
