@@ -10,19 +10,16 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import org.dtangler.core.analysis.configurableanalyzer.ConfigurableDependencyAnalyzer;
 import org.dtangler.core.analysisresult.AnalysisResult;
 import org.dtangler.core.configuration.Arguments;
 import org.dtangler.core.dependencies.Dependencies;
 import org.dtangler.core.dependencies.Dependable;
-import org.dtangler.core.dependencies.Dependency;
 import org.dtangler.core.dependencies.DependencyGraph;
 import org.dtangler.core.dependencies.Scope;
 import org.dtangler.core.dependencyengine.DependencyEngine;
 import org.dtangler.core.dependencyengine.DependencyEngineFactory;
 import org.dtangler.core.dsm.Dsm;
-import org.dtangler.core.dsm.DsmCell;
 import org.dtangler.core.dsm.DsmRow;
 import org.dtangler.core.dsmengine.DsmEngine;
 import org.dtangler.core.input.ArgumentBuilder;
@@ -39,7 +36,7 @@ public class DsmReport {
 
 	private Dsm dsm;
 
-	private DsmHtmlWriter dsmHtmlWriter = new DsmHtmlWriter();
+	private DsmHtmlWriter dsmHtmlWriter;
 
 	private String dsmReportSiteDirectory;
 
@@ -51,6 +48,9 @@ public class DsmReport {
 	 *            Full output directory path
 	 */
 	public void setOutputDirectory(final String aOutputDirectory) {
+		if (!textHasContent(aOutputDirectory)) {
+			throw new IllegalArgumentException("Output directory has no path.");
+		}
 		outputDirectory = aOutputDirectory;
 	}
 
@@ -60,16 +60,18 @@ public class DsmReport {
 	 *            Namr of DSM report folder
 	 */
 	public void setDsmReportSiteDirectory(final String aDsmDirectory) {
-		dsmReportSiteDirectory = File.separator + "site" + File.separator
-				+ aDsmDirectory + File.separator;
+		if (!textHasContent(aDsmDirectory)) {
+			throw new IllegalArgumentException("Dsm directory has no path.");
+		}
+		dsmReportSiteDirectory = aDsmDirectory + File.separator;
 	}
 
 	/**
 	 * 
 	 */
 	public void startReport() {
-		String[] arg = { "-input=" + outputDirectory + File.separator
-				+ "classes" };
+		dsmHtmlWriter = new DsmHtmlWriter(dsmReportSiteDirectory);
+		String[] arg = { "-input=" + outputDirectory };
 		startReport(arg);
 	}
 
@@ -111,13 +113,13 @@ public class DsmReport {
 	 * @param packageNames
 	 *            List of the package names
 	 */
-	public void printDsmForClasses(DependencyEngine engine,
+	private void printDsmForClasses(DependencyEngine engine,
 			Arguments arguments, List<String> packageNames) {
 		for (int packageIndex = 0; packageIndex < dsm.getRows().size(); packageIndex++) {
 			Dependencies dependencies2 = engine.getDependencies(arguments);
 			Scope scope = dependencies2.getChildScope(dependencies2
 					.getDefaultScope());
-			Set<Dependable> dep = getSelectionDependables(packageIndex);
+			Set<Dependable> dep = getDependablesByRowIndex(packageIndex);
 
 			DependencyGraph dependencyGraph2 = dependencies2
 					.getDependencyGraph(scope, dep,
@@ -146,8 +148,7 @@ public class DsmReport {
 	private void createTheDirectories() {
 		String[] pluginDirectories = { imagesFolderName, cssFolderName };
 		for (String dir : pluginDirectories) {
-			File outputFile = new File(outputDirectory + dsmReportSiteDirectory
-					+ dir);
+			File outputFile = new File(dsmReportSiteDirectory + dir);
 			if (!outputFile.exists()) {
 				outputFile.mkdir();
 			}
@@ -167,7 +168,7 @@ public class DsmReport {
 		try {
 			int numberOfBytes;
 			byte[] buffer = new byte[1024];
-			File outputFile = new File(outputDirectory + dsmReportSiteDirectory
+			File outputFile = new File(dsmReportSiteDirectory
 					+ directoryOrFileName);
 			inputStream = getClass().getResourceAsStream(
 					File.separator + directoryOrFileName);
@@ -252,50 +253,16 @@ public class DsmReport {
 	}
 
 	/**
-	 * Get Set of dependencies.
-	 * 
-	 * @param aRow
-	 *            Index of row wich analysing
-	 * @return Set of Dependencies
-	 */
-	public Set<Dependency> getSelectionDependencies(final int aRow) {
-		Set<Dependency> result = new HashSet<Dependency>();
-		result.add(getDsmCell(0, 0).getDependency());
-		return result;
-	}
-
-	/**
 	 * Get Set of dependables.
 	 * 
 	 * @param aRow
 	 *            Index of row wich analysing
 	 * @return Set of Dependables
 	 */
-	public Set<Dependable> getSelectionDependables(final int aRow) {
-		Set<Dependency> selectionDependencies = new HashSet<Dependency>();
+	private Set<Dependable> getDependablesByRowIndex(final int aRow) {
 		Set<Dependable> result = new HashSet<Dependable>();
-		if (selectionDependencies.isEmpty()) {
-			result.add(dsm.getRows().get(aRow).getDependee());
-		} else {
-			for (Dependency dependency : selectionDependencies) {
-				result.add(dependency.getDependant());
-				result.add(dependency.getDependee());
-			}
-		}
+		result.add(dsm.getRows().get(aRow).getDependee());
 		return result;
-	}
-
-	/**
-	 * Get DSMCell by row and coll indexes
-	 * 
-	 * @param aRow
-	 *            Row index
-	 * @param aCol
-	 *            Col index
-	 * @return DsmCell structure
-	 */
-	private DsmCell getDsmCell(final int aRow, final int aCol) {
-		return dsm.getRows().get(aRow).getCells().get(aCol);
 	}
 
 	/**
@@ -337,5 +304,9 @@ public class DsmReport {
 	 */
 	private void printPackagesNavigationMenu(final List<String> aPackageNames) {
 		dsmHtmlWriter.printNavigateDsmPackages(aPackageNames);
+	}
+
+	private boolean textHasContent(String aText) {
+		return (aText != null) && (!aText.trim().isEmpty());
 	}
 }

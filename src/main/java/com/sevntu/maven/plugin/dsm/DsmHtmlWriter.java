@@ -35,8 +35,14 @@ public class DsmHtmlWriter {
 	private final String classIconpath = "." + File.separator + "images"
 			+ File.separator + "class.png";
 
+	/* Path to your site report dir */
+	private final String reportSiteDirectory;
 
 	private int nextRow = 0;
+
+	public DsmHtmlWriter(String aReportSiteDirectory) {
+		reportSiteDirectory = aReportSiteDirectory;
+	}
 
 	/**
 	 * Print navigation on site by packages
@@ -47,13 +53,13 @@ public class DsmHtmlWriter {
 	public void printNavigateDsmPackages(List<String> aPackageNames) {
 		StringBuilder htmlContent = new StringBuilder();
 
-		// Add headers 
+		// Add headers
 		htmlContent.append(addHeaderContent(siteHeaders));
 
-		// Body start 
+		// Body start
 		htmlContent.append(TagFactory.body(""));
 
-		// Title of menu 
+		// Title of menu
 		htmlContent.append(TagFactory.b("") + "Packages:" + TagFactory.bEnd());
 
 		// Packages menu start
@@ -62,8 +68,8 @@ public class DsmHtmlWriter {
 		// First link in packages menu. Link to DSM of all packages.
 		htmlContent.append(TagFactory.li("")
 				+ TagFactory.a("", allPackagesFilePath, "", linkTarget)
-				+ TagFactory.img("", packagesIconPath, "") + " All" + TagFactory.aEnd()
-				+ TagFactory.liEnd());
+				+ TagFactory.img("", packagesIconPath, "") + " All"
+				+ TagFactory.aEnd() + TagFactory.liEnd());
 
 		for (int index = 0; index < aPackageNames.size(); index++) {
 			String packageName = aPackageNames.get(index);
@@ -123,8 +129,8 @@ public class DsmHtmlWriter {
 		htmlContent.append(TagFactory.h1("")
 				+ TagFactory.a("", allPackagesFilePath, "", linkTarget)
 				+ "DSM Report" + TagFactory.aEnd() + " - "
-				+ TagFactory.img("", allPackageIconPath, "") + " " + aPackageName
-				+ TagFactory.h1End());
+				+ TagFactory.img("", allPackageIconPath, "") + " "
+				+ aPackageName + TagFactory.h1End());
 
 		// Start table of DSM
 		htmlContent.append(TagFactory.table(""));
@@ -328,8 +334,8 @@ public class DsmHtmlWriter {
 
 		htmlContent.append(TagFactory.tdEnd());
 
-		htmlContent
-				.append(TagFactory.td("packageNumber_rows") + rowId + TagFactory.tdEnd());
+		htmlContent.append(TagFactory.td("packageNumber_rows") + rowId
+				+ TagFactory.tdEnd());
 	}
 
 	/**
@@ -359,7 +365,8 @@ public class DsmHtmlWriter {
 			htmlContent.append(TagFactory.td("packageName_cols") + aCellContent
 					+ TagFactory.tdEnd());
 		} else {
-			htmlContent.append(TagFactory.td("") + aCellContent + TagFactory.tdEnd());
+			htmlContent.append(TagFactory.td("") + aCellContent
+					+ TagFactory.tdEnd());
 		}
 	}
 
@@ -371,9 +378,8 @@ public class DsmHtmlWriter {
 	 */
 	private void writeHtml(String aPackageName, StringBuilder htmlContent) {
 		String sHtmlContent = htmlContent.toString();
-		String filePath = System.getProperty("project.build.directory")
-				+ File.separator + "site" + File.separator + "DSM"
-				+ File.separator + aPackageName + htmlFormat;
+		String filePath = reportSiteDirectory + File.separator + aPackageName
+				+ htmlFormat;
 		writeToFile(filePath, sHtmlContent);
 	}
 

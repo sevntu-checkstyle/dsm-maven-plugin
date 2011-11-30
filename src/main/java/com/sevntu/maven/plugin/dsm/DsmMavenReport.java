@@ -24,12 +24,22 @@ public class DsmMavenReport extends AbstractMavenReport {
 	private MavenProject project;
 
 	/**
-	 * Specifies the directory where the report will be generated
+	 * Specifies the directory where the report will be generated. Path to your "target/classes" dir
 	 * 
-	 * @parameter default-value="${project.build.directory}"
+	 * @parameter default-value="${project.build.outputDirectory}"
 	 * @required
 	 */
-	private File outputDirectory;
+	private File buildOutputDirectory;
+
+	/**
+	 * Directory containing the generated project sites and report
+	 * distributions.
+	 * 
+	 * @parameter alias="outputDirectory"
+	 *            expression="${project.reporting.outputDirectory}"
+	 * @required
+	 */
+	private File inputDirectory;
 
 	/**
 	 * Folder name of DSM report
@@ -38,9 +48,6 @@ public class DsmMavenReport extends AbstractMavenReport {
 
 	@Override
 	protected MavenProject getProject() {
-		if (project == null) {
-			throw new IllegalArgumentException("The project can not be null");
-		}
 		return project;
 	}
 
@@ -52,16 +59,11 @@ public class DsmMavenReport extends AbstractMavenReport {
 
 	@Override
 	protected String getOutputDirectory() {
-		if (outputDirectory == null) {
-			throw new IllegalArgumentException(
-					"The outputDirectory can not be null");
-		}
-		return outputDirectory.getAbsolutePath();
+		return buildOutputDirectory.getAbsolutePath();
 	}
 
 	@Override
 	public String getOutputName() {
-		System.setProperty("project.build.directory", getOutputDirectory());
 		return dsmDirectory + File.separator + "index";
 	}
 
@@ -78,8 +80,11 @@ public class DsmMavenReport extends AbstractMavenReport {
 	@Override
 	protected void executeReport(Locale locale) throws MavenReportException {
 		DsmReport dsmReport = new DsmReport();
+
 		dsmReport.setOutputDirectory(getOutputDirectory());
-		dsmReport.setDsmReportSiteDirectory(dsmDirectory);
+		dsmReport.setDsmReportSiteDirectory(inputDirectory + File.separator
+				+ dsmDirectory);
+
 		dsmReport.startReport();
 	}
 

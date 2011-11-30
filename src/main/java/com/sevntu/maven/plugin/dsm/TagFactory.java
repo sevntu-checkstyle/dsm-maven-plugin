@@ -9,10 +9,9 @@ import java.util.Map;
  * @author yuriy
  * 
  */
-public class TagFactory {
+public final class TagFactory {
 
-	protected TagFactory() {
-		throw new UnsupportedOperationException();
+	private TagFactory() {
 	}
 
 	/**
@@ -281,8 +280,7 @@ public class TagFactory {
 	}
 
 	public final static boolean textHasContent(String aText) {
-		String emptyString = "";
-		return (aText != null) && (!aText.trim().equals(emptyString));
+		return (aText != null) && (!aText.trim().isEmpty());
 	}
 
 	public static enum Attributes {
