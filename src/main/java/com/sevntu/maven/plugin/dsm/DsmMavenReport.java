@@ -82,7 +82,7 @@ public class DsmMavenReport extends AbstractMavenReport {
 		DsmReport dsmReport = new DsmReport();
 
 		dsmReport.setOutputDirectory(getOutputDirectory());
-		dsmReport.setDsmReportSiteDirectory(inputDirectory + File.separator
+		dsmReport.setDsmReportSiteDirectory(inputDirectory.getAbsolutePath() + File.separator
 				+ dsmDirectory);
 
 		dsmReport.startReport();
