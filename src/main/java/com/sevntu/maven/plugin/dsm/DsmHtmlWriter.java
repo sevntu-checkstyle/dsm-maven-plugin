@@ -1,10 +1,17 @@
 package com.sevntu.maven.plugin.dsm;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.util.List;
 
 import org.dtangler.core.analysisresult.AnalysisResult;
@@ -13,6 +20,7 @@ import org.dtangler.core.dsm.Dsm;
 import org.dtangler.core.dsm.DsmCell;
 import org.dtangler.core.dsm.DsmRow;
 
+
 /**
  * Generate site content and write to HTML file.
  * 
@@ -20,29 +28,30 @@ import org.dtangler.core.dsm.DsmRow;
  * 
  */
 public class DsmHtmlWriter {
+
 	private final String siteHeaders = "SiteHeaders.html";
 	private final String documentPackagesHeader = siteHeaders;
 	private final String documentDSMHeader = siteHeaders;
 	private final String htmlFormat = ".html";
 	private final String linkTarget = "summary";
-	private final String allPackagesFilePath = "." + File.separator
-			+ "all_packages.html";
-	private final String packageIconPath = "." + File.separator
-			+ "images/package.png";
+	private final String allPackagesFilePath = "." + File.separator + "all_packages.html";
+	private final String packageIconPath = "." + File.separator + "images/package.png";
 	private final String menuPackageIconPath = packageIconPath;
 	private final String packagesIconPath = packageIconPath;
 	private final String allPackageIconPath = packageIconPath;
-	private final String classIconpath = "." + File.separator + "images"
-			+ File.separator + "class.png";
+	private final String classIconpath = "." + File.separator + "images" + File.separator
+			+ "class.png";
 
 	/* Path to your site report dir */
 	private final String reportSiteDirectory;
 
 	private int nextRow = 0;
 
+
 	public DsmHtmlWriter(String aReportSiteDirectory) {
 		reportSiteDirectory = aReportSiteDirectory;
 	}
+
 
 	/**
 	 * Print navigation on site by packages
@@ -68,17 +77,16 @@ public class DsmHtmlWriter {
 		// First link in packages menu. Link to DSM of all packages.
 		htmlContent.append(TagFactory.li("")
 				+ TagFactory.a("", allPackagesFilePath, "", linkTarget)
-				+ TagFactory.img("", packagesIconPath, "") + " All"
-				+ TagFactory.aEnd() + TagFactory.liEnd());
+				+ TagFactory.img("", packagesIconPath, "") + " All" + TagFactory.aEnd()
+				+ TagFactory.liEnd());
 
 		for (int index = 0; index < aPackageNames.size(); index++) {
 			String packageName = aPackageNames.get(index);
 
 			// Next link to DSM of some package
 			htmlContent.append(TagFactory.li("")
-					+ TagFactory.a("", "." + File.separator + packageName
-							+ htmlFormat, "", linkTarget)
-					+ TagFactory.img("", menuPackageIconPath, "") + " "
+					+ TagFactory.a("", "." + File.separator + packageName + htmlFormat, "",
+							linkTarget) + TagFactory.img("", menuPackageIconPath, "") + " "
 					+ packageName + TagFactory.aEnd() + TagFactory.liEnd());
 		}
 
@@ -92,17 +100,18 @@ public class DsmHtmlWriter {
 		writeHtml("packages", htmlContent);
 	}
 
+
 	/**
 	 * Get header content from resource file
 	 * 
-	 * @param path
+	 * @param aPath
 	 *            Path to file with the headers content
 	 * @return Headers content
 	 */
-	private String addHeaderContent(String path) {
-		ReadContentFromFile contentFromFile = new ReadContentFromFile(path);
-		return contentFromFile.getTemplate();
+	private String addHeaderContent(String aPath) {
+		return getTemplate(aPath);
 	}
+
 
 	/**
 	 * Print all packages
@@ -114,8 +123,7 @@ public class DsmHtmlWriter {
 	 * @param aPackageName
 	 *            Name of package
 	 */
-	public void printDsmPackages(Dsm dsm, AnalysisResult analysisResult,
-			String aPackageName) {
+	public void printDsmPackages(Dsm dsm, AnalysisResult analysisResult, String aPackageName) {
 		nextRow = 0;
 		StringBuilder htmlContent = new StringBuilder();
 
@@ -127,9 +135,8 @@ public class DsmHtmlWriter {
 
 		// Add DSM Title
 		htmlContent.append(TagFactory.h1("")
-				+ TagFactory.a("", allPackagesFilePath, "", linkTarget)
-				+ "DSM Report" + TagFactory.aEnd() + " - "
-				+ TagFactory.img("", allPackageIconPath, "") + " "
+				+ TagFactory.a("", allPackagesFilePath, "", linkTarget) + "DSM Report"
+				+ TagFactory.aEnd() + " - " + TagFactory.img("", allPackageIconPath, "") + " "
 				+ aPackageName + TagFactory.h1End());
 
 		// Start table of DSM
@@ -153,6 +160,7 @@ public class DsmHtmlWriter {
 		writeHtml(aPackageName, htmlContent);
 	}
 
+
 	/**
 	 * Print dependency structure matrix
 	 * 
@@ -163,8 +171,7 @@ public class DsmHtmlWriter {
 	 * @param aPackageName
 	 *            Name of package
 	 */
-	public void printDsm(Dsm dsm, AnalysisResult analysisResult,
-			String aPackageName) {
+	public void printDsm(Dsm dsm, AnalysisResult analysisResult, String aPackageName) {
 		nextRow = 0;
 		StringBuilder htmlContent = new StringBuilder();
 
@@ -174,10 +181,9 @@ public class DsmHtmlWriter {
 
 		// Add DSM Title
 		htmlContent.append(TagFactory.h1("")
-				+ TagFactory.a("", allPackagesFilePath, "", linkTarget)
-				+ "DSM Report" + TagFactory.aEnd() + " - "
-				+ TagFactory.img("", packageIconPath, "") + " " + aPackageName
-				+ TagFactory.h1End());
+				+ TagFactory.a("", allPackagesFilePath, "", linkTarget) + "DSM Report"
+				+ TagFactory.aEnd() + " - " + TagFactory.img("", packageIconPath, "") + " "
+				+ aPackageName + TagFactory.h1End());
 
 		// Start table of DSM
 		htmlContent.append(TagFactory.table(""));
@@ -200,14 +206,14 @@ public class DsmHtmlWriter {
 		writeHtml(aPackageName, htmlContent);
 	}
 
+
 	/**
 	 * Print columns index
 	 * 
 	 * @param size
 	 *            Count of columns
 	 */
-	private void printColumnHeaders(final int size,
-			final StringBuilder htmlContent) {
+	private void printColumnHeaders(final int size, final StringBuilder htmlContent) {
 		// start row
 		htmlContent.append(TagFactory.tr(""));
 
@@ -220,6 +226,7 @@ public class DsmHtmlWriter {
 
 		htmlContent.append(TagFactory.tdEnd() + TagFactory.trEnd());
 	}
+
 
 	/**
 	 * Print class to DSM
@@ -236,8 +243,8 @@ public class DsmHtmlWriter {
 
 		htmlContent.append(TagFactory.tr(""));
 
-		printRowHeader(index, row.getDependee().getDisplayName(), row
-				.getDependee().getContentCount(), false, htmlContent);
+		printRowHeader(index, row.getDependee().getDisplayName(), row.getDependee()
+				.getContentCount(), false, htmlContent);
 
 		for (DsmCell dep : row.getCells()) {
 			printCell(formatDependency(dep, analysisResult), htmlContent);
@@ -245,6 +252,7 @@ public class DsmHtmlWriter {
 
 		htmlContent.append(TagFactory.trEnd());
 	}
+
 
 	/**
 	 * Print package to DSM
@@ -264,8 +272,7 @@ public class DsmHtmlWriter {
 		htmlContent.append(TagFactory.tr(""));
 
 		// print name of package
-		printRowHeader(index, packageName, row.getDependee().getContentCount(),
-				true, htmlContent);
+		printRowHeader(index, packageName, row.getDependee().getContentCount(), true, htmlContent);
 
 		// print count of dependency
 		for (DsmCell dep : row.getCells()) {
@@ -275,6 +282,7 @@ public class DsmHtmlWriter {
 		// end row
 		htmlContent.append(TagFactory.trEnd());
 	}
+
 
 	/**
 	 * Analyzing dependency
@@ -293,12 +301,12 @@ public class DsmHtmlWriter {
 			return "";
 		}
 		String s = Integer.toString(dep.getDependencyWeight());
-		if (!analysisResult.getViolations(dep.getDependency(), Severity.error)
-				.isEmpty()) {
+		if (!analysisResult.getViolations(dep.getDependency(), Severity.error).isEmpty()) {
 			s = s + "C";
 		}
 		return s;
 	}
+
 
 	/**
 	 * Print row headers of matrix (icon with package name or class name)
@@ -312,8 +320,8 @@ public class DsmHtmlWriter {
 	 * @param aIsPackages
 	 *            Matrix of packages or classes
 	 */
-	private void printRowHeader(int rowId, String aName, int pkgCount,
-			boolean aIsPackages, final StringBuilder htmlContent) {
+	private void printRowHeader(int rowId, String aName, int pkgCount, boolean aIsPackages,
+			final StringBuilder htmlContent) {
 
 		htmlContent.append(TagFactory.td("packageName_rows"));
 
@@ -334,9 +342,9 @@ public class DsmHtmlWriter {
 
 		htmlContent.append(TagFactory.tdEnd());
 
-		htmlContent.append(TagFactory.td("packageNumber_rows") + rowId
-				+ TagFactory.tdEnd());
+		htmlContent.append(TagFactory.td("packageNumber_rows") + rowId + TagFactory.tdEnd());
 	}
+
 
 	/**
 	 * Truncate package or class name
@@ -354,6 +362,7 @@ public class DsmHtmlWriter {
 		return ".." + name.substring(name.length() - length - 2);
 	}
 
+
 	/**
 	 * Print cell content into the row
 	 * 
@@ -365,10 +374,10 @@ public class DsmHtmlWriter {
 			htmlContent.append(TagFactory.td("packageName_cols") + aCellContent
 					+ TagFactory.tdEnd());
 		} else {
-			htmlContent.append(TagFactory.td("") + aCellContent
-					+ TagFactory.tdEnd());
+			htmlContent.append(TagFactory.td("") + aCellContent + TagFactory.tdEnd());
 		}
 	}
+
 
 	/**
 	 * Convert StringBuildr to String and write to file
@@ -378,10 +387,10 @@ public class DsmHtmlWriter {
 	 */
 	private void writeHtml(String aPackageName, StringBuilder htmlContent) {
 		String sHtmlContent = htmlContent.toString();
-		String filePath = reportSiteDirectory + File.separator + aPackageName
-				+ htmlFormat;
+		String filePath = reportSiteDirectory + File.separator + aPackageName + htmlFormat;
 		writeToFile(filePath, sHtmlContent);
 	}
+
 
 	public void writeToFile(String aFilePath, String aHtmlContent) {
 		BufferedWriter bufferedWriter = null;
@@ -402,5 +411,48 @@ public class DsmHtmlWriter {
 				ex.printStackTrace();
 			}
 		}
+	}
+
+
+	/**
+	 * 
+	 * @param aPath
+	 *            path to template file
+	 * @return contents of the file
+	 */
+	private String getTemplate(String aPath) {
+		if (!TagFactory.textHasContent(aPath)) {
+			throw new IllegalArgumentException("Has no path to input file");
+		}
+
+		InputStream is = getClass().getResourceAsStream(File.separator + aPath);
+		Writer writer = new StringWriter();
+		char[] buffer = new char[1024];
+		String fileContents = "";
+
+		try {
+			Reader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+			int n;
+			while ((n = reader.read(buffer)) != -1) {
+				writer.write(buffer, 0, n);
+			}
+			fileContents = writer.toString();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (is != null) {
+					is.close();
+				}
+				if (writer != null) {
+					writer.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return fileContents;
 	}
 }

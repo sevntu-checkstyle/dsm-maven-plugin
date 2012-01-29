@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+
 /**
  * 
  * @author yuriy
@@ -12,7 +13,9 @@ import java.util.Map;
 public final class TagFactory {
 
 	private TagFactory() {
+		// no code
 	}
+
 
 	/**
 	 * 
@@ -28,11 +31,11 @@ public final class TagFactory {
 			throw new IllegalArgumentException("Attribute name has no content.");
 		}
 		if (aAttributeValue == null) {
-			throw new IllegalArgumentException(
-					"Attribute value should not be null.");
+			throw new IllegalArgumentException("Attribute value should not be null.");
 		}
 		return " " + aAttributeName + "=\"" + aAttributeValue + "\"";
 	}
+
 
 	/**
 	 * 
@@ -49,16 +52,16 @@ public final class TagFactory {
 		}
 		String tagContent = aTagName;
 		if (aAttributes != null) {
-			for (Iterator<Map.Entry<Attributes, String>> it = aAttributes
-					.entrySet().iterator(); it.hasNext();) {
+			for (Iterator<Map.Entry<Attributes, String>> it = aAttributes.entrySet().iterator(); it
+					.hasNext();) {
 				Map.Entry<Attributes, String> attr = it.next();
-				tagContent += createTagAttribute(attr.getKey().attributeName,
-						attr.getValue());
+				tagContent += createTagAttribute(attr.getKey().attributeName, attr.getValue());
 			}
 		}
 
 		return "<" + tagContent + ">";
 	}
+
 
 	/**
 	 * 
@@ -70,8 +73,8 @@ public final class TagFactory {
 	 *            Value of tag attribute
 	 * @return
 	 */
-	private static String createTag(final String aTagName,
-			final String aAttributeName, final String aAttributeValue) {
+	private static String createTag(final String aTagName, final String aAttributeName,
+			final String aAttributeValue) {
 		if (!textHasContent(aTagName)) {
 			throw new IllegalArgumentException("Tag name has no content.");
 		}
@@ -86,6 +89,7 @@ public final class TagFactory {
 		return "<" + tagContent + ">";
 	}
 
+
 	/**
 	 * 
 	 * @param className
@@ -96,6 +100,7 @@ public final class TagFactory {
 		return createTag("td", Attributes.CLASS.attributeName, className);
 	}
 
+
 	/**
 	 * 
 	 * @return String of tag
@@ -103,6 +108,7 @@ public final class TagFactory {
 	public final static String tdEnd() {
 		return createTag("/td", null);
 	}
+
 
 	/**
 	 * 
@@ -114,6 +120,7 @@ public final class TagFactory {
 		return createTag("tr", Attributes.CLASS.attributeName, className);
 	}
 
+
 	/**
 	 * 
 	 * @return String of tag
@@ -121,6 +128,7 @@ public final class TagFactory {
 	public final static String trEnd() {
 		return createTag("/tr", null);
 	}
+
 
 	/**
 	 * 
@@ -132,6 +140,7 @@ public final class TagFactory {
 		return createTag("h1", Attributes.CLASS.attributeName, className);
 	}
 
+
 	/**
 	 * 
 	 * @return String of tag
@@ -139,6 +148,7 @@ public final class TagFactory {
 	public final static String h1End() {
 		return createTag("/h1", null);
 	}
+
 
 	/**
 	 * 
@@ -150,6 +160,7 @@ public final class TagFactory {
 		return createTag("ul", Attributes.CLASS.attributeName, className);
 	}
 
+
 	/**
 	 * 
 	 * @return String of tag
@@ -157,6 +168,7 @@ public final class TagFactory {
 	public final static String ulEnd() {
 		return createTag("/ul", null);
 	}
+
 
 	/**
 	 * 
@@ -168,6 +180,7 @@ public final class TagFactory {
 		return createTag("li", Attributes.CLASS.attributeName, className);
 	}
 
+
 	/**
 	 * 
 	 * @return String of tag
@@ -175,6 +188,7 @@ public final class TagFactory {
 	public final static String liEnd() {
 		return createTag("/li", null);
 	}
+
 
 	/**
 	 * 
@@ -186,6 +200,7 @@ public final class TagFactory {
 		return createTag("body", Attributes.CLASS.attributeName, className);
 	}
 
+
 	/**
 	 * 
 	 * @return String of tag
@@ -193,6 +208,7 @@ public final class TagFactory {
 	public final static String bodyEnd() {
 		return createTag("/body", null);
 	}
+
 
 	/**
 	 * 
@@ -204,6 +220,7 @@ public final class TagFactory {
 		return createTag("table", Attributes.CLASS.attributeName, className);
 	}
 
+
 	/**
 	 * 
 	 * @return String of tag
@@ -211,6 +228,7 @@ public final class TagFactory {
 	public final static String tableEnd() {
 		return createTag("/table", null);
 	}
+
 
 	/**
 	 * 
@@ -222,6 +240,7 @@ public final class TagFactory {
 		return createTag("b", Attributes.CLASS.attributeName, className);
 	}
 
+
 	/**
 	 * 
 	 * @return String of tag
@@ -229,6 +248,7 @@ public final class TagFactory {
 	public final static String bEnd() {
 		return createTag("/b", null);
 	}
+
 
 	/**
 	 * 
@@ -242,8 +262,8 @@ public final class TagFactory {
 	 *            Frame name where link will be open
 	 * @return String of tag
 	 */
-	public final static String a(final String className, final String href,
-			final String title, final String target) {
+	public final static String a(final String className, final String href, final String title,
+			final String target) {
 		HashMap<Attributes, String> attributes = new HashMap<Attributes, String>();
 		attributes.put(Attributes.CLASS, className);
 		attributes.put(Attributes.HREF, href);
@@ -252,6 +272,7 @@ public final class TagFactory {
 		return createTag("a", attributes);
 	}
 
+
 	/**
 	 * 
 	 * @return String of tag
@@ -259,6 +280,7 @@ public final class TagFactory {
 	public final static String aEnd() {
 		return createTag("/a", null);
 	}
+
 
 	/**
 	 * 
@@ -270,8 +292,7 @@ public final class TagFactory {
 	 *            Title of link
 	 * @return String of tag
 	 */
-	public final static String img(final String className, final String src,
-			final String alt) {
+	public final static String img(final String className, final String src, final String alt) {
 		HashMap<Attributes, String> attributes = new HashMap<Attributes, String>();
 		attributes.put(Attributes.CLASS, className);
 		attributes.put(Attributes.SRC, src);
@@ -279,15 +300,16 @@ public final class TagFactory {
 		return createTag("img", attributes);
 	}
 
+
 	public final static boolean textHasContent(String aText) {
 		return (aText != null) && (!aText.trim().isEmpty());
 	}
 
 	public static enum Attributes {
-		CLASS("class"), TITLE("title"), ALT("alt"), HREF("href"), SRC("src"), TARGET(
-				"target");
+		CLASS("class"), TITLE("title"), ALT("alt"), HREF("href"), SRC("src"), TARGET("target");
 
 		private String attributeName;
+
 
 		private Attributes(String a) {
 			attributeName = a;
