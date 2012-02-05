@@ -8,10 +8,9 @@
 		<version>5</version> </parent> -->
 
 	<modelVersion>4.0.0</modelVersion>
-	<!-- TODO what group should be? -->
-	<groupId>com.github.sevntu-checkstyle</groupId>
+	<groupId>com.sevntu</groupId>
 	<artifactId>maven-dsm-plugin</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>1.0</version>
 	<packaging>maven-plugin</packaging>
 	<name>DSM maven plugin</name>
 	<url>https://github.com/sevntu-checkstyle/maven-dsm-report</url>
@@ -82,7 +81,7 @@
 	<reporting>
 		<plugins>
 			<plugin>
-				<groupId>com.github.sevntu-checkstyle</groupId>
+				<groupId>com.sevntu</groupId>
 				<artifactId>maven-dsm-plugin</artifactId>
 				<version>1.0-SNAPSHOT</version>
 				<reportSets>

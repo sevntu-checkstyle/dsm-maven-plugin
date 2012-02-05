@@ -92,12 +92,12 @@ public final class TagFactory {
 
 	/**
 	 * 
-	 * @param className
+	 * @param aClassName
 	 *            Name of some class from CSS file
 	 * @return String of tag
 	 */
-	public final static String td(final String className) {
-		return createTag("td", Attributes.CLASS.attributeName, className);
+	public final static String td(final String aClassName) {
+		return createTag("td", Attributes.CLASS.attributeName, aClassName);
 	}
 
 
@@ -112,12 +112,12 @@ public final class TagFactory {
 
 	/**
 	 * 
-	 * @param className
+	 * @param aClassName
 	 *            Name of some class from CSS file
 	 * @return String of tag
 	 */
-	public final static String tr(final String className) {
-		return createTag("tr", Attributes.CLASS.attributeName, className);
+	public final static String tr(final String aClassName) {
+		return createTag("tr", Attributes.CLASS.attributeName, aClassName);
 	}
 
 
@@ -132,12 +132,12 @@ public final class TagFactory {
 
 	/**
 	 * 
-	 * @param className
+	 * @param aClassName
 	 *            Name of some class from CSS file
 	 * @return String of tag
 	 */
-	public final static String h1(final String className) {
-		return createTag("h1", Attributes.CLASS.attributeName, className);
+	public final static String h1(final String aClassName) {
+		return createTag("h1", Attributes.CLASS.attributeName, aClassName);
 	}
 
 
@@ -152,12 +152,12 @@ public final class TagFactory {
 
 	/**
 	 * 
-	 * @param className
+	 * @param aClassName
 	 *            Name of some class from CSS file
 	 * @return String of tag
 	 */
-	public final static String ul(final String className) {
-		return createTag("ul", Attributes.CLASS.attributeName, className);
+	public final static String ul(final String aClassName) {
+		return createTag("ul", Attributes.CLASS.attributeName, aClassName);
 	}
 
 
@@ -172,12 +172,12 @@ public final class TagFactory {
 
 	/**
 	 * 
-	 * @param className
+	 * @param aClassName
 	 *            Name of some class from CSS file
 	 * @return String of tag
 	 */
-	public final static String li(final String className) {
-		return createTag("li", Attributes.CLASS.attributeName, className);
+	public final static String li(final String aClassName) {
+		return createTag("li", Attributes.CLASS.attributeName, aClassName);
 	}
 
 
@@ -192,12 +192,12 @@ public final class TagFactory {
 
 	/**
 	 * 
-	 * @param className
+	 * @param aClassName
 	 *            Name of some class from CSS file
 	 * @return String of tag
 	 */
-	public final static String body(final String className) {
-		return createTag("body", Attributes.CLASS.attributeName, className);
+	public final static String body(final String aClassName) {
+		return createTag("body", Attributes.CLASS.attributeName, aClassName);
 	}
 
 
@@ -212,12 +212,12 @@ public final class TagFactory {
 
 	/**
 	 * 
-	 * @param className
+	 * @param aClassName
 	 *            Name of some class from CSS file
 	 * @return String of tag
 	 */
-	public final static String table(final String className) {
-		return createTag("table", Attributes.CLASS.attributeName, className);
+	public final static String table(final String aClassName) {
+		return createTag("table", Attributes.CLASS.attributeName, aClassName);
 	}
 
 
@@ -232,12 +232,12 @@ public final class TagFactory {
 
 	/**
 	 * 
-	 * @param className
+	 * @param aClassName
 	 *            Name of some class from CSS file
 	 * @return String of tag
 	 */
-	public final static String b(final String className) {
-		return createTag("b", Attributes.CLASS.attributeName, className);
+	public final static String b(final String aClassName) {
+		return createTag("b", Attributes.CLASS.attributeName, aClassName);
 	}
 
 
@@ -252,23 +252,23 @@ public final class TagFactory {
 
 	/**
 	 * 
-	 * @param className
+	 * @param aClassName
 	 *            Name of some class from CSS file
-	 * @param href
+	 * @param aHref
 	 *            Link
-	 * @param title
+	 * @param aTitle
 	 *            Title of link
-	 * @param target
+	 * @param aTarget
 	 *            Frame name where link will be open
 	 * @return String of tag
 	 */
-	public final static String a(final String className, final String href, final String title,
-			final String target) {
+	public final static String a(final String aClassName, final String aHref, final String aTitle,
+			final String aTarget) {
 		HashMap<Attributes, String> attributes = new HashMap<Attributes, String>();
-		attributes.put(Attributes.CLASS, className);
-		attributes.put(Attributes.HREF, href);
-		attributes.put(Attributes.TITLE, title);
-		attributes.put(Attributes.TARGET, target);
+		attributes.put(Attributes.CLASS, aClassName);
+		attributes.put(Attributes.HREF, aHref);
+		attributes.put(Attributes.TITLE, aTitle);
+		attributes.put(Attributes.TARGET, aTarget);
 		return createTag("a", attributes);
 	}
 
@@ -284,19 +284,19 @@ public final class TagFactory {
 
 	/**
 	 * 
-	 * @param className
+	 * @param aClassName
 	 *            Name of some class from CSS file
-	 * @param src
+	 * @param aSrc
 	 *            Link
-	 * @param alt
+	 * @param aAlt
 	 *            Title of link
 	 * @return String of tag
 	 */
-	public final static String img(final String className, final String src, final String alt) {
+	public final static String img(final String aClassName, final String aSrc, final String aAlt) {
 		HashMap<Attributes, String> attributes = new HashMap<Attributes, String>();
-		attributes.put(Attributes.CLASS, className);
-		attributes.put(Attributes.SRC, src);
-		attributes.put(Attributes.ALT, alt);
+		attributes.put(Attributes.CLASS, aClassName);
+		attributes.put(Attributes.SRC, aSrc);
+		attributes.put(Attributes.ALT, aAlt);
 		return createTag("img", attributes);
 	}
 
@@ -311,8 +311,8 @@ public final class TagFactory {
 		private String attributeName;
 
 
-		private Attributes(String a) {
-			attributeName = a;
+		private Attributes(String attributeName) {
+			this.attributeName = attributeName;
 		}
 	}
 }

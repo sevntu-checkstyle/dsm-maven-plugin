@@ -35,7 +35,8 @@ public class DsmHtmlWriter {
 	private final String htmlFormat = ".html";
 	private final String linkTarget = "summary";
 	private final String allPackagesFilePath = "." + File.separator + "all_packages.html";
-	private final String packageIconPath = "." + File.separator + "images/package.png";
+	private final String packageIconPath = "." + File.separator + "images" + File.separator
+			+ "package.png";
 	private final String menuPackageIconPath = packageIconPath;
 	private final String packagesIconPath = packageIconPath;
 	private final String allPackageIconPath = packageIconPath;
@@ -116,14 +117,14 @@ public class DsmHtmlWriter {
 	/**
 	 * Print all packages
 	 * 
-	 * @param dsm
+	 * @param aDsm
 	 *            Dsm structure
-	 * @param analysisResult
+	 * @param aAnalysisResult
 	 *            Analysis structure
 	 * @param aPackageName
 	 *            Name of package
 	 */
-	public void printDsmPackages(Dsm dsm, AnalysisResult analysisResult, String aPackageName) {
+	public void printDsmPackages(Dsm aDsm, AnalysisResult aAnalysisResult, String aPackageName) {
 		nextRow = 0;
 		StringBuilder htmlContent = new StringBuilder();
 
@@ -142,12 +143,12 @@ public class DsmHtmlWriter {
 		// Start table of DSM
 		htmlContent.append(TagFactory.table(""));
 
-		printColumnHeaders(dsm.getRows().size(), htmlContent);
+		printColumnHeaders(aDsm.getRows().size(), htmlContent);
 
 		int packageIndex = 1;
-		for (DsmRow row : dsm.getRows()) {
+		for (DsmRow row : aDsm.getRows()) {
 			nextRow++;
-			printPackage(packageIndex++, row, analysisResult, htmlContent);
+			printPackage(packageIndex++, row, aAnalysisResult, htmlContent);
 		}
 
 		// End table of DSM
@@ -164,14 +165,14 @@ public class DsmHtmlWriter {
 	/**
 	 * Print dependency structure matrix
 	 * 
-	 * @param dsm
+	 * @param aDsm
 	 *            Dsm structure
-	 * @param analysisResult
+	 * @param aAnalysisResult
 	 *            Analysis structure
 	 * @param aPackageName
 	 *            Name of package
 	 */
-	public void printDsm(Dsm dsm, AnalysisResult analysisResult, String aPackageName) {
+	public void printDsm(Dsm aDsm, AnalysisResult aAnalysisResult, String aPackageName) {
 		nextRow = 0;
 		StringBuilder htmlContent = new StringBuilder();
 
@@ -188,12 +189,12 @@ public class DsmHtmlWriter {
 		// Start table of DSM
 		htmlContent.append(TagFactory.table(""));
 
-		printColumnHeaders(dsm.getRows().size(), htmlContent);
+		printColumnHeaders(aDsm.getRows().size(), htmlContent);
 
 		int rowIndex = 1;
-		for (DsmRow row : dsm.getRows()) {
+		for (DsmRow row : aDsm.getRows()) {
 			nextRow++;
-			printClasses(rowIndex++, row, analysisResult, htmlContent);
+			printClasses(rowIndex++, row, aAnalysisResult, htmlContent);
 		}
 
 		// End table of DSM
@@ -210,98 +211,99 @@ public class DsmHtmlWriter {
 	/**
 	 * Print columns index
 	 * 
-	 * @param size
+	 * @param aSize
 	 *            Count of columns
 	 */
-	private void printColumnHeaders(final int size, final StringBuilder htmlContent) {
+	private void printColumnHeaders(final int aSize, final StringBuilder aHtmlContent) {
 		// start row
-		htmlContent.append(TagFactory.tr(""));
+		aHtmlContent.append(TagFactory.tr(""));
 
-		htmlContent.append(TagFactory.td("") + TagFactory.tdEnd());
-		htmlContent.append(TagFactory.td("") + TagFactory.tdEnd());
+		aHtmlContent.append(TagFactory.td("") + TagFactory.tdEnd());
+		aHtmlContent.append(TagFactory.td("") + TagFactory.tdEnd());
 
-		for (int i = 1; i <= size; i++) {
-			printCell(Integer.toString(i), htmlContent);
+		for (int i = 1; i <= aSize; i++) {
+			printCell(Integer.toString(i), aHtmlContent);
 		}
 
-		htmlContent.append(TagFactory.tdEnd() + TagFactory.trEnd());
+		aHtmlContent.append(TagFactory.tdEnd() + TagFactory.trEnd());
 	}
 
 
 	/**
 	 * Print class to DSM
 	 * 
-	 * @param index
+	 * @param aIndex
 	 *            Index of printed class
-	 * @param row
+	 * @param aRow
 	 *            Dependency of class
-	 * @param analysisResult
+	 * @param aAnalysisResult
 	 *            Analysis structure
 	 */
-	private void printClasses(final int index, final DsmRow row,
-			final AnalysisResult analysisResult, final StringBuilder htmlContent) {
+	private void printClasses(final int aIndex, final DsmRow aRow,
+			final AnalysisResult aAnalysisResult, final StringBuilder aHtmlContent) {
 
-		htmlContent.append(TagFactory.tr(""));
+		aHtmlContent.append(TagFactory.tr(""));
 
-		printRowHeader(index, row.getDependee().getDisplayName(), row.getDependee()
-				.getContentCount(), false, htmlContent);
+		printRowHeader(aIndex, aRow.getDependee().getDisplayName(), aRow.getDependee()
+				.getContentCount(), false, aHtmlContent);
 
-		for (DsmCell dep : row.getCells()) {
-			printCell(formatDependency(dep, analysisResult), htmlContent);
+		for (DsmCell dep : aRow.getCells()) {
+			printCell(formatDependency(dep, aAnalysisResult), aHtmlContent);
 		}
 
-		htmlContent.append(TagFactory.trEnd());
+		aHtmlContent.append(TagFactory.trEnd());
 	}
 
 
 	/**
 	 * Print package to DSM
 	 * 
-	 * @param index
+	 * @param aIndex
 	 *            Index of printed package
-	 * @param row
+	 * @param aRow
 	 *            Dependency of package
-	 * @param analysisResult
+	 * @param aAnalysisResult
 	 *            Analysis structure
 	 */
-	private void printPackage(final int index, final DsmRow row,
-			final AnalysisResult analysisResult, final StringBuilder htmlContent) {
-		String packageName = row.getDependee().getDisplayName();
+	private void printPackage(final int aIndex, final DsmRow aRow,
+			final AnalysisResult aAnalysisResult, final StringBuilder aHtmlContent) {
+		String packageName = aRow.getDependee().getDisplayName();
 
 		// start row
-		htmlContent.append(TagFactory.tr(""));
+		aHtmlContent.append(TagFactory.tr(""));
 
 		// print name of package
-		printRowHeader(index, packageName, row.getDependee().getContentCount(), true, htmlContent);
+		printRowHeader(aIndex, packageName, aRow.getDependee().getContentCount(), true,
+				aHtmlContent);
 
 		// print count of dependency
-		for (DsmCell dep : row.getCells()) {
-			printCell(formatDependency(dep, analysisResult), htmlContent);
+		for (DsmCell dep : aRow.getCells()) {
+			printCell(formatDependency(dep, aAnalysisResult), aHtmlContent);
 		}
 
 		// end row
-		htmlContent.append(TagFactory.trEnd());
+		aHtmlContent.append(TagFactory.trEnd());
 	}
 
 
 	/**
 	 * Analyzing dependency
 	 * 
-	 * @param dep
+	 * @param aDep
 	 *            Count of dependency (number, 'x', or cycle)
-	 * @param analysisResult
+	 * @param aAnalysisResult
 	 *            Analysis structure
 	 * @return Count of dependency
 	 */
-	private String formatDependency(DsmCell dep, AnalysisResult analysisResult) {
-		if (!dep.isValid()) {
+	private String formatDependency(final DsmCell aDep, final AnalysisResult aAnalysisResult) {
+		if (!aDep.isValid()) {
 			return "x";
 		}
-		if (dep.getDependencyWeight() == 0) {
+		if (aDep.getDependencyWeight() == 0) {
 			return "";
 		}
-		String s = Integer.toString(dep.getDependencyWeight());
-		if (!analysisResult.getViolations(dep.getDependency(), Severity.error).isEmpty()) {
+		String s = Integer.toString(aDep.getDependencyWeight());
+		if (!aAnalysisResult.getViolations(aDep.getDependency(), Severity.error).isEmpty()) {
 			s = s + "C";
 		}
 		return s;
@@ -311,55 +313,55 @@ public class DsmHtmlWriter {
 	/**
 	 * Print row headers of matrix (icon with package name or class name)
 	 * 
-	 * @param rowId
+	 * @param aRowId
 	 *            Row index
 	 * @param aName
 	 *            Package name or class name
-	 * @param pkgCount
+	 * @param aPkgCount
 	 *            Count of classes in package
 	 * @param aIsPackages
 	 *            Matrix of packages or classes
 	 */
-	private void printRowHeader(int rowId, String aName, int pkgCount, boolean aIsPackages,
-			final StringBuilder htmlContent) {
+	private void printRowHeader(final int aRowId, final String aName, final int aPkgCount, final boolean aIsPackages,
+			final StringBuilder aHtmlContent) {
 
-		htmlContent.append(TagFactory.td("packageName_rows"));
+		aHtmlContent.append(TagFactory.td("packageName_rows"));
 
 		if (aIsPackages) {
 
-			htmlContent.append(TagFactory.img("", packageIconPath, ""));
+			aHtmlContent.append(TagFactory.img("", packageIconPath, ""));
 
-			htmlContent.append(TagFactory.a("", aName + htmlFormat, aName, "")
+			aHtmlContent.append(TagFactory.a("", aName + htmlFormat, aName, "")
 					+ formatName(aName, 40) + TagFactory.aEnd());
 		} else {
 
-			htmlContent.append(TagFactory.img("", classIconpath, ""));
+			aHtmlContent.append(TagFactory.img("", classIconpath, ""));
 
-			htmlContent.append(aName);
+			aHtmlContent.append(aName);
 		}
 
-		htmlContent.append(" (" + pkgCount + ")");
+		aHtmlContent.append(" (" + aPkgCount + ")");
 
-		htmlContent.append(TagFactory.tdEnd());
+		aHtmlContent.append(TagFactory.tdEnd());
 
-		htmlContent.append(TagFactory.td("packageNumber_rows") + rowId + TagFactory.tdEnd());
+		aHtmlContent.append(TagFactory.td("packageNumber_rows") + aRowId + TagFactory.tdEnd());
 	}
 
 
 	/**
 	 * Truncate package or class name
 	 * 
-	 * @param name
+	 * @param aName
 	 *            Package or class name
-	 * @param length
+	 * @param aLength
 	 *            Maximum length of name
 	 * @return Truncated name
 	 */
-	private String formatName(String name, int length) {
-		if (name.length() - 2 <= length) {
-			return name;
+	private String formatName(final String aName, final int aLength) {
+		if (aName.length() - 2 <= aLength) {
+			return aName;
 		}
-		return ".." + name.substring(name.length() - length - 2);
+		return ".." + aName.substring(aName.length() - aLength - 2);
 	}
 
 
@@ -369,12 +371,12 @@ public class DsmHtmlWriter {
 	 * @param aCellContent
 	 *            Cell content
 	 */
-	private void printCell(String aCellContent, final StringBuilder htmlContent) {
+	private void printCell(final String aCellContent, final StringBuilder aHtmlContent) {
 		if (nextRow == 0) {
-			htmlContent.append(TagFactory.td("packageName_cols") + aCellContent
+			aHtmlContent.append(TagFactory.td("packageName_cols") + aCellContent
 					+ TagFactory.tdEnd());
 		} else {
-			htmlContent.append(TagFactory.td("") + aCellContent + TagFactory.tdEnd());
+			aHtmlContent.append(TagFactory.td("") + aCellContent + TagFactory.tdEnd());
 		}
 	}
 
@@ -385,14 +387,14 @@ public class DsmHtmlWriter {
 	 * @param aPackageName
 	 *            Package file name
 	 */
-	private void writeHtml(String aPackageName, StringBuilder htmlContent) {
-		String sHtmlContent = htmlContent.toString();
+	private void writeHtml(final String aPackageName, final StringBuilder aHtmlContent) {
+		String sHtmlContent = aHtmlContent.toString();
 		String filePath = reportSiteDirectory + File.separator + aPackageName + htmlFormat;
 		writeToFile(filePath, sHtmlContent);
 	}
 
 
-	public void writeToFile(String aFilePath, String aHtmlContent) {
+	public void writeToFile(final String aFilePath, final String aHtmlContent) {
 		BufferedWriter bufferedWriter = null;
 		try {
 			bufferedWriter = new BufferedWriter(new FileWriter(aFilePath));
@@ -420,7 +422,7 @@ public class DsmHtmlWriter {
 	 *            path to template file
 	 * @return contents of the file
 	 */
-	private String getTemplate(String aPath) {
+	private String getTemplate(final String aPath) {
 		if (!TagFactory.textHasContent(aPath)) {
 			throw new IllegalArgumentException("Has no path to input file");
 		}

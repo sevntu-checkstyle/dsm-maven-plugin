@@ -24,6 +24,7 @@ import org.dtangler.core.dsm.DsmRow;
 import org.dtangler.core.dsmengine.DsmEngine;
 import org.dtangler.core.input.ArgumentBuilder;
 
+
 /**
  * This class begins dependency analysis of input files
  * 
@@ -31,6 +32,7 @@ import org.dtangler.core.input.ArgumentBuilder;
  * 
  */
 public class DsmReport {
+
 	private final String imagesFolderName = "images";
 	private final String cssFolderName = "css";
 
@@ -41,6 +43,7 @@ public class DsmReport {
 	private String dsmReportSiteDirectory;
 
 	private String outputDirectory;
+
 
 	/**
 	 * 
@@ -54,6 +57,7 @@ public class DsmReport {
 		outputDirectory = aOutputDirectory;
 	}
 
+
 	/**
 	 * 
 	 * @param aDsmDirectory
@@ -66,6 +70,7 @@ public class DsmReport {
 		dsmReportSiteDirectory = aDsmDirectory + File.separator;
 	}
 
+
 	/**
 	 * 
 	 */
@@ -75,6 +80,7 @@ public class DsmReport {
 		startReport(arg);
 	}
 
+
 	/**
 	 * Parse dependencies from target.
 	 * 
@@ -83,8 +89,7 @@ public class DsmReport {
 	 */
 	private void startReport(final String[] args) {
 		Arguments arguments = new ArgumentBuilder().build(args);
-		DependencyEngine engine = new DependencyEngineFactory()
-				.getDependencyEngine(arguments);
+		DependencyEngine engine = new DependencyEngineFactory().getDependencyEngine(arguments);
 
 		Dependencies dependencies = engine.getDependencies(arguments);
 		DependencyGraph dependencyGraph = dependencies.getDependencyGraph();
@@ -95,40 +100,39 @@ public class DsmReport {
 
 		printPackagesNavigationMenu(packageNames);
 
-		printDsmForPackages(dependencies, arguments, dependencyGraph,
-				"all_packages");
+		printDsmForPackages(dependencies, arguments, dependencyGraph, "all_packages");
 
 		printDsmForClasses(engine, arguments, packageNames);
 
 		copySource();
 	}
 
+
 	/**
 	 * Print DSM for all packages.
 	 * 
-	 * @param engine
+	 * @param aEngine
 	 *            DependencyEngine
-	 * @param arguments
+	 * @param aArguments
 	 *            Input arguments
-	 * @param packageNames
+	 * @param aPackageNames
 	 *            List of the package names
 	 */
-	private void printDsmForClasses(DependencyEngine engine,
-			Arguments arguments, List<String> packageNames) {
+	private void printDsmForClasses(final DependencyEngine aEngine, final Arguments aArguments,
+			final List<String> aPackageNames) {
 		for (int packageIndex = 0; packageIndex < dsm.getRows().size(); packageIndex++) {
-			Dependencies dependencies2 = engine.getDependencies(arguments);
-			Scope scope = dependencies2.getChildScope(dependencies2
-					.getDefaultScope());
+			Dependencies dependencies2 = aEngine.getDependencies(aArguments);
+			Scope scope = dependencies2.getChildScope(dependencies2.getDefaultScope());
 			Set<Dependable> dep = getDependablesByRowIndex(packageIndex);
 
-			DependencyGraph dependencyGraph2 = dependencies2
-					.getDependencyGraph(scope, dep,
-							Dependencies.DependencyFilter.none);
+			DependencyGraph dependencyGraph2 = dependencies2.getDependencyGraph(scope, dep,
+					Dependencies.DependencyFilter.none);
 
-			analisisAndPrintDsm(dependencies2, arguments, dependencyGraph2,
-					packageNames.get(packageIndex));
+			analisisAndPrintDsm(dependencies2, aArguments, dependencyGraph2,
+					aPackageNames.get(packageIndex));
 		}
 	}
+
 
 	/**
 	 * Move sourc files from project source folder to the site folder.
@@ -141,6 +145,7 @@ public class DsmReport {
 		copyFileToSiteFolder(imagesFolderName + File.separator + "package.png");
 		copyFileToSiteFolder(imagesFolderName + File.separator + "packages.png");
 	}
+
 
 	/**
 	 * Create the folders in a site directory.
@@ -156,6 +161,7 @@ public class DsmReport {
 		}
 	}
 
+
 	/**
 	 * Copy file to the site directory
 	 * 
@@ -168,10 +174,8 @@ public class DsmReport {
 		try {
 			int numberOfBytes;
 			byte[] buffer = new byte[1024];
-			File outputFile = new File(dsmReportSiteDirectory
-					+ directoryOrFileName);
-			inputStream = getClass().getResourceAsStream(
-					File.separator + directoryOrFileName);
+			File outputFile = new File(dsmReportSiteDirectory + directoryOrFileName);
+			inputStream = getClass().getResourceAsStream(File.separator + directoryOrFileName);
 			outputStream = new FileOutputStream(outputFile);
 
 			while ((numberOfBytes = inputStream.read(buffer)) > 0) {
@@ -195,6 +199,7 @@ public class DsmReport {
 		}
 	}
 
+
 	/**
 	 * @param aDsm
 	 *            DSM structure
@@ -210,6 +215,7 @@ public class DsmReport {
 		return packageNames;
 	}
 
+
 	/**
 	 * Analysin and print DSM of Class from package
 	 * 
@@ -222,13 +228,12 @@ public class DsmReport {
 	 * @param aPackageName
 	 *            Package name
 	 */
-	public void analisisAndPrintDsm(final Dependencies aDependencies,
-			final Arguments aArguments, final DependencyGraph aDependencyGraph,
-			final String aPackageName) {
-		AnalysisResult analysisResult = getAnalysisResult(aArguments,
-				aDependencies);
+	private void analisisAndPrintDsm(final Dependencies aDependencies, final Arguments aArguments,
+			final DependencyGraph aDependencyGraph, final String aPackageName) {
+		AnalysisResult analysisResult = getAnalysisResult(aArguments, aDependencies);
 		printDsm(aDependencyGraph, analysisResult, aPackageName);
 	}
+
 
 	/**
 	 * Analysin and print DSM of package from project
@@ -242,15 +247,13 @@ public class DsmReport {
 	 * @param aAllPackages
 	 *            "all_packages"
 	 */
-	public void printDsmForPackages(final Dependencies aDependencies,
-			final Arguments aArguments, final DependencyGraph aDependencyGraph,
-			final String aAllPackages) {
-		AnalysisResult analysisResult = getAnalysisResult(aArguments,
-				aDependencies);
-		dsmHtmlWriter.printDsmPackages(
-				new DsmEngine(aDependencyGraph).createDsm(), analysisResult,
+	private void printDsmForPackages(final Dependencies aDependencies, final Arguments aArguments,
+			final DependencyGraph aDependencyGraph, final String aAllPackages) {
+		AnalysisResult analysisResult = getAnalysisResult(aArguments, aDependencies);
+		dsmHtmlWriter.printDsmPackages(new DsmEngine(aDependencyGraph).createDsm(), analysisResult,
 				aAllPackages);
 	}
+
 
 	/**
 	 * Get Set of dependables.
@@ -265,20 +268,21 @@ public class DsmReport {
 		return result;
 	}
 
+
 	/**
 	 * Analisyng dependencies by arguments
 	 * 
-	 * @param arguments
+	 * @param aArguments
 	 *            Arguments
-	 * @param dependencies
+	 * @param aDependencies
 	 *            Dependencies structure
 	 * @return AnalysisResult structure
 	 */
-	private AnalysisResult getAnalysisResult(final Arguments arguments,
-			final Dependencies dependencies) {
-		return new ConfigurableDependencyAnalyzer(arguments)
-				.analyze(dependencies);
+	private AnalysisResult getAnalysisResult(final Arguments aArguments,
+			final Dependencies aDependencies) {
+		return new ConfigurableDependencyAnalyzer(aArguments).analyze(aDependencies);
 	}
+
 
 	/**
 	 * Print DSM
@@ -292,9 +296,10 @@ public class DsmReport {
 	 */
 	private void printDsm(final DependencyGraph aDependencies,
 			final AnalysisResult aAnalysisResult, final String aPackageName) {
-		dsmHtmlWriter.printDsm(new DsmEngine(aDependencies).createDsm(),
-				aAnalysisResult, aPackageName);
+		dsmHtmlWriter.printDsm(new DsmEngine(aDependencies).createDsm(), aAnalysisResult,
+				aPackageName);
 	}
+
 
 	/**
 	 * Print site navigation menu by packages
@@ -305,6 +310,7 @@ public class DsmReport {
 	private void printPackagesNavigationMenu(final List<String> aPackageNames) {
 		dsmHtmlWriter.printNavigateDsmPackages(aPackageNames);
 	}
+
 
 	private boolean textHasContent(String aText) {
 		return (aText != null) && (!aText.trim().isEmpty());
