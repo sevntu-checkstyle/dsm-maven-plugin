@@ -50,6 +50,9 @@ public class DsmHtmlWriter {
 
 
 	public DsmHtmlWriter(String aReportSiteDirectory) {
+		if (aReportSiteDirectory == null) {
+			throw new IllegalArgumentException("Name of report directory should not be null");
+		}
 		reportSiteDirectory = aReportSiteDirectory;
 	}
 
@@ -60,7 +63,10 @@ public class DsmHtmlWriter {
 	 * @param aPackageNames
 	 *            List of package names
 	 */
-	public void printNavigateDsmPackages(List<String> aPackageNames) {
+	public void printNavigateDsmPackages(final List<String> aPackageNames) {
+		if (aPackageNames == null) {
+			throw new IllegalArgumentException("List of package names should not be null");
+		}
 		StringBuilder htmlContent = new StringBuilder();
 
 		// Add headers
@@ -121,10 +127,21 @@ public class DsmHtmlWriter {
 	 *            Dsm structure
 	 * @param aAnalysisResult
 	 *            Analysis structure
-	 * @param aPackageName
-	 *            Name of package
+	 * @param aAllPackagesName
+	 *            Title of DSM
 	 */
-	public void printDsmPackages(Dsm aDsm, AnalysisResult aAnalysisResult, String aPackageName) {
+	public void printDsmPackages(final Dsm aDsm, final AnalysisResult aAnalysisResult,
+			final String aAllPackagesName) {
+		if (aDsm == null) {
+			throw new IllegalArgumentException("DSM structure should not be null");
+		}
+		if (aAnalysisResult == null) {
+			throw new IllegalArgumentException("Analysis structure should not be null");
+		}
+		if (TagFactory.isNotEmptyString(aAllPackagesName)) {
+			throw new IllegalArgumentException("Title of DSM should not be empty");
+		}
+
 		nextRow = 0;
 		StringBuilder htmlContent = new StringBuilder();
 
@@ -138,7 +155,7 @@ public class DsmHtmlWriter {
 		htmlContent.append(TagFactory.h1("")
 				+ TagFactory.a("", allPackagesFilePath, "", linkTarget) + "DSM Report"
 				+ TagFactory.aEnd() + " - " + TagFactory.img("", allPackageIconPath, "") + " "
-				+ aPackageName + TagFactory.h1End());
+				+ aAllPackagesName + TagFactory.h1End());
 
 		// Start table of DSM
 		htmlContent.append(TagFactory.table(""));
@@ -158,7 +175,7 @@ public class DsmHtmlWriter {
 		htmlContent.append(TagFactory.bodyEnd());
 
 		// Write content to file and save it
-		writeHtml(aPackageName, htmlContent);
+		writeHtml(aAllPackagesName, htmlContent);
 	}
 
 
@@ -172,7 +189,18 @@ public class DsmHtmlWriter {
 	 * @param aPackageName
 	 *            Name of package
 	 */
-	public void printDsm(Dsm aDsm, AnalysisResult aAnalysisResult, String aPackageName) {
+	public void printDsm(final Dsm aDsm, final AnalysisResult aAnalysisResult,
+			final String aPackageName) {
+		if (aDsm == null) {
+			throw new IllegalArgumentException("DSM structure should not be null");
+		}
+		if (aAnalysisResult == null) {
+			throw new IllegalArgumentException("Analysis structure should not be null");
+		}
+		if (TagFactory.isNotEmptyString(aPackageName)) {
+			throw new IllegalArgumentException("Title of DSM should not be empty");
+		}
+
 		nextRow = 0;
 		StringBuilder htmlContent = new StringBuilder();
 
@@ -322,8 +350,8 @@ public class DsmHtmlWriter {
 	 * @param aIsPackages
 	 *            Matrix of packages or classes
 	 */
-	private void printRowHeader(final int aRowId, final String aName, final int aPkgCount, final boolean aIsPackages,
-			final StringBuilder aHtmlContent) {
+	private void printRowHeader(final int aRowId, final String aName, final int aPkgCount,
+			final boolean aIsPackages, final StringBuilder aHtmlContent) {
 
 		aHtmlContent.append(TagFactory.td("packageName_rows"));
 
@@ -394,7 +422,7 @@ public class DsmHtmlWriter {
 	}
 
 
-	public void writeToFile(final String aFilePath, final String aHtmlContent) {
+	private void writeToFile(final String aFilePath, final String aHtmlContent) {
 		BufferedWriter bufferedWriter = null;
 		try {
 			bufferedWriter = new BufferedWriter(new FileWriter(aFilePath));
