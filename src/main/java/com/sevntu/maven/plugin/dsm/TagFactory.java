@@ -78,13 +78,9 @@ public final class TagFactory {
 		if (!isNotEmptyString(aTagName)) {
 			throw new IllegalArgumentException("Tag name has no content.");
 		}
-		if (!isNotEmptyString(aAttributeName)) {
-			throw new IllegalArgumentException("Attribute name has no content.");
-		}
+
 		String tagContent = aTagName;
-		if (isNotEmptyString(aAttributeValue)) {
 			tagContent += createTagAttribute(aAttributeName, aAttributeValue);
-		}
 
 		return "<" + tagContent + ">";
 	}
