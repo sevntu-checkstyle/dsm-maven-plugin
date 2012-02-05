@@ -51,7 +51,7 @@ public class DsmReport {
 	 *            Full output directory path
 	 */
 	public void setOutputDirectory(final String aOutputDirectory) {
-		if (!textHasContent(aOutputDirectory)) {
+		if (!TagFactory.isNotEmptyString(aOutputDirectory)) {
 			throw new IllegalArgumentException("Output directory has no path.");
 		}
 		outputDirectory = aOutputDirectory;
@@ -64,7 +64,7 @@ public class DsmReport {
 	 *            Namr of DSM report folder
 	 */
 	public void setDsmReportSiteDirectory(final String aDsmDirectory) {
-		if (!textHasContent(aDsmDirectory)) {
+		if (!TagFactory.isNotEmptyString(aDsmDirectory)) {
 			throw new IllegalArgumentException("Dsm directory has no path.");
 		}
 		dsmReportSiteDirectory = aDsmDirectory + File.separator;
@@ -309,10 +309,5 @@ public class DsmReport {
 	 */
 	private void printPackagesNavigationMenu(final List<String> aPackageNames) {
 		dsmHtmlWriter.printNavigateDsmPackages(aPackageNames);
-	}
-
-
-	private boolean textHasContent(String aText) {
-		return (aText != null) && (!aText.trim().isEmpty());
 	}
 }

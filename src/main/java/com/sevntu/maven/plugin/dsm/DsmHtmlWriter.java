@@ -423,7 +423,7 @@ public class DsmHtmlWriter {
 	 * @return contents of the file
 	 */
 	private String getTemplate(final String aPath) {
-		if (!TagFactory.textHasContent(aPath)) {
+		if (!TagFactory.isNotEmptyString(aPath)) {
 			throw new IllegalArgumentException("Has no path to input file");
 		}
 

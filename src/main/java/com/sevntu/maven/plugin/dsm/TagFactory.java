@@ -27,7 +27,7 @@ public final class TagFactory {
 	 */
 	private static String createTagAttribute(final String aAttributeName,
 			final String aAttributeValue) {
-		if (!textHasContent(aAttributeName)) {
+		if (!isNotEmptyString(aAttributeName)) {
 			throw new IllegalArgumentException("Attribute name has no content.");
 		}
 		if (aAttributeValue == null) {
@@ -47,7 +47,7 @@ public final class TagFactory {
 	 */
 	private static String createTag(final String aTagName,
 			final HashMap<Attributes, String> aAttributes) {
-		if (!textHasContent(aTagName)) {
+		if (!isNotEmptyString(aTagName)) {
 			throw new IllegalArgumentException("Tag name has no content.");
 		}
 		String tagContent = aTagName;
@@ -75,14 +75,14 @@ public final class TagFactory {
 	 */
 	private static String createTag(final String aTagName, final String aAttributeName,
 			final String aAttributeValue) {
-		if (!textHasContent(aTagName)) {
+		if (!isNotEmptyString(aTagName)) {
 			throw new IllegalArgumentException("Tag name has no content.");
 		}
-		if (!textHasContent(aAttributeName)) {
+		if (!isNotEmptyString(aAttributeName)) {
 			throw new IllegalArgumentException("Attribute name has no content.");
 		}
 		String tagContent = aTagName;
-		if (textHasContent(aAttributeValue)) {
+		if (isNotEmptyString(aAttributeValue)) {
 			tagContent += createTagAttribute(aAttributeName, aAttributeValue);
 		}
 
@@ -301,7 +301,7 @@ public final class TagFactory {
 	}
 
 
-	public final static boolean textHasContent(String aText) {
+	public final static boolean isNotEmptyString(String aText) {
 		return (aText != null) && (!aText.trim().isEmpty());
 	}
 
