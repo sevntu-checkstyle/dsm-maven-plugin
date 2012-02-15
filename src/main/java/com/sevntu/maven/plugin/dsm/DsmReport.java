@@ -151,7 +151,7 @@ public class DsmReport {
 	 * Create the folders in a site directory.
 	 */
 	private void createTheDirectories() {
-		String[] pluginDirectories = { imagesFolderName, cssFolderName };
+		String[] pluginDirectories = { imagesFolderName, cssFolderName};
 		for (String dir : pluginDirectories) {
 			File outputFile = new File(dsmReportSiteDirectory + dir);
 			if (!outputFile.exists()) {
