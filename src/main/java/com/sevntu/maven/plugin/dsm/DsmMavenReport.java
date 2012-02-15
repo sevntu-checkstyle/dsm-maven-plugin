@@ -33,15 +33,7 @@ public class DsmMavenReport extends AbstractMavenReport {
 	 */
 	private File buildOutputDirectory;
 
-	/**
-	 * Directory containing the generated project sites and report
-	 * distributions.
-	 * 
-	 * @parameter alias="outputDirectory"
-	 *            expression="${project.reporting.outputDirectory}"
-	 * @required
-	 */
-	private File inputDirectory;
+	private File reportOutputDirectory;
 
 	/**
 	 * Folder name of DSM report
@@ -74,6 +66,21 @@ public class DsmMavenReport extends AbstractMavenReport {
 
 
 	@Override
+	public File getReportOutputDirectory() {
+		if (reportOutputDirectory == null) {
+			reportOutputDirectory = new File(getOutputDirectory());
+		}
+		return reportOutputDirectory;
+	}
+
+
+	@Override
+	public void setReportOutputDirectory(File reportOutputDirectory) {
+		this.reportOutputDirectory = reportOutputDirectory;
+	}
+
+
+	@Override
 	public String getName(final Locale aLocale) {
 		if (aLocale == null) {
 			throw new IllegalArgumentException("locale should not be null");
@@ -99,8 +106,8 @@ public class DsmMavenReport extends AbstractMavenReport {
 
 		DsmReport dsmReport = new DsmReport();
 		dsmReport.setOutputDirectory(getOutputDirectory());
-		dsmReport.setDsmReportSiteDirectory(inputDirectory.getAbsolutePath() + File.separator
-				+ dsmDirectory);
+		dsmReport.setDsmReportSiteDirectory(reportOutputDirectory.getAbsolutePath()
+				+ File.separator + dsmDirectory);
 
 		dsmReport.startReport();
 	}
