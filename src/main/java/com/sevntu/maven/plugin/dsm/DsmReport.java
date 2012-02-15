@@ -35,7 +35,8 @@ public class DsmReport {
 
 	private final String imagesFolderName = "images";
 	private final String cssFolderName = "css";
-
+	private final String classesTpl = "classes_page.html";
+	private final String packagesTpl = "packages_page.html";
 	private Dsm dsm;
 
 	private DsmHtmlWriter dsmHtmlWriter;
@@ -51,7 +52,7 @@ public class DsmReport {
 	 *            Full output directory path
 	 */
 	public void setOutputDirectory(final String aOutputDirectory) {
-		if (!TagFactory.isNotEmptyString(aOutputDirectory)) {
+		if (!DsmHtmlWriter.isNotEmptyString(aOutputDirectory)) {
 			throw new IllegalArgumentException("Output directory has no path.");
 		}
 		outputDirectory = aOutputDirectory;
@@ -64,7 +65,7 @@ public class DsmReport {
 	 *            Namr of DSM report folder
 	 */
 	public void setDsmReportSiteDirectory(final String aDsmDirectory) {
-		if (!TagFactory.isNotEmptyString(aDsmDirectory)) {
+		if (!DsmHtmlWriter.isNotEmptyString(aDsmDirectory)) {
 			throw new IllegalArgumentException("Dsm directory has no path.");
 		}
 		dsmReportSiteDirectory = aDsmDirectory + File.separator;
@@ -151,7 +152,7 @@ public class DsmReport {
 	 * Create the folders in a site directory.
 	 */
 	private void createTheDirectories() {
-		String[] pluginDirectories = { imagesFolderName, cssFolderName};
+		String[] pluginDirectories = { imagesFolderName, cssFolderName };
 		for (String dir : pluginDirectories) {
 			File outputFile = new File(dsmReportSiteDirectory + dir);
 			if (!outputFile.exists()) {
@@ -250,8 +251,8 @@ public class DsmReport {
 	private void printDsmForPackages(final Dependencies aDependencies, final Arguments aArguments,
 			final DependencyGraph aDependencyGraph, final String aAllPackages) {
 		AnalysisResult analysisResult = getAnalysisResult(aArguments, aDependencies);
-		dsmHtmlWriter.printDsmPackages(new DsmEngine(aDependencyGraph).createDsm(), analysisResult,
-				aAllPackages);
+		dsmHtmlWriter.printDsm(new DsmEngine(aDependencyGraph).createDsm(), analysisResult,
+				aAllPackages, packagesTpl);
 	}
 
 
@@ -297,7 +298,7 @@ public class DsmReport {
 	private void printDsm(final DependencyGraph aDependencies,
 			final AnalysisResult aAnalysisResult, final String aPackageName) {
 		dsmHtmlWriter.printDsm(new DsmEngine(aDependencies).createDsm(), aAnalysisResult,
-				aPackageName);
+				aPackageName, classesTpl);
 	}
 
 

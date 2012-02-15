@@ -18,26 +18,30 @@
 <body>
 	<h1>
 		<a href="./all_packages.html" title="" target="summary" class="">DSM
-			Report</a> - <img src="./images/package.png" alt="" class="" /> ${title}
+			Report</a> - <img src="./images/package.png" alt="" class="" />
+		${title} 
 	</h1>
 	<table cellspacing="0" cellpadding="0">
 		<tr>
 			<td></td>
-			<td></td> <#list headerIndexes as i>
-			<td class="packageName_cols">${i}</td> </#list>
+			<td></td>
+			<#list headerIndexes as i>
+			<td class="packageName_cols">${i}</td>
+  			</#list>
 		</tr>
-
-		<#list rows as package>
+		
+		<#list rows as class>
 		<tr>
-			<td class="packageName_rows"><img src="./images/package.png"
-				alt="" class="" /> <a href="${package.name}.html"
-				title="${package.name}" target="" class=""> ${package.name} </a>
-				(${package.depCount})</td>
-			<td class="packageNumber_rows">${package.positionIndex}</td> <#list
-			package.numberOfDependencies as dependCount>
-			<td>${dependCount}</td> </#list>
+			<td class="packageName_rows">
+				<img src="./images/class.png"	alt="${class.name}" class="" />
+				${class.name} (${class.depCount})
+			</td>
+			<td class="packageNumber_rows">${class.positionIndex}</td>
+			<#list class.numberOfDependencies as dependCount>
+				<td>${dependCount}</td>
+  			</#list>
 		</tr>
-		</#list>
+  		</#list>
 
 	</table>
 </body>
