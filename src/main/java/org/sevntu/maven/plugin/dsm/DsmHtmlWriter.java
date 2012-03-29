@@ -1,4 +1,4 @@
-package com.sevntu.maven.plugin.dsm;
+package org.sevntu.maven.plugin.dsm;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -16,6 +16,8 @@ import org.dtangler.core.dsm.DsmRow;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -26,10 +28,9 @@ import freemarker.template.TemplateException;
  */
 public class DsmHtmlWriter {
 
-	/**
-	 * 
-	 */
+	private static final Log LOGGER = LogFactory.getLog(DsmHtmlWriter.class);
 	private final String htmlFormat = ".html";
+	private final String packagesMenuTpl = "packages_menu.fpl";
 
 	/**
 	 * Path to your site report dir
@@ -42,8 +43,9 @@ public class DsmHtmlWriter {
 	 * @param aReportSiteDirectory
 	 */
 	public DsmHtmlWriter(String aReportSiteDirectory) {
-		if (aReportSiteDirectory == null) {
-			throw new IllegalArgumentException("Name of report directory should not be null");
+		if (aReportSiteDirectory == null || aReportSiteDirectory.isEmpty()) {
+			throw new IllegalArgumentException(
+					"Path to the report directory should not be null or empty");
 		}
 		reportSiteDirectory = aReportSiteDirectory;
 	}
@@ -51,22 +53,36 @@ public class DsmHtmlWriter {
 
 	/**
 	 * 
-	 * @param datamodel
-	 * @param template
+	 * @param aDataModel
+	 * @param aTemplateName
 	 * @return
-	 * @throws IOException
-	 * @throws TemplateException
 	 */
-	private String freemarkerDo(Map<String, Object> datamodel, String template, String aFileName)
-			throws IOException, TemplateException {
+	private String freemarkerDo(Map<String, Object> aDataModel, String aTemplateName,
+			String aFileName) {
 		Configuration cfg = new Configuration();
 		cfg.setClassForTemplateLoading(DsmHtmlWriter.class, File.separator + "templates");
-		Template tpl = cfg.getTemplate(template);
-
+		File reportDir = new File(reportSiteDirectory);
+		if (!reportDir.exists()) {
+			reportDir.mkdirs();
+		}
 		String filePath = reportSiteDirectory + File.separator + aFileName + htmlFormat;
-		Writer out = new FileWriter(filePath);
 
-		tpl.process(datamodel, out);
+		Writer out = null;
+		Template tpl;
+		try {
+			out = new FileWriter(filePath);
+			tpl = cfg.getTemplate(aTemplateName);
+			tpl.process(aDataModel, out);
+		} catch (TemplateException e) {
+			LOGGER.error(e.getMessage(), e);
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+
+		if (out == null) {
+			throw new IllegalStateException("out shold not be null!");
+		}
+
 		return out.toString();
 	}
 
@@ -86,15 +102,7 @@ public class DsmHtmlWriter {
 		datamodel.put("aPackageNames", aPackageNames);
 
 		StringBuilder htmlContent = new StringBuilder();
-		try {
-			htmlContent.append(freemarkerDo(datamodel, "packages_menu.html", "packages"));
-		} catch (IOException e) {
-			System.out.println(e.getLocalizedMessage());
-			// FIXME
-		} catch (TemplateException e) {
-			System.out.println(e.getLocalizedMessage());
-			// FIXME
-		}
+		htmlContent.append(freemarkerDo(datamodel, packagesMenuTpl, "packages"));
 	}
 
 
@@ -149,15 +157,7 @@ public class DsmHtmlWriter {
 		datamodel.put("rows", dsmRowDatas);
 
 		StringBuilder htmlContent = new StringBuilder();
-		try {
-			htmlContent.append(freemarkerDo(datamodel, templateName, aName));
-		} catch (IOException e) {
-			System.out.println(e.getLocalizedMessage());
-			// FIXME
-		} catch (TemplateException e) {
-			System.out.println(e.getLocalizedMessage());
-			// FIXME
-		}
+		htmlContent.append(freemarkerDo(datamodel, templateName, aName));
 	}
 
 

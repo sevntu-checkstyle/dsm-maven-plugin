@@ -1,0 +1,14 @@
+<project>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>dsm-maven-plugin</artifactId>
+        <configuration>
+<!--           <project implementation="org.sevntu.maven.plugin.dsm.stubs.ReportMavenProjectStub"/> -->
+          <dataFile>${basedir}</dataFile>
+          <outputDirectory>${basedir}/target/test-harness/report/site</outputDirectory>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

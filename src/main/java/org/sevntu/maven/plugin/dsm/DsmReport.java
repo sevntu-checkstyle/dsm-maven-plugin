@@ -1,4 +1,4 @@
-package com.sevntu.maven.plugin.dsm;
+package org.sevntu.maven.plugin.dsm;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -35,27 +35,27 @@ public class DsmReport {
 
 	private final String imagesFolderName = "images";
 	private final String cssFolderName = "css";
-	private final String classesTpl = "classes_page.html";
-	private final String packagesTpl = "packages_page.html";
+	private final String classesTpl = "classes_page.fpl";
+	private final String packagesTpl = "packages_page.fpl";
 	private Dsm dsm;
 
 	private DsmHtmlWriter dsmHtmlWriter;
 
 	private String dsmReportSiteDirectory;
 
-	private String outputDirectory;
+	private String sourceDirectory;
 
 
 	/**
 	 * 
-	 * @param aOutputDirectory
+	 * @param aSourceDirectory
 	 *            Full output directory path
 	 */
-	public void setOutputDirectory(final String aOutputDirectory) {
-		if (!DsmHtmlWriter.isNotEmptyString(aOutputDirectory)) {
-			throw new IllegalArgumentException("Output directory has no path.");
+	public void setSourceDirectory(final String aSourceDirectory) {
+		if (!DsmHtmlWriter.isNotEmptyString(aSourceDirectory)) {
+			throw new IllegalArgumentException("Source directory has no path.");
 		}
-		outputDirectory = aOutputDirectory;
+		sourceDirectory = aSourceDirectory;
 	}
 
 
@@ -77,7 +77,7 @@ public class DsmReport {
 	 */
 	public void startReport() {
 		dsmHtmlWriter = new DsmHtmlWriter(dsmReportSiteDirectory);
-		String[] arg = { "-input=" + outputDirectory };
+		String[] arg = { "-input=" + sourceDirectory };
 		startReport(arg);
 	}
 
