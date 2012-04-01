@@ -16,8 +16,7 @@ import org.dtangler.core.dsm.DsmRow;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.maven.plugin.MojoExecutionException;
 
 
 /**
@@ -28,9 +27,8 @@ import org.apache.commons.logging.LogFactory;
  */
 public class DsmHtmlWriter {
 
-	private static final Log LOGGER = LogFactory.getLog(DsmHtmlWriter.class);
 	private final String htmlFormat = ".html";
-	private final String packagesMenuTpl = "packages_menu.fpl";
+	private final String packagesMenuFtl = "packages_menu.ftl";
 
 	/**
 	 * Path to your site report dir
@@ -43,7 +41,7 @@ public class DsmHtmlWriter {
 	 * @param aReportSiteDirectory
 	 */
 	public DsmHtmlWriter(String aReportSiteDirectory) {
-		if (aReportSiteDirectory == null || aReportSiteDirectory.isEmpty()) {
+		if (aReportSiteDirectory == null || DsmHtmlWriter.isEmptyString(aReportSiteDirectory)) {
 			throw new IllegalArgumentException(
 					"Path to the report directory should not be null or empty");
 		}
@@ -58,7 +56,7 @@ public class DsmHtmlWriter {
 	 * @return
 	 */
 	private String freemarkerDo(Map<String, Object> aDataModel, String aTemplateName,
-			String aFileName) {
+			String aFileName) throws MojoExecutionException {
 		Configuration cfg = new Configuration();
 		cfg.setClassForTemplateLoading(DsmHtmlWriter.class, File.separator + "templates");
 		File reportDir = new File(reportSiteDirectory);
@@ -74,13 +72,9 @@ public class DsmHtmlWriter {
 			tpl = cfg.getTemplate(aTemplateName);
 			tpl.process(aDataModel, out);
 		} catch (TemplateException e) {
-			LOGGER.error(e.getMessage(), e);
+			throw new MojoExecutionException("Unable to process template file.", e);
 		} catch (IOException e) {
-			LOGGER.error(e.getMessage(), e);
-		}
-
-		if (out == null) {
-			throw new IllegalStateException("out shold not be null!");
+			throw new MojoExecutionException("Unable to write " + filePath + " file.", e);
 		}
 
 		return out.toString();
@@ -93,7 +87,8 @@ public class DsmHtmlWriter {
 	 * @param aPackageNames
 	 *            List of package names
 	 */
-	public void printNavigateDsmPackages(final List<String> aPackageNames) {
+	public void printNavigateDsmPackages(final List<String> aPackageNames)
+			throws MojoExecutionException {
 		if (aPackageNames == null) {
 			throw new IllegalArgumentException("List of package names should not be null");
 		}
@@ -102,7 +97,7 @@ public class DsmHtmlWriter {
 		datamodel.put("aPackageNames", aPackageNames);
 
 		StringBuilder htmlContent = new StringBuilder();
-		htmlContent.append(freemarkerDo(datamodel, packagesMenuTpl, "packages"));
+		htmlContent.append(freemarkerDo(datamodel, packagesMenuFtl, "packages"));
 	}
 
 
@@ -117,14 +112,14 @@ public class DsmHtmlWriter {
 	 *            Name of package
 	 */
 	public void printDsm(final Dsm aDsm, final AnalysisResult aAnalysisResult, final String aName,
-			final String templateName) {
+			final String templateName) throws MojoExecutionException {
 		if (aDsm == null) {
 			throw new IllegalArgumentException("DSM structure should not be null");
 		}
 		if (aAnalysisResult == null) {
 			throw new IllegalArgumentException("Analysis structure should not be null");
 		}
-		if (!isNotEmptyString(aName)) {
+		if (isEmptyString(aName)) {
 			throw new IllegalArgumentException("Title of DSM should not be empty");
 		}
 
@@ -207,8 +202,8 @@ public class DsmHtmlWriter {
 	 * @param aText
 	 * @return
 	 */
-	public final static boolean isNotEmptyString(String aText) {
-		return (aText != null) && (!aText.trim().isEmpty());
+	public final static boolean isEmptyString(String aText) {
+		return aText == null || aText.trim().isEmpty();
 	}
 
 	/**

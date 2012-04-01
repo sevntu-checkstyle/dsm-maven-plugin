@@ -7,6 +7,7 @@ import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
+import org.apache.maven.plugin.MojoExecutionException;
 
 
 /**
@@ -71,6 +72,11 @@ public class DsmReportMojo extends AbstractMavenReport {
 	}
 
 
+	public void setDsmDirectory(final String aDsmDirectory) {
+		this.dsmDirectory = aDsmDirectory;
+	}
+
+
 	@Override
 	public String getName(final Locale aLocale) {
 		if (aLocale == null) {
@@ -91,19 +97,20 @@ public class DsmReportMojo extends AbstractMavenReport {
 
 	@Override
 	protected void executeReport(final Locale aLocale) throws MavenReportException {
-		if (aLocale == null) {
-			throw new IllegalArgumentException("locale should not be null");
-		}
 		DsmReport dsmReport = new DsmReport();
 
 		dsmReport.setSourceDirectory(getSourseDir());
 		dsmReport.setDsmReportSiteDirectory(getOutputDirectory());
 
-		dsmReport.startReport();
+		try {
+			dsmReport.startReport();
+		} catch (MojoExecutionException e) {
+			getLog().error("Error in Dsm Report generation: " + e.getMessage(), e);
+		}
 	}
 
 
-	private String getSourseDir() {
+	protected String getSourseDir() {
 		if (dataFile != null) {
 			return dataFile.getAbsolutePath();
 		}
@@ -135,5 +142,23 @@ public class DsmReportMojo extends AbstractMavenReport {
 	@Override
 	protected String getOutputDirectory() {
 		return outputDirectory.getAbsolutePath() + File.separator + dsmDirectory;
+	}
+
+
+	/**
+	 * @param dataFile
+	 *            the dataFile to set
+	 */
+	public void setDataFile(File dataFile) {
+		this.dataFile = dataFile;
+	}
+
+
+	/**
+	 * @param project
+	 *            the project to set
+	 */
+	public void setProject(MavenProject project) {
+		this.project = project;
 	}
 }
