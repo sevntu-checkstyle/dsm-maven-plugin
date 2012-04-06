@@ -81,18 +81,18 @@ public class DsmReportMojoTest extends AbstractMojoTestCase {
 	@Test
 	public void testGetSourseDir() {
 		MavenProject mavenProject = new MavenProject();
-		mavenProject.setBasedir(new File("basedir"));
+		mavenProject.setBasedir(new File(""));
 
 		DsmReportMojo dsmReportMojo = new DsmReportMojo();
 		dsmReportMojo.setProject(mavenProject);
-		dsmReportMojo.setDataFile(new File("datadir"));
+		dsmReportMojo.setDataFile(new File(""));
 
 		String sourceDir = dsmReportMojo.getSourseDir();
-		assertEquals(System.getProperty("user.dir") + "/datadir", sourceDir);
+		assertEquals(System.getProperty("user.dir"), sourceDir);
 
 		dsmReportMojo.setDataFile(null);
 		sourceDir = dsmReportMojo.getSourseDir();
-		assertEquals(System.getProperty("user.dir") + "/basedir", sourceDir);
+		assertEquals(System.getProperty("user.dir") + "/target/classes", sourceDir);
 	}
 
 

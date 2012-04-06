@@ -1,4 +1,3 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
@@ -17,27 +16,37 @@
 </head>
 <body>
 	<h1>
-		<a href="./all_packages.html" title="" target="summary" class="">DSM
-			Report</a> - <img src="./images/package.png" alt="" class="" /> ${title}
+		<a href="./all_packages.html" title="" target="summary" class="">DSM Report</a> - 
+		<img src="./images/package.png" alt="" class="" />
+		${title}
 	</h1>
 	<table cellspacing="0" cellpadding="0">
 		<tr>
 			<td></td>
-			<td></td> <#list headerIndexes as i>
-			<td class="packageName_cols">${i}</td> </#list>
+			<td></td> 
+			<#list headerIndexes as i>
+			<td class="packageName_cols">${i}</td> 
+			</#list>
 		</tr>
 
 		<#list rows as package>
 		<tr>
-			<td class="packageName_rows"><img src="./images/package.png"
-				alt="" class="" /> <a href="${package.name}.html"
-				title="${package.name}" target="" class=""> ${package.name} </a>
-				(${package.depCount})</td>
-			<td class="packageNumber_rows">${package.positionIndex}</td> <#list
-			package.numberOfDependencies as dependCount>
-			<td>${dependCount}</td> </#list>
+			<td class="packageName_rows">
+				<img src="./images/package.png"	alt="" class="" /> 
+				<a href="${package.name}.html" title="${package.name}" target="" class=""> 
+					${package.name} 
+				</a>
+				(${package.dependencyContentCount})
+			</td>
+			<td class="packageNumber_rows">
+				${package.positionIndex}
+			</td>
+			<#list package.numberOfDependencies as dependCount>
+			<td>
+				${dependCount}
+			</td> 
+			</#list>
 		</tr>
 		</#list>
-
 	</table>
 </body>

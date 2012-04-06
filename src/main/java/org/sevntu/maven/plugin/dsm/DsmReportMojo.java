@@ -114,7 +114,7 @@ public class DsmReportMojo extends AbstractMavenReport {
 		if (dataFile != null) {
 			return dataFile.getAbsolutePath();
 		}
-		return project.getBasedir().getAbsolutePath();
+		return project.getBasedir().getAbsolutePath() + "/target/classes";
 	}
 
 

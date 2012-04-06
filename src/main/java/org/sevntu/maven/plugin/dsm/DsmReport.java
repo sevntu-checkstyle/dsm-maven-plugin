@@ -35,8 +35,8 @@ import org.dtangler.core.input.ArgumentBuilder;
  */
 public class DsmReport {
 
-	private final String imagesFolderName = "images";
-	private final String cssFolderName = "css";
+	private final static String IMAGE_FOLDER_NAME = "images";
+	private final static String CSS_FOLDER_NAME = "css";
 	private final String classesFtl = "classes_page.ftl";
 	private final String packagesFtl = "packages_page.ftl";
 	private Dsm dsm;
@@ -101,7 +101,7 @@ public class DsmReport {
 
 		List<String> packageNames = getPackageNames(dsm);
 
-		printPackagesNavigationMenu(packageNames);
+		dsmHtmlWriter.printNavigateDsmPackages(packageNames);
 
 		printDsmForPackages(dependencies, arguments, dependencyGraph, "all_packages");
 
@@ -131,7 +131,7 @@ public class DsmReport {
 			DependencyGraph dependencyGraph2 = dependencies2.getDependencyGraph(scope, dep,
 					Dependencies.DependencyFilter.none);
 
-			analisisAndPrintDsm(dependencies2, aArguments, dependencyGraph2,
+			analyseAndPrintDsm(dependencies2, aArguments, dependencyGraph2,
 					aPackageNames.get(packageIndex));
 		}
 	}
@@ -141,22 +141,22 @@ public class DsmReport {
 	 * Move sourc files from project source folder to the site folder.
 	 */
 	private void copySource() throws MojoExecutionException {
-		createTheDirectories();
+		createTheDirectories(dsmReportSiteDirectory);
 		copyFileToSiteFolder("index.html");
-		copyFileToSiteFolder(cssFolderName + File.separator + "style.css");
-		copyFileToSiteFolder(imagesFolderName + File.separator + "class.png");
-		copyFileToSiteFolder(imagesFolderName + File.separator + "package.png");
-		copyFileToSiteFolder(imagesFolderName + File.separator + "packages.png");
+		copyFileToSiteFolder(CSS_FOLDER_NAME + File.separator + "style.css");
+		copyFileToSiteFolder(IMAGE_FOLDER_NAME + File.separator + "class.png");
+		copyFileToSiteFolder(IMAGE_FOLDER_NAME + File.separator + "package.png");
+		copyFileToSiteFolder(IMAGE_FOLDER_NAME + File.separator + "packages.png");
 	}
 
 
 	/**
 	 * Create the folders in a site directory.
 	 */
-	private void createTheDirectories() {
-		String[] pluginDirectories = { imagesFolderName, cssFolderName };
+	private static void createTheDirectories(String aDsmReportSiteDirectory) {
+		String[] pluginDirectories = { IMAGE_FOLDER_NAME, CSS_FOLDER_NAME };
 		for (String dir : pluginDirectories) {
-			File outputFile = new File(dsmReportSiteDirectory + dir);
+			File outputFile = new File(aDsmReportSiteDirectory + dir);
 			if (!outputFile.exists()) {
 				outputFile.mkdir();
 			}
@@ -168,28 +168,26 @@ public class DsmReport {
 	/**
 	 * Copy file to the site directory
 	 * 
-	 * @param directoryOrFileName
+	 * @param aFileName
 	 *            Directory or File name
 	 * @throws MojoExecutionException
 	 */
-	private void copyFileToSiteFolder(final String directoryOrFileName)
-			throws MojoExecutionException {
+	private void copyFileToSiteFolder(final String aFileName) throws MojoExecutionException {
 		InputStream inputStream = null;
 		OutputStream outputStream = null;
 		try {
 			int numberOfBytes;
 			byte[] buffer = new byte[1024];
-			File outputFile = new File(dsmReportSiteDirectory + directoryOrFileName);
-			inputStream = getClass().getResourceAsStream(File.separator + directoryOrFileName);
+			File outputFile = new File(dsmReportSiteDirectory + aFileName);
+			inputStream = getClass().getResourceAsStream(File.separator + aFileName);
 			outputStream = new FileOutputStream(outputFile);
 
 			while ((numberOfBytes = inputStream.read(buffer)) > 0) {
 				outputStream.write(buffer, 0, numberOfBytes);
 			}
 		} catch (FileNotFoundException e) {
-
-			throw new MojoExecutionException("Can't find " + dsmReportSiteDirectory
-					+ directoryOrFileName + " file. " + e.getMessage(), e);
+			throw new MojoExecutionException("Can't find " + dsmReportSiteDirectory + aFileName
+					+ " file. " + e.getMessage(), e);
 		} catch (IOException e) {
 			throw new MojoExecutionException("Unable to copy source file. " + e.getMessage(), e);
 		} finally {
@@ -211,8 +209,7 @@ public class DsmReport {
 	private List<String> getPackageNames(final Dsm aDsm) {
 		List<DsmRow> dsmRowList = aDsm.getRows();
 		List<String> packageNames = new ArrayList<String>();
-		for (int index = 0; index < dsmRowList.size(); index++) {
-			DsmRow dsmRow = dsmRowList.get(index);
+		for (DsmRow dsmRow : dsmRowList) {
 			packageNames.add(dsmRow.getDependee().toString());
 		}
 		return packageNames;
@@ -231,7 +228,7 @@ public class DsmReport {
 	 * @param aPackageName
 	 *            Package name
 	 */
-	private void analisisAndPrintDsm(final Dependencies aDependencies, final Arguments aArguments,
+	private void analyseAndPrintDsm(final Dependencies aDependencies, final Arguments aArguments,
 			final DependencyGraph aDependencyGraph, final String aPackageName)
 			throws MojoExecutionException {
 		AnalysisResult analysisResult = getAnalysisResult(aArguments, aDependencies);
@@ -304,17 +301,5 @@ public class DsmReport {
 			throws MojoExecutionException {
 		dsmHtmlWriter.printDsm(new DsmEngine(aDependencies).createDsm(), aAnalysisResult,
 				aPackageName, classesFtl);
-	}
-
-
-	/**
-	 * Print site navigation menu by packages
-	 * 
-	 * @param aPackageNames
-	 *            List of package names
-	 */
-	private void printPackagesNavigationMenu(final List<String> aPackageNames)
-			throws MojoExecutionException {
-		dsmHtmlWriter.printNavigateDsmPackages(aPackageNames);
 	}
 }

@@ -51,7 +51,7 @@ public class DsmHtmlWriterTest {
 
 	@Test
 	public void printDsmTest() throws MojoExecutionException {
-		DsmHtmlWriter dsmHtmlWriter = new DsmHtmlWriter("testDir");
+		DsmHtmlWriter dsmHtmlWriter = new DsmHtmlWriter("target/testDir");
 		Exception ex = null;
 		try {
 			dsmHtmlWriter.printDsm(null, null, null, null);
@@ -85,7 +85,7 @@ public class DsmHtmlWriterTest {
 
 	@Test
 	public void printNavigateDsmPackagesTest() throws MojoExecutionException {
-		DsmHtmlWriter dsmHtmlWriter = new DsmHtmlWriter("testDir");
+		DsmHtmlWriter dsmHtmlWriter = new DsmHtmlWriter("target/testDir");
 		Exception ex = null;
 		try {
 			dsmHtmlWriter.printNavigateDsmPackages(null);

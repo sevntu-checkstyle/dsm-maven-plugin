@@ -46,6 +46,11 @@ public class DsmHtmlWriter {
 					"Path to the report directory should not be null or empty");
 		}
 		reportSiteDirectory = aReportSiteDirectory;
+
+		File reportDir = new File(reportSiteDirectory);
+		if (!reportDir.exists()) {
+			reportDir.mkdirs();
+		}
 	}
 
 
@@ -55,29 +60,22 @@ public class DsmHtmlWriter {
 	 * @param aTemplateName
 	 * @return
 	 */
-	private String freemarkerDo(Map<String, Object> aDataModel, String aTemplateName,
+	private void processTemplate(Map<String, Object> aDataModel, String aTemplateName,
 			String aFileName) throws MojoExecutionException {
 		Configuration cfg = new Configuration();
 		cfg.setClassForTemplateLoading(DsmHtmlWriter.class, File.separator + "templates");
-		File reportDir = new File(reportSiteDirectory);
-		if (!reportDir.exists()) {
-			reportDir.mkdirs();
-		}
+
 		String filePath = reportSiteDirectory + File.separator + aFileName + htmlFormat;
 
-		Writer out = null;
-		Template tpl;
 		try {
-			out = new FileWriter(filePath);
-			tpl = cfg.getTemplate(aTemplateName);
+			Writer out = new FileWriter(filePath);
+			Template tpl = cfg.getTemplate(aTemplateName);
 			tpl.process(aDataModel, out);
 		} catch (TemplateException e) {
 			throw new MojoExecutionException("Unable to process template file.", e);
 		} catch (IOException e) {
 			throw new MojoExecutionException("Unable to write " + filePath + " file.", e);
 		}
-
-		return out.toString();
 	}
 
 
@@ -93,11 +91,10 @@ public class DsmHtmlWriter {
 			throw new IllegalArgumentException("List of package names should not be null");
 		}
 
-		Map<String, Object> datamodel = new HashMap<String, Object>();
-		datamodel.put("aPackageNames", aPackageNames);
+		Map<String, Object> dataModel = new HashMap<String, Object>();
+		dataModel.put("aPackageNames", aPackageNames);
 
-		StringBuilder htmlContent = new StringBuilder();
-		htmlContent.append(freemarkerDo(datamodel, packagesMenuFtl, "packages"));
+		processTemplate(dataModel, packagesMenuFtl, "packages");
 	}
 
 
@@ -123,8 +120,8 @@ public class DsmHtmlWriter {
 			throw new IllegalArgumentException("Title of DSM should not be empty");
 		}
 
-		ArrayList<Integer> headerIndexes = new ArrayList<Integer>();
-		ArrayList<DsmRowData> dsmRowDatas = new ArrayList<DsmRowData>();
+		List<Integer> headerIndexes = new ArrayList<Integer>();
+		List<DsmRowData> dsmRowDatas = new ArrayList<DsmRowData>();
 
 		int packageIndex = 1;
 		for (DsmRow dsmRow : aDsm.getRows()) {
@@ -132,27 +129,26 @@ public class DsmHtmlWriter {
 			headerIndexes.add(packageIndex);
 
 			String packageName = formatName(dsmRow.getDependee().getDisplayName(), 40);
-			int depCount = dsmRow.getDependee().getContentCount();
+			int dependencyContentCount = dsmRow.getDependee().getContentCount();
 
-			ArrayList<String> dependenciesNumbers = new ArrayList<String>();
+			List<String> dependenciesNumbers = new ArrayList<String>();
 			for (DsmCell dep : dsmRow.getCells()) {
 				dependenciesNumbers.add(formatDependency(dep, aAnalysisResult));
 			}
 
-			DsmRowData rowData = new DsmRowData(packageIndex, packageName, depCount,
+			DsmRowData rowData = new DsmRowData(packageIndex, packageName, dependencyContentCount,
 					dependenciesNumbers);
 			dsmRowDatas.add(rowData);
 
 			packageIndex++;
 		}
 
-		Map<String, Object> datamodel = new HashMap<String, Object>();
-		datamodel.put("title", aName);
-		datamodel.put("headerIndexes", headerIndexes);
-		datamodel.put("rows", dsmRowDatas);
+		Map<String, Object> dataModel = new HashMap<String, Object>();
+		dataModel.put("title", aName);
+		dataModel.put("headerIndexes", headerIndexes);
+		dataModel.put("rows", dsmRowDatas);
 
-		StringBuilder htmlContent = new StringBuilder();
-		htmlContent.append(freemarkerDo(datamodel, templateName, aName));
+		processTemplate(dataModel, templateName, aName);
 	}
 
 
@@ -166,15 +162,16 @@ public class DsmHtmlWriter {
 	 * @return Count of dependency
 	 */
 	private String formatDependency(final DsmCell aDep, final AnalysisResult aAnalysisResult) {
+		String s;
 		if (!aDep.isValid()) {
-			return "x";
-		}
-		if (aDep.getDependencyWeight() == 0) {
-			return "";
-		}
-		String s = Integer.toString(aDep.getDependencyWeight());
-		if (!aAnalysisResult.getViolations(aDep.getDependency(), Severity.error).isEmpty()) {
-			s = s + "C";
+			s = "x";
+		} else if (aDep.getDependencyWeight() == 0) {
+			s = "";
+		} else {
+			s = Integer.toString(aDep.getDependencyWeight());
+			if (!aAnalysisResult.getViolations(aDep.getDependency(), Severity.error).isEmpty()) {
+				s = s + "C";
+			}
 		}
 		return s;
 	}
@@ -214,16 +211,16 @@ public class DsmHtmlWriter {
 	public class DsmRowData {
 
 		private String name;
-		private ArrayList<String> numberOfDependencies;
-		private int depCount;
+		private List<String> numberOfDependencies;
+		private int dependencyContentCount;
 		private int positionIndex;
 
 
-		public DsmRowData(int positionIndex, String name, int depCount,
-				ArrayList<String> numberOfDependencies) {
+		public DsmRowData(int positionIndex, String name, int dependencyContentCount,
+				List<String> numberOfDependencies) {
 			this.positionIndex = positionIndex;
 			this.name = name;
-			this.depCount = depCount;
+			this.dependencyContentCount = dependencyContentCount;
 			this.numberOfDependencies = numberOfDependencies;
 		}
 
@@ -239,7 +236,7 @@ public class DsmHtmlWriter {
 		/**
 		 * @return the numberOfDependencies
 		 */
-		public ArrayList<String> getNumberOfDependencies() {
+		public List<String> getNumberOfDependencies() {
 			return numberOfDependencies;
 		}
 
@@ -247,8 +244,8 @@ public class DsmHtmlWriter {
 		/**
 		 * @return the depCount
 		 */
-		public int getDepCount() {
-			return depCount;
+		public int getDependencyContentCount() {
+			return dependencyContentCount;
 		}
 
 
