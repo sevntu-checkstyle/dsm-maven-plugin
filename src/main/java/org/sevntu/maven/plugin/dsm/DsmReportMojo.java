@@ -7,8 +7,6 @@ import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
-import org.apache.maven.plugin.MojoExecutionException;
-
 
 /**
  * Initialising DSM plugin.
@@ -104,7 +102,7 @@ public class DsmReportMojo extends AbstractMavenReport {
 
 		try {
 			dsmReport.startReport();
-		} catch (MojoExecutionException e) {
+		} catch (Exception e) {
 			getLog().error("Error in Dsm Report generation: " + e.getMessage(), e);
 		}
 	}
