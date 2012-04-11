@@ -98,7 +98,7 @@ public class DsmReportMojo extends AbstractMavenReport {
 		DsmReport dsmReport = new DsmReport();
 
 		dsmReport.setSourceDirectory(getSourseDir());
-		dsmReport.setDsmReportSiteDirectory(getOutputDirectory());
+		dsmReport.setOutputDirectory(getOutputDirectory());
 
 		try {
 			dsmReport.startReport();

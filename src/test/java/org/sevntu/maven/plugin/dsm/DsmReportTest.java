@@ -13,7 +13,7 @@ public class DsmReportTest {
 		Exception ex = null;
 		DsmReport dsmReport = new DsmReport();
 		try {
-			dsmReport.setDsmReportSiteDirectory(null);
+			dsmReport.setOutputDirectory(null);
 		} catch (IllegalArgumentException e) {
 			ex = e;
 			assertEquals("Dsm directory has no path.", e.getMessage());

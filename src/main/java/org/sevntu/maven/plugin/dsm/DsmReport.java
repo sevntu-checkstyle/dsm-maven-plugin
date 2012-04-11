@@ -38,12 +38,19 @@ public class DsmReport {
 	private final static String CSS_FOLDER_NAME = "css";
 	private final String classesFtl = "classes_page.ftl";
 	private final String packagesFtl = "packages_page.ftl";
+
 	private Dsm dsm;
 
 	private DsmHtmlWriter dsmHtmlWriter;
 
-	private String dsmReportSiteDirectory;
+	/**
+	 * The output directory for the report.
+	 */
+	private String outputDirectory;
 
+	/**
+	 * The java source directory
+	 */
 	private String sourceDirectory;
 
 
@@ -62,14 +69,14 @@ public class DsmReport {
 
 	/**
 	 * 
-	 * @param aDsmDirectory
-	 *            Namr of DSM report folder
+	 * @param aOutputDirectory
+	 *            Name of DSM report folder
 	 */
-	public void setDsmReportSiteDirectory(final String aDsmDirectory) {
-		if (DsmHtmlWriter.isEmptyString(aDsmDirectory)) {
+	public void setOutputDirectory(final String aOutputDirectory) {
+		if (DsmHtmlWriter.isEmptyString(aOutputDirectory)) {
 			throw new IllegalArgumentException("Dsm directory has no path.");
 		}
-		dsmReportSiteDirectory = aDsmDirectory + File.separator;
+		outputDirectory = aOutputDirectory + File.separator;
 	}
 
 
@@ -77,7 +84,7 @@ public class DsmReport {
 	 * 
 	 */
 	public void startReport() throws Exception {
-		dsmHtmlWriter = new DsmHtmlWriter(dsmReportSiteDirectory);
+		dsmHtmlWriter = new DsmHtmlWriter(outputDirectory);
 		String[] arg = { "-input=" + sourceDirectory };
 		startReport(arg);
 	}
@@ -140,7 +147,7 @@ public class DsmReport {
 	 * Move sourc files from project source folder to the site folder.
 	 */
 	private void copySource() throws Exception {
-		createTheDirectories(dsmReportSiteDirectory);
+		createTheDirectories(outputDirectory);
 		copyFileToSiteFolder("index.html");
 		copyFileToSiteFolder(CSS_FOLDER_NAME + File.separator + "style.css");
 		copyFileToSiteFolder(IMAGE_FOLDER_NAME + File.separator + "class.png");
@@ -177,7 +184,7 @@ public class DsmReport {
 		try {
 			int numberOfBytes;
 			byte[] buffer = new byte[1024];
-			File outputFile = new File(dsmReportSiteDirectory + aFileName);
+			File outputFile = new File(outputDirectory + aFileName);
 			inputStream = getClass().getResourceAsStream(File.separator + aFileName);
 			outputStream = new FileOutputStream(outputFile);
 
@@ -185,8 +192,8 @@ public class DsmReport {
 				outputStream.write(buffer, 0, numberOfBytes);
 			}
 		} catch (FileNotFoundException e) {
-			throw new Exception("Can't find " + dsmReportSiteDirectory + aFileName
-					+ " file. " + e.getMessage(), e);
+			throw new Exception("Can't find " + outputDirectory + aFileName + " file. "
+					+ e.getMessage(), e);
 		} catch (IOException e) {
 			throw new Exception("Unable to copy source file. " + e.getMessage(), e);
 		} finally {
@@ -228,8 +235,7 @@ public class DsmReport {
 	 *            Package name
 	 */
 	private void analyseAndPrintDsm(final Dependencies aDependencies, final Arguments aArguments,
-			final DependencyGraph aDependencyGraph, final String aPackageName)
-			throws Exception {
+			final DependencyGraph aDependencyGraph, final String aPackageName) throws Exception {
 		AnalysisResult analysisResult = getAnalysisResult(aArguments, aDependencies);
 		printDsm(aDependencyGraph, analysisResult, aPackageName);
 	}
@@ -248,8 +254,7 @@ public class DsmReport {
 	 *            "all_packages"
 	 */
 	private void printDsmForPackages(final Dependencies aDependencies, final Arguments aArguments,
-			final DependencyGraph aDependencyGraph, final String aAllPackages)
-			throws Exception {
+			final DependencyGraph aDependencyGraph, final String aAllPackages) throws Exception {
 		AnalysisResult analysisResult = getAnalysisResult(aArguments, aDependencies);
 		dsmHtmlWriter.printDsm(new DsmEngine(aDependencyGraph).createDsm(), analysisResult,
 				aAllPackages, packagesFtl);
@@ -296,8 +301,7 @@ public class DsmReport {
 	 *            Package name
 	 */
 	private void printDsm(final DependencyGraph aDependencies,
-			final AnalysisResult aAnalysisResult, final String aPackageName)
-			throws Exception {
+			final AnalysisResult aAnalysisResult, final String aPackageName) throws Exception {
 		dsmHtmlWriter.printDsm(new DsmEngine(aDependencies).createDsm(), aAnalysisResult,
 				aPackageName, classesFtl);
 	}
