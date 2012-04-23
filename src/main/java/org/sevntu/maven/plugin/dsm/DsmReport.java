@@ -23,7 +23,6 @@ import org.dtangler.core.dependencyengine.DependencyEngineFactory;
 import org.dtangler.core.dsm.Dsm;
 import org.dtangler.core.dsm.DsmRow;
 import org.dtangler.core.dsmengine.DsmEngine;
-import org.dtangler.core.input.ArgumentBuilder;
 
 
 /**
@@ -36,10 +35,8 @@ public class DsmReport {
 
 	private final static String IMAGE_FOLDER_NAME = "images";
 	private final static String CSS_FOLDER_NAME = "css";
-	private final String classesFtl = "classes_page.ftl";
-	private final String packagesFtl = "packages_page.ftl";
-
-	private Dsm dsm;
+	private final static String FTL_CLASSES_PAGE = "classes_page.ftl";
+	private final static String FTL_PACKAGES_PAGE = "packages_page.ftl";
 
 	private DsmHtmlWriter dsmHtmlWriter;
 
@@ -82,135 +79,85 @@ public class DsmReport {
 
 	/**
 	 * 
+	 * @throws Exception
 	 */
 	public void startReport() throws Exception {
 		dsmHtmlWriter = new DsmHtmlWriter(outputDirectory);
-		String[] arg = { "-input=" + sourceDirectory };
-		startReport(arg);
+
+		List<String> sourcePathList = new ArrayList<String>();
+		sourcePathList.add(sourceDirectory);
+
+		startReport(sourcePathList);
 	}
 
 
 	/**
 	 * Parse dependencies from target.
 	 * 
-	 * @param args
-	 *            Arguments
+	 * @param aSourcePathList
+	 *            path list of project source
+	 * @throws Exception
 	 */
-	private void startReport(final String[] args) throws Exception {
-		Arguments arguments = new ArgumentBuilder().build(args);
-		DependencyEngine engine = new DependencyEngineFactory().getDependencyEngine(arguments);
+	private void startReport(final List<String> aSourcePathList) throws Exception {
+		Arguments arguments = new Arguments();
+		arguments.setInput(aSourcePathList);
 
+		DependencyEngine engine = new DependencyEngineFactory().getDependencyEngine(arguments);
 		Dependencies dependencies = engine.getDependencies(arguments);
 		DependencyGraph dependencyGraph = dependencies.getDependencyGraph();
+		AnalysisResult analysisResult = getAnalysisResult(arguments, dependencies);
+		Dsm dsm = new DsmEngine(dependencyGraph).createDsm();
 
-		dsm = new DsmEngine(dependencyGraph).createDsm();
-
+		// print dsm site navigation by packages
 		List<String> packageNames = getPackageNames(dsm);
-
 		dsmHtmlWriter.printNavigateDsmPackages(packageNames);
 
-		printDsmForPackages(dependencies, arguments, dependencyGraph, "all_packages");
-
-		printDsmForClasses(engine, arguments, packageNames);
+		printDsmForPackages(dependencies, analysisResult, dependencyGraph, "all_packages");
+		printDsmForClasses(dsm, dependencies, analysisResult, packageNames);
 
 		copySource();
 	}
 
 
 	/**
-	 * Print DSM for all packages.
 	 * 
-	 * @param aEngine
-	 *            DependencyEngine
-	 * @param aArguments
-	 *            Input arguments
+	 * Print DSM for for each package in project.
+	 * 
+	 * @param aDsm
+	 *            Dsm
+	 * @param aDependencies
+	 *            Dependencies
+	 * @param aAnalysisResult
+	 *            Analysis result
 	 * @param aPackageNames
 	 *            List of the package names
+	 * @throws Exception
 	 */
-	private void printDsmForClasses(final DependencyEngine aEngine, final Arguments aArguments,
-			final List<String> aPackageNames) throws Exception {
-		for (int packageIndex = 0; packageIndex < dsm.getRows().size(); packageIndex++) {
-			Dependencies dependencies2 = aEngine.getDependencies(aArguments);
-			Scope scope = dependencies2.getChildScope(dependencies2.getDefaultScope());
-			Set<Dependable> dep = getDependablesByRowIndex(packageIndex);
+	private void printDsmForClasses(final Dsm aDsm, final Dependencies aDependencies,
+			final AnalysisResult aAnalysisResult, final List<String> aPackageNames)
+			throws Exception {
+		Scope scope = aDependencies.getChildScope(aDependencies.getDefaultScope());
 
-			DependencyGraph dependencyGraph2 = dependencies2.getDependencyGraph(scope, dep,
+		for (int packageIndex = 0; packageIndex < aDsm.getRows().size(); packageIndex++) {
+			Set<Dependable> ependableSet = getDependablesByRowIndex(aDsm, packageIndex);
+
+			DependencyGraph dependencyGraph = aDependencies.getDependencyGraph(scope, ependableSet,
 					Dependencies.DependencyFilter.none);
 
-			analyseAndPrintDsm(dependencies2, aArguments, dependencyGraph2,
-					aPackageNames.get(packageIndex));
+			Dsm dsm = new DsmEngine(dependencyGraph).createDsm();
+
+			dsmHtmlWriter.printDsm(dsm, aAnalysisResult, aPackageNames.get(packageIndex),
+					FTL_CLASSES_PAGE);
 		}
 	}
 
 
 	/**
-	 * Move sourc files from project source folder to the site folder.
-	 */
-	private void copySource() throws Exception {
-		createTheDirectories(outputDirectory);
-		copyFileToSiteFolder("index.html");
-		copyFileToSiteFolder(CSS_FOLDER_NAME + File.separator + "style.css");
-		copyFileToSiteFolder(IMAGE_FOLDER_NAME + File.separator + "class.png");
-		copyFileToSiteFolder(IMAGE_FOLDER_NAME + File.separator + "package.png");
-		copyFileToSiteFolder(IMAGE_FOLDER_NAME + File.separator + "packages.png");
-	}
-
-
-	/**
-	 * Create the folders in a site directory.
-	 */
-	private static void createTheDirectories(String aDsmReportSiteDirectory) {
-		String[] pluginDirectories = { IMAGE_FOLDER_NAME, CSS_FOLDER_NAME };
-		for (String dir : pluginDirectories) {
-			File outputFile = new File(aDsmReportSiteDirectory + dir);
-			if (!outputFile.exists()) {
-				outputFile.mkdir();
-			}
-
-		}
-	}
-
-
-	/**
-	 * Copy file to the site directory
+	 * Get name list of project packages
 	 * 
-	 * @param aFileName
-	 *            Directory or File name
-	 * @throws MojoExecutionException
-	 */
-	private void copyFileToSiteFolder(final String aFileName) throws Exception {
-		InputStream inputStream = null;
-		OutputStream outputStream = null;
-		try {
-			int numberOfBytes;
-			byte[] buffer = new byte[1024];
-			File outputFile = new File(outputDirectory + aFileName);
-			inputStream = getClass().getResourceAsStream(File.separator + aFileName);
-			outputStream = new FileOutputStream(outputFile);
-
-			while ((numberOfBytes = inputStream.read(buffer)) > 0) {
-				outputStream.write(buffer, 0, numberOfBytes);
-			}
-		} catch (FileNotFoundException e) {
-			throw new Exception("Can't find " + outputDirectory + aFileName + " file. "
-					+ e.getMessage(), e);
-		} catch (IOException e) {
-			throw new Exception("Unable to copy source file. " + e.getMessage(), e);
-		} finally {
-			try {
-				inputStream.close();
-				outputStream.close();
-			} catch (IOException e) {
-				throw new Exception("Can't close stream. " + e.getMessage(), e);
-			}
-		}
-	}
-
-
-	/**
 	 * @param aDsm
 	 *            DSM structure
-	 * @return List of Package Names
+	 * @return List of package names
 	 */
 	private List<String> getPackageNames(final Dsm aDsm) {
 		List<DsmRow> dsmRowList = aDsm.getRows();
@@ -223,54 +170,37 @@ public class DsmReport {
 
 
 	/**
-	 * Analysin and print DSM of Class from package
-	 * 
-	 * @param aDependencies
-	 *            Package dependensies
-	 * @param aArguments
-	 *            Arguments
-	 * @param aDependencyGraph
-	 *            Dependency graph
-	 * @param aPackageName
-	 *            Package name
-	 */
-	private void analyseAndPrintDsm(final Dependencies aDependencies, final Arguments aArguments,
-			final DependencyGraph aDependencyGraph, final String aPackageName) throws Exception {
-		AnalysisResult analysisResult = getAnalysisResult(aArguments, aDependencies);
-		printDsm(aDependencyGraph, analysisResult, aPackageName);
-	}
-
-
-	/**
-	 * Analysin and print DSM of package from project
+	 * Print dsm for packages
 	 * 
 	 * @param aDependencies
 	 *            Project dependensies
-	 * @param aArguments
-	 *            Arguments
+	 * @param aAnalysisResult
+	 *            Analysis result
 	 * @param aDependencyGraph
 	 *            Dependency graph
 	 * @param aAllPackages
 	 *            "all_packages"
 	 */
-	private void printDsmForPackages(final Dependencies aDependencies, final Arguments aArguments,
-			final DependencyGraph aDependencyGraph, final String aAllPackages) throws Exception {
-		AnalysisResult analysisResult = getAnalysisResult(aArguments, aDependencies);
-		dsmHtmlWriter.printDsm(new DsmEngine(aDependencyGraph).createDsm(), analysisResult,
-				aAllPackages, packagesFtl);
+	private void printDsmForPackages(final Dependencies aDependencies,
+			final AnalysisResult aAnalysisResult, final DependencyGraph aDependencyGraph,
+			final String aAllPackages) throws Exception {
+		Dsm dsm = new DsmEngine(aDependencyGraph).createDsm();
+		dsmHtmlWriter.printDsm(dsm, aAnalysisResult, aAllPackages, FTL_PACKAGES_PAGE);
 	}
 
 
 	/**
 	 * Get Set of dependables.
 	 * 
+	 * @param aDsm
+	 *            Dsm
 	 * @param aRow
 	 *            Index of row wich analysing
 	 * @return Set of Dependables
 	 */
-	private Set<Dependable> getDependablesByRowIndex(final int aRow) {
+	private Set<Dependable> getDependablesByRowIndex(final Dsm aDsm, final int aRow) {
 		Set<Dependable> result = new HashSet<Dependable>();
-		result.add(dsm.getRows().get(aRow).getDependee());
+		result.add(aDsm.getRows().get(aRow).getDependee());
 		return result;
 	}
 
@@ -291,18 +221,95 @@ public class DsmReport {
 
 
 	/**
-	 * Print DSM
-	 * 
-	 * @param aDependencies
-	 *            Dependencies structure
-	 * @param aAnalysisResult
-	 *            AnalysisResult structure
-	 * @param aPackageName
-	 *            Package name
+	 * Move sourc files from project source folder to the site folder.
 	 */
-	private void printDsm(final DependencyGraph aDependencies,
-			final AnalysisResult aAnalysisResult, final String aPackageName) throws Exception {
-		dsmHtmlWriter.printDsm(new DsmEngine(aDependencies).createDsm(), aAnalysisResult,
-				aPackageName, classesFtl);
+	private void copySource() throws Exception {
+		copyFileToSiteFolder(outputDirectory, "", "index.html");
+		copyFileToSiteFolder(outputDirectory, CSS_FOLDER_NAME, "style.css");
+		copyFileToSiteFolder(outputDirectory, IMAGE_FOLDER_NAME, "class.png");
+		copyFileToSiteFolder(outputDirectory, IMAGE_FOLDER_NAME, "package.png");
+		copyFileToSiteFolder(outputDirectory, IMAGE_FOLDER_NAME, "packages.png");
+	}
+
+
+	/**
+	 * Create the folder in a site directory.
+	 * 
+	 * @param aOutputDirectory
+	 *            Report output directory
+	 * @param aDirName
+	 *            Folder name
+	 */
+	private static void makeDirectory(String aOutputDirectory, String aDirName) {
+		File outputFile = new File(aOutputDirectory + aDirName);
+		if (!outputFile.exists()) {
+			outputFile.mkdir();
+		}
+	}
+
+
+	/**
+	 * Copy file to the site directory
+	 * 
+	 * @param aOutputDirectory
+	 *            Report output directory
+	 * @param aDirName
+	 *            Directory name
+	 * @param aFileName
+	 *            File name
+	 * @throws Exception
+	 */
+	private static void copyFileToSiteFolder(final String aOutputDirectory, final String aDirName,
+			final String aFileName) throws Exception {
+		String fileName;
+
+		// check directory
+		if (aDirName != null && !aDirName.isEmpty()) {
+			makeDirectory(aOutputDirectory, aDirName);
+			fileName = aDirName + File.separator + aFileName;
+		} else {
+			fileName = aFileName;
+		}
+
+		copyFileToSiteFolder(aOutputDirectory, fileName);
+	}
+
+
+	/**
+	 * Copy file to the site directory
+	 * 
+	 * @param aOutputDirectory
+	 *            Report output directory
+	 * @param aFileName
+	 *            File name
+	 * @throws Exception
+	 */
+	private static void copyFileToSiteFolder(final String aOutputDirectory, final String aFileName)
+			throws Exception {
+		InputStream inputStream = null;
+		OutputStream outputStream = null;
+		try {
+			int numberOfBytes;
+			byte[] buffer = new byte[1024];
+
+			outputStream = new FileOutputStream(new File(aOutputDirectory + aFileName));
+			inputStream = DsmReport.class.getResourceAsStream(File.separator + aFileName);
+
+			while ((numberOfBytes = inputStream.read(buffer)) > 0) {
+				outputStream.write(buffer, 0, numberOfBytes);
+			}
+		} catch (FileNotFoundException e) {
+			throw new Exception("Can't find " + aOutputDirectory + aFileName + " file. "
+					+ e.getMessage(), e);
+		} catch (IOException e) {
+			throw new Exception("Unable to copy source file. " + e.getMessage(), e);
+		} finally {
+			try {
+				inputStream.close();
+				outputStream.close();
+			} catch (IOException e) {
+				throw new Exception("Can't close stream. " + e.getMessage(), e);
+			}
+		}
 	}
 }
