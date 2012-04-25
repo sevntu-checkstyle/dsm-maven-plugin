@@ -1,8 +1,11 @@
 package org.sevntu.maven.plugin.dsm;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,7 +18,6 @@ import org.dtangler.core.dsm.DsmCell;
 import org.dtangler.core.dsm.DsmRow;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
-import freemarker.template.TemplateException;
 import org.apache.maven.plugin.MojoExecutionException;
 
 
@@ -59,20 +61,41 @@ public class DsmHtmlWriter {
 	 * @param aDataModel
 	 * @param aTemplateName
 	 * @return
+	 * @throws MojoExecutionException
 	 */
-	private void processTemplate(Map<String, Object> aDataModel, String aTemplateName,
-			String aFileName) throws MojoExecutionException {
+	public ByteArrayOutputStream processTemplate(Map<String, Object> aDataModel,
+			String aTemplateName) throws MojoExecutionException {
+		ByteArrayOutputStream baos;
+
 		Configuration cfg = new Configuration();
 		cfg.setClassForTemplateLoading(DsmHtmlWriter.class, File.separator + "templates");
 
+		try {
+			baos = new ByteArrayOutputStream();
+			Writer out = new OutputStreamWriter(baos);
+
+			Template tpl = cfg.getTemplate(aTemplateName);
+			tpl.process(aDataModel, out);
+		} catch (Exception e) {
+			throw new MojoExecutionException("Unable to process template file.", e);
+		}
+		return baos;
+	}
+
+
+	/**
+	 * 
+	 * @param baos
+	 * @param aFileName
+	 * @throws MojoExecutionException
+	 */
+	private void writeStreamToFile(ByteArrayOutputStream baos, String aFileName)
+			throws MojoExecutionException {
 		String filePath = reportSiteDirectory + File.separator + aFileName + htmlFormat;
 
 		try {
-			Writer out = new FileWriter(filePath);
-			Template tpl = cfg.getTemplate(aTemplateName);
-			tpl.process(aDataModel, out);
-		} catch (TemplateException e) {
-			throw new MojoExecutionException("Unable to process template file.", e);
+			OutputStream outputStream = new FileOutputStream(filePath);
+			outputStream.write(baos.toByteArray());
 		} catch (IOException e) {
 			throw new MojoExecutionException("Unable to write " + filePath + " file.", e);
 		}
@@ -94,7 +117,8 @@ public class DsmHtmlWriter {
 		Map<String, Object> dataModel = new HashMap<String, Object>();
 		dataModel.put("aPackageNames", aPackageNames);
 
-		processTemplate(dataModel, packagesMenuFtl, "packages");
+		ByteArrayOutputStream baos = processTemplate(dataModel, packagesMenuFtl);
+		writeStreamToFile(baos, "packages");
 	}
 
 
@@ -148,7 +172,8 @@ public class DsmHtmlWriter {
 		dataModel.put("headerIndexes", headerIndexes);
 		dataModel.put("rows", dsmRowDatas);
 
-		processTemplate(dataModel, templateName, aName);
+		ByteArrayOutputStream baos = processTemplate(dataModel, templateName);
+		writeStreamToFile(baos, aName);
 	}
 
 
