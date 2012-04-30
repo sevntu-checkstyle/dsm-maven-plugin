@@ -3,7 +3,6 @@ package org.sevntu.maven.plugin.dsm;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -18,7 +17,6 @@ import org.dtangler.core.dsm.DsmCell;
 import org.dtangler.core.dsm.DsmRow;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
-import org.apache.maven.plugin.MojoExecutionException;
 
 
 /**
@@ -29,8 +27,12 @@ import org.apache.maven.plugin.MojoExecutionException;
  */
 public class DsmHtmlWriter {
 
-	private final String htmlFormat = ".html";
-	private final String packagesMenuFtl = "packages_menu.ftl";
+	public final static String FILE_FORMAT = ".html";
+	public final static String IMAGE_FOLDER_NAME = "images";
+	public final static String CSS_FOLDER_NAME = "css";
+	public final static String FTL_CLASSES_PAGE = "classes_page.ftl";
+	public final static String FTL_PACKAGES_PAGE = "packages_page.ftl";
+	public final static String FTL_PACKAGES_MENU = "packages_menu.ftl";
 
 	/**
 	 * Path to your site report dir
@@ -49,10 +51,7 @@ public class DsmHtmlWriter {
 		}
 		reportSiteDirectory = aReportSiteDirectory;
 
-		File reportDir = new File(reportSiteDirectory);
-		if (!reportDir.exists()) {
-			reportDir.mkdirs();
-		}
+		new File(reportSiteDirectory).mkdirs();
 	}
 
 
@@ -61,24 +60,20 @@ public class DsmHtmlWriter {
 	 * @param aDataModel
 	 * @param aTemplateName
 	 * @return
-	 * @throws MojoExecutionException
+	 * @throws Exception
 	 */
 	public ByteArrayOutputStream processTemplate(Map<String, Object> aDataModel,
-			String aTemplateName) throws MojoExecutionException {
+			String aTemplateName) throws Exception {
 		ByteArrayOutputStream baos;
 
 		Configuration cfg = new Configuration();
 		cfg.setClassForTemplateLoading(DsmHtmlWriter.class, File.separator + "templates");
 
-		try {
-			baos = new ByteArrayOutputStream();
-			Writer out = new OutputStreamWriter(baos);
+		baos = new ByteArrayOutputStream();
+		Writer out = new OutputStreamWriter(baos);
 
-			Template tpl = cfg.getTemplate(aTemplateName);
-			tpl.process(aDataModel, out);
-		} catch (Exception e) {
-			throw new MojoExecutionException("Unable to process template file.", e);
-		}
+		Template tpl = cfg.getTemplate(aTemplateName);
+		tpl.process(aDataModel, out);
 		return baos;
 	}
 
@@ -87,18 +82,13 @@ public class DsmHtmlWriter {
 	 * 
 	 * @param baos
 	 * @param aFileName
-	 * @throws MojoExecutionException
+	 * @throws Exception
 	 */
-	private void writeStreamToFile(ByteArrayOutputStream baos, String aFileName)
-			throws MojoExecutionException {
-		String filePath = reportSiteDirectory + File.separator + aFileName + htmlFormat;
+	private void writeStreamToFile(ByteArrayOutputStream baos, String aFileName) throws Exception {
+		String filePath = reportSiteDirectory + File.separator + aFileName + FILE_FORMAT;
 
-		try {
-			OutputStream outputStream = new FileOutputStream(filePath);
-			outputStream.write(baos.toByteArray());
-		} catch (IOException e) {
-			throw new MojoExecutionException("Unable to write " + filePath + " file.", e);
-		}
+		OutputStream outputStream = new FileOutputStream(filePath);
+		outputStream.write(baos.toByteArray());
 	}
 
 
@@ -108,8 +98,7 @@ public class DsmHtmlWriter {
 	 * @param aPackageNames
 	 *            List of package names
 	 */
-	public void printNavigateDsmPackages(final List<String> aPackageNames)
-			throws MojoExecutionException {
+	public void printNavigateDsmPackages(final List<String> aPackageNames) throws Exception {
 		if (aPackageNames == null) {
 			throw new IllegalArgumentException("List of package names should not be null");
 		}
@@ -117,7 +106,7 @@ public class DsmHtmlWriter {
 		Map<String, Object> dataModel = new HashMap<String, Object>();
 		dataModel.put("aPackageNames", aPackageNames);
 
-		ByteArrayOutputStream baos = processTemplate(dataModel, packagesMenuFtl);
+		ByteArrayOutputStream baos = processTemplate(dataModel, FTL_PACKAGES_MENU);
 		writeStreamToFile(baos, "packages");
 	}
 
@@ -133,7 +122,7 @@ public class DsmHtmlWriter {
 	 *            Name of package
 	 */
 	public void printDsm(final Dsm aDsm, final AnalysisResult aAnalysisResult, final String aName,
-			final String templateName) throws MojoExecutionException {
+			final String templateName) throws Exception {
 		if (aDsm == null) {
 			throw new IllegalArgumentException("DSM structure should not be null");
 		}
@@ -228,57 +217,4 @@ public class DsmHtmlWriter {
 		return aText == null || aText.trim().isEmpty();
 	}
 
-	/**
-	 * 
-	 * @author yuriy
-	 * 
-	 */
-	public class DsmRowData {
-
-		private String name;
-		private List<String> numberOfDependencies;
-		private int dependencyContentCount;
-		private int positionIndex;
-
-
-		public DsmRowData(int positionIndex, String name, int dependencyContentCount,
-				List<String> numberOfDependencies) {
-			this.positionIndex = positionIndex;
-			this.name = name;
-			this.dependencyContentCount = dependencyContentCount;
-			this.numberOfDependencies = numberOfDependencies;
-		}
-
-
-		/**
-		 * @return the name
-		 */
-		public String getName() {
-			return name;
-		}
-
-
-		/**
-		 * @return the numberOfDependencies
-		 */
-		public List<String> getNumberOfDependencies() {
-			return numberOfDependencies;
-		}
-
-
-		/**
-		 * @return the depCount
-		 */
-		public int getDependencyContentCount() {
-			return dependencyContentCount;
-		}
-
-
-		/**
-		 * @return the positionIndex
-		 */
-		public int getPositionIndex() {
-			return positionIndex;
-		}
-	}
 }

@@ -33,11 +33,6 @@ import org.dtangler.core.dsmengine.DsmEngine;
  */
 public class DsmReport {
 
-	private final static String IMAGE_FOLDER_NAME = "images";
-	private final static String CSS_FOLDER_NAME = "css";
-	private final static String FTL_CLASSES_PAGE = "classes_page.ftl";
-	private final static String FTL_PACKAGES_PAGE = "packages_page.ftl";
-
 	private DsmHtmlWriter dsmHtmlWriter;
 
 	/**
@@ -147,7 +142,7 @@ public class DsmReport {
 			Dsm dsm = new DsmEngine(dependencyGraph).createDsm();
 
 			dsmHtmlWriter.printDsm(dsm, aAnalysisResult, aPackageNames.get(packageIndex),
-					FTL_CLASSES_PAGE);
+					DsmHtmlWriter.FTL_CLASSES_PAGE);
 		}
 	}
 
@@ -185,7 +180,7 @@ public class DsmReport {
 			final AnalysisResult aAnalysisResult, final DependencyGraph aDependencyGraph,
 			final String aAllPackages) throws Exception {
 		Dsm dsm = new DsmEngine(aDependencyGraph).createDsm();
-		dsmHtmlWriter.printDsm(dsm, aAnalysisResult, aAllPackages, FTL_PACKAGES_PAGE);
+		dsmHtmlWriter.printDsm(dsm, aAnalysisResult, aAllPackages, DsmHtmlWriter.FTL_PACKAGES_PAGE);
 	}
 
 
@@ -221,14 +216,16 @@ public class DsmReport {
 
 
 	/**
-	 * Move sourc files from project source folder to the site folder.
+	 * Move source files from project source folder to the site folder.
+	 * 
+	 * @throws Exception
 	 */
 	private void copySource() throws Exception {
 		copyFileToSiteFolder(outputDirectory, "", "index.html");
-		copyFileToSiteFolder(outputDirectory, CSS_FOLDER_NAME, "style.css");
-		copyFileToSiteFolder(outputDirectory, IMAGE_FOLDER_NAME, "class.png");
-		copyFileToSiteFolder(outputDirectory, IMAGE_FOLDER_NAME, "package.png");
-		copyFileToSiteFolder(outputDirectory, IMAGE_FOLDER_NAME, "packages.png");
+		copyFileToSiteFolder(outputDirectory, DsmHtmlWriter.CSS_FOLDER_NAME, "style.css");
+		copyFileToSiteFolder(outputDirectory, DsmHtmlWriter.IMAGE_FOLDER_NAME, "class.png");
+		copyFileToSiteFolder(outputDirectory, DsmHtmlWriter.IMAGE_FOLDER_NAME, "package.png");
+		copyFileToSiteFolder(outputDirectory, DsmHtmlWriter.IMAGE_FOLDER_NAME, "packages.png");
 	}
 
 
@@ -241,10 +238,7 @@ public class DsmReport {
 	 *            Folder name
 	 */
 	private static void makeDirectory(String aOutputDirectory, String aDirName) {
-		File outputFile = new File(aOutputDirectory + aDirName);
-		if (!outputFile.exists()) {
-			outputFile.mkdir();
-		}
+		new File(aOutputDirectory + aDirName).mkdirs();
 	}
 
 
