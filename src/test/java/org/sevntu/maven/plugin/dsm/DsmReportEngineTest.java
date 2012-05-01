@@ -6,17 +6,17 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 
 
-public class DsmReportTest {
+public class DsmReportEngineTest {
 
 	@Test
 	public void setDsmReportSiteDirectoryTest() {
 		Exception ex = null;
-		DsmReport dsmReport = new DsmReport();
+		DsmReportEngine dsmReport = new DsmReportEngine();
 		try {
 			dsmReport.setOutputDirectory(null);
 		} catch (IllegalArgumentException e) {
 			ex = e;
-			assertEquals("Dsm directory has no path.", e.getMessage());
+			assertEquals("Dsm directory is empty.", e.getMessage());
 		}
 		assertNotNull(ex);
 	}
@@ -25,13 +25,21 @@ public class DsmReportTest {
 	@Test
 	public void setSourceDirectoryTest() {
 		Exception ex = null;
-		DsmReport dsmReport = new DsmReport();
+		DsmReportEngine dsmReport = new DsmReportEngine();
 		try {
 			dsmReport.setSourceDirectory(null);
 		} catch (IllegalArgumentException e) {
 			ex = e;
-			assertEquals("Source directory has no path.", e.getMessage());
+			assertEquals("Source directory is empty.", e.getMessage());
 		}
+
+		try {
+			dsmReport.setSourceDirectory("/not/exists/directory");
+		} catch (RuntimeException e) {
+			ex = e;
+			assertEquals("Source directory '/not/exists/directory' not exists", e.getMessage());
+		}
+
 		assertNotNull(ex);
 	}
 }

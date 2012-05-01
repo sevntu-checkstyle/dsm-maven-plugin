@@ -7,16 +7,16 @@ import java.util.List;
 import org.junit.Test;
 
 
-public class DsmRowDataTest {
+public class DsmRowModelTest {
 
 	@Test
-	public void dsmRowData() {
+	public void dsmRowModelTest() {
 		List<String> numberOfDependencies = new ArrayList<String>();
 		numberOfDependencies.add("1");
 		numberOfDependencies.add("2");
-		DsmRowData dsmRowData = new DsmRowData(1, "row name", 2, numberOfDependencies);
+		DsmRowModel dsmRowData = new DsmRowModel(1, "row name", 2, numberOfDependencies);
 
-		assertTrue(dsmRowData.getDependencyContentCount() == 2);
+		assertTrue(dsmRowData.getContentCount() == 2);
 		assertTrue("row name".equals(dsmRowData.getName()));
 		assertTrue("1".equals(dsmRowData.getNumberOfDependencies().get(0)));
 		assertTrue("2".equals(dsmRowData.getNumberOfDependencies().get(1)));

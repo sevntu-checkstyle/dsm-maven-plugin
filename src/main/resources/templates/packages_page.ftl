@@ -24,8 +24,8 @@
 		<tr>
 			<td></td>
 			<td></td> 
-			<#list headerIndexes as i>
-			<td class="packageName_cols">${i}</td> 
+			<#list rows as i>
+			<td class="packageName_cols">${i.positionIndex}</td> 
 			</#list>
 		</tr>
 
@@ -34,9 +34,9 @@
 			<td class="packageName_rows">
 				<img src="./images/package.png"	alt="" class="" /> 
 				<a href="${package.name}.html" title="${package.name}" target="" class=""> 
-					${package.name} 
+					${package.truncatedName} 
 				</a>
-				(${package.dependencyContentCount})
+				(${package.contentCount})
 			</td>
 			<td class="packageNumber_rows">
 				${package.positionIndex}

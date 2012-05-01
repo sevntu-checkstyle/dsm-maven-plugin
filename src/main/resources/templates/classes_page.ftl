@@ -24,8 +24,8 @@
 		<tr>
 			<td></td>
 			<td></td>
-			<#list headerIndexes as i>
-			<td class="packageName_cols">${i}</td>
+			<#list rows as i>
+			<td class="packageName_cols">${i.positionIndex}</td>
   			</#list>
 		</tr>
 		
@@ -33,7 +33,7 @@
 		<tr>
 			<td class="packageName_rows">
 				<img src="./images/class.png" alt="${class.name}" class="" />
-				${class.name} (${class.dependencyContentCount})
+				${class.name}
 			</td>
 			<td class="packageNumber_rows">${class.positionIndex}</td>
 			<#list class.numberOfDependencies as dependCount>

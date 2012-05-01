@@ -4,8 +4,8 @@
 			<plugin>
 				<artifactId>dsm-maven-plugin</artifactId>
 				<configuration>
-					<dataFile>${basedir}</dataFile>
-					<outputDirectory>${basedir}/target/test-harness/report/site</outputDirectory>
+					<outputDirectory>${basedir}</outputDirectory>
+					<reportingOutputDirectory>${basedir}/target/test-harness/report/site</reportingOutputDirectory>
 				</configuration>
 			</plugin>
 		</plugins>

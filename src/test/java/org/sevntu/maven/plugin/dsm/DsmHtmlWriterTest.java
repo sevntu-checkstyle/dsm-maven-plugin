@@ -44,10 +44,10 @@ public class DsmHtmlWriterTest {
 
 	@Test
 	public void isEmptyStringTest() {
-		assertEquals(true, DsmHtmlWriter.isEmptyString(null));
-		assertEquals(true, DsmHtmlWriter.isEmptyString(""));
-		assertEquals(true, DsmHtmlWriter.isEmptyString("  "));
-		assertEquals(false, DsmHtmlWriter.isEmptyString("asd "));
+		assertEquals(true, DsmHtmlWriter.isNullOrEmpty(null));
+		assertEquals(true, DsmHtmlWriter.isNullOrEmpty(""));
+		assertEquals(true, DsmHtmlWriter.isNullOrEmpty("  "));
+		assertEquals(false, DsmHtmlWriter.isNullOrEmpty("asd "));
 	}
 
 
@@ -107,7 +107,7 @@ public class DsmHtmlWriterTest {
 		String result = "";
 
 		List<Integer> headerIndexes = new ArrayList<Integer>();
-		List<DsmRowData> dsmRowDatas = new ArrayList<DsmRowData>();
+		List<DsmRowModel> dsmRowDatas = new ArrayList<DsmRowModel>();
 		List<String> numberOfDependencies = new ArrayList<String>();
 
 		headerIndexes.add(1);
@@ -116,8 +116,8 @@ public class DsmHtmlWriterTest {
 		numberOfDependencies.add("1");
 		numberOfDependencies.add("2");
 
-		dsmRowDatas.add(new DsmRowData(1, "first name", 2, numberOfDependencies));
-		dsmRowDatas.add(new DsmRowData(2, "second name", 3, numberOfDependencies));
+		dsmRowDatas.add(new DsmRowModel(1, "first name", 2, numberOfDependencies));
+		dsmRowDatas.add(new DsmRowModel(2, "second name", 3, numberOfDependencies));
 
 		dataModel.put("title", "My title.");
 		dataModel.put("headerIndexes", headerIndexes);
@@ -130,8 +130,8 @@ public class DsmHtmlWriterTest {
 
 		assertTrue(result.indexOf("<td class=\"packageName_cols\">1</td>") > -1);
 		assertTrue(result.indexOf("<td class=\"packageName_cols\">2</td>") > -1);
-		assertTrue(result.indexOf("first name (2)") > -1);
-		assertTrue(result.indexOf("second name (3)") > -1);
+		assertTrue(result.indexOf("first name") > -1);
+		assertTrue(result.indexOf("second name") > -1);
 		assertTrue(result.indexOf("<td class=\"packageNumber_rows\">1</td>") > -1);
 		assertTrue(result.indexOf("<td class=\"packageNumber_rows\">2</td>") > -1);
 		assertTrue(result.indexOf("<td>1</td>") > -1);

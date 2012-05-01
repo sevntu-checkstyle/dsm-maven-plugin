@@ -45,7 +45,7 @@ public class DsmHtmlWriter {
 	 * @param aReportSiteDirectory
 	 */
 	public DsmHtmlWriter(String aReportSiteDirectory) {
-		if (aReportSiteDirectory == null || DsmHtmlWriter.isEmptyString(aReportSiteDirectory)) {
+		if (aReportSiteDirectory == null || DsmHtmlWriter.isNullOrEmpty(aReportSiteDirectory)) {
 			throw new IllegalArgumentException(
 					"Path to the report directory should not be null or empty");
 		}
@@ -129,19 +129,16 @@ public class DsmHtmlWriter {
 		if (aAnalysisResult == null) {
 			throw new IllegalArgumentException("Analysis structure should not be null");
 		}
-		if (isEmptyString(aName)) {
+		if (isNullOrEmpty(aName)) {
 			throw new IllegalArgumentException("Title of DSM should not be empty");
 		}
 
-		List<Integer> headerIndexes = new ArrayList<Integer>();
-		List<DsmRowData> dsmRowDatas = new ArrayList<DsmRowData>();
+		List<DsmRowModel> dsmRowDatas = new ArrayList<DsmRowModel>();
 
-		int packageIndex = 1;
-		for (DsmRow dsmRow : aDsm.getRows()) {
+		for (int packageIndex = 0; packageIndex < aDsm.getRows().size(); packageIndex++) {
+			DsmRow dsmRow = aDsm.getRows().get(packageIndex);
 
-			headerIndexes.add(packageIndex);
-
-			String packageName = formatName(dsmRow.getDependee().getDisplayName(), 40);
+			String packageName = dsmRow.getDependee().getDisplayName();
 			int dependencyContentCount = dsmRow.getDependee().getContentCount();
 
 			List<String> dependenciesNumbers = new ArrayList<String>();
@@ -149,16 +146,13 @@ public class DsmHtmlWriter {
 				dependenciesNumbers.add(formatDependency(dep, aAnalysisResult));
 			}
 
-			DsmRowData rowData = new DsmRowData(packageIndex, packageName, dependencyContentCount,
-					dependenciesNumbers);
+			DsmRowModel rowData = new DsmRowModel(packageIndex + 1, packageName,
+					dependencyContentCount, dependenciesNumbers);
 			dsmRowDatas.add(rowData);
-
-			packageIndex++;
 		}
 
 		Map<String, Object> dataModel = new HashMap<String, Object>();
 		dataModel.put("title", aName);
-		dataModel.put("headerIndexes", headerIndexes);
 		dataModel.put("rows", dsmRowDatas);
 
 		ByteArrayOutputStream baos = processTemplate(dataModel, templateName);
@@ -192,28 +186,11 @@ public class DsmHtmlWriter {
 
 
 	/**
-	 * Truncate package or class name
-	 * 
-	 * @param aName
-	 *            Package or class name
-	 * @param aLength
-	 *            Maximum length of name
-	 * @return Truncated name
-	 */
-	private String formatName(final String aName, final int aLength) {
-		if (aName.length() - 2 <= aLength) {
-			return aName;
-		}
-		return ".." + aName.substring(aName.length() - aLength - 2);
-	}
-
-
-	/**
 	 * 
 	 * @param aText
 	 * @return
 	 */
-	public final static boolean isEmptyString(String aText) {
+	public final static boolean isNullOrEmpty(String aText) {
 		return aText == null || aText.trim().isEmpty();
 	}
 
