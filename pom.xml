@@ -124,33 +124,6 @@
 			</plugin>
 		</plugins>
 	</build>
-<<<<<<< HEAD
-	
-	<reporting>
-		<plugins>
-			<plugin>
-				<groupId>com.sevntu</groupId>
-				<artifactId>maven-dsm-plugin</artifactId>
-				<version>1.0</version>
-				<reportSets>
-					<reportSet>
-						<reports>
-							<report>dsm</report>
-						</reports>
-					</reportSet>
-				</reportSets>
-			</plugin>
-			
-		<plugin>
-           <groupId>org.codehaus.mojo</groupId> 
-           <artifactId>findbugs-maven-plugin</artifactId> 
-           <version>2.3</version> 
-        </plugin>
-			
-		</plugins>
-	</reporting>
-=======
->>>>>>> a33c77ebf8ebce756fefbc383de6a12b8219533c
 
 	<!-- TODO publish dtangler to maven-central -->
 	<repositories>
