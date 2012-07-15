@@ -1,0 +1,13 @@
+<project>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>dsm-maven-plugin</artifactId>
+				<configuration>
+					<outputDirectory>${basedir}</outputDirectory>
+					<reportingOutputDirectory>${basedir}/target/test-harness/report/site</reportingOutputDirectory>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

@@ -1,4 +1,4 @@
-package com.sevntu.maven.plugin.dsm;
+package org.sevntu.maven.plugin.dsm;
 
 import java.io.File;
 import java.util.Locale;
@@ -15,14 +15,15 @@ import org.apache.maven.reporting.MavenReportException;
  * @goal dsm
  * @phase site
  */
-public class DsmMavenReport extends AbstractMavenReport {
+public class DsmReportMojo extends AbstractMavenReport {
 
 	/**
-	 * @parameter expression="${project}"
+	 * The output directory for the report.
+	 * 
+	 * @parameter default-value="${project.reporting.outputDirectory}"
 	 * @required
-	 * @readonly
 	 */
-	private MavenProject project;
+	private File reportingOutputDirectory;
 
 	/**
 	 * Specifies the directory where the report will be generated. Path to your
@@ -31,9 +32,7 @@ public class DsmMavenReport extends AbstractMavenReport {
 	 * @parameter default-value="${project.build.outputDirectory}"
 	 * @required
 	 */
-	private File buildOutputDirectory;
-
-	private File reportOutputDirectory;
+	private File outputDirectory;
 
 	/**
 	 * Folder name of DSM report
@@ -43,19 +42,13 @@ public class DsmMavenReport extends AbstractMavenReport {
 
 	@Override
 	protected MavenProject getProject() {
-		return project;
+		return null;
 	}
 
 
 	@Override
 	protected Renderer getSiteRenderer() {
-		throw new IllegalStateException("This method is not expected to be called");
-	}
-
-
-	@Override
-	protected String getOutputDirectory() {
-		return buildOutputDirectory.getAbsolutePath();
+		return null;
 	}
 
 
@@ -66,59 +59,29 @@ public class DsmMavenReport extends AbstractMavenReport {
 
 
 	@Override
-	public File getReportOutputDirectory() {
-		if (reportOutputDirectory == null) {
-			reportOutputDirectory = new File(getOutputDirectory());
-		}
-		return reportOutputDirectory;
-	}
-
-
-	@Override
-	public void setReportOutputDirectory(File reportOutputDirectory) {
-		this.reportOutputDirectory = reportOutputDirectory;
-	}
-
-
-	@Override
 	public String getName(final Locale aLocale) {
-		if (aLocale == null) {
-			throw new IllegalArgumentException("locale should not be null");
-		}
 		return getBundle(aLocale).getString("report.dsm-report.name");
 	}
 
 
 	@Override
 	public String getDescription(final Locale aLocale) {
-		if (aLocale == null) {
-			throw new IllegalArgumentException("locale should not be null");
-		}
 		return getBundle(aLocale).getString("report.dsm-report.description");
 	}
 
 
 	@Override
-	protected void executeReport(final Locale aLocale) throws MavenReportException {
-		if (aLocale == null) {
-			throw new IllegalArgumentException("locale should not be null");
-		}
-
-		DsmReport dsmReport = new DsmReport();
-		dsmReport.setOutputDirectory(getOutputDirectory());
-		dsmReport.setDsmReportSiteDirectory(reportOutputDirectory.getAbsolutePath()
-				+ File.separator + dsmDirectory);
-
-		dsmReport.startReport();
+	protected String getOutputDirectory() {
+		return reportingOutputDirectory.getAbsolutePath() + File.separator + dsmDirectory;
 	}
 
 
 	/**
-	 * @return Return true for create the report without using Doxia
+	 * 
+	 * @return project output directory
 	 */
-	@Override
-	public boolean isExternalReport() {
-		return true;
+	private String getSourseDir() {
+		return outputDirectory.getAbsolutePath();
 	}
 
 
@@ -132,4 +95,26 @@ public class DsmMavenReport extends AbstractMavenReport {
 	private ResourceBundle getBundle(final Locale aLocale) {
 		return ResourceBundle.getBundle("dsm-report", aLocale, getClass().getClassLoader());
 	}
+
+
+	@Override
+	protected void executeReport(final Locale aLocale) throws MavenReportException {
+		DsmReportEngine dsmReport = new DsmReportEngine();
+
+		dsmReport.setSourceDirectory(getSourseDir());
+		dsmReport.setOutputDirectory(getOutputDirectory());
+
+		try {
+			dsmReport.startReport();
+		} catch (Exception e) {
+			getLog().error("Error in Dsm Report generation: " + e.getMessage(), e);
+		}
+	}
+
+
+	@Override
+	public boolean isExternalReport() {
+		return true;
+	}
+
 }
