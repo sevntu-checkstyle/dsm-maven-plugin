@@ -82,7 +82,7 @@ public class DsmReportEngine {
 	 *            DSM structure
 	 * @return List of package names
 	 */
-	private List<String> getPackageNames(final Dsm aDsm) {
+	private static List<String> getPackageNames(final Dsm aDsm) {
 		List<DsmRow> dsmRowList = aDsm.getRows();
 		List<String> packageNames = new ArrayList<String>();
 		for (DsmRow dsmRow : dsmRowList) {
@@ -101,7 +101,7 @@ public class DsmReportEngine {
 	 *            Index of row wich analysing
 	 * @return Set of Dependables
 	 */
-	private Set<Dependable> getDependablesByRowIndex(final Dsm aDsm, final int aRow) {
+	private static Set<Dependable> getDependablesByRowIndex(final Dsm aDsm, final int aRow) {
 		Set<Dependable> result = new HashSet<Dependable>();
 		result.add(aDsm.getRows().get(aRow).getDependee());
 		return result;
@@ -117,7 +117,7 @@ public class DsmReportEngine {
 	 *            Dependencies structure
 	 * @return AnalysisResult structure
 	 */
-	private AnalysisResult getAnalysisResult(final Arguments aArguments,
+	private static AnalysisResult getAnalysisResult(final Arguments aArguments,
 			final Dependencies aDependencies) {
 		return new ConfigurableDependencyAnalyzer(aArguments).analyze(aDependencies);
 	}
@@ -180,7 +180,7 @@ public class DsmReportEngine {
 	 * Print dsm for packages
 	 * 
 	 * @param aDsm
-	 *            Project dependensies
+	 *            Project dependencies
 	 * @param aAnalysisResult
 	 *            Analysis result
 	 */
@@ -199,7 +199,7 @@ public class DsmReportEngine {
 	 */
 	private void printDsmNavigation(Dsm aDsm) throws Exception {
 		List<String> packageNames = getPackageNames(aDsm);
-		dsmHtmlWriter.printNavigateDsmPackages(packageNames);
+		dsmHtmlWriter.printDsmPackagesNavigation(packageNames);
 	}
 
 
@@ -219,7 +219,7 @@ public class DsmReportEngine {
 	 */
 	private void printDsmForClasses(final Dsm aDsm, final Dependencies aDependencies,
 			final AnalysisResult aAnalysisResult, final List<String> aPackageNames)
-			throws Exception {
+			        throws Exception {
 		Scope scope = aDependencies.getChildScope(aDependencies.getDefaultScope());
 
 		for (int packageIndex = 0; packageIndex < aDsm.getRows().size(); packageIndex++) {

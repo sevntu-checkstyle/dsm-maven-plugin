@@ -36,7 +36,7 @@
 				<a href="${package.name}.html" title="${package.name}" target="" class=""> 
 					${package.truncatedName} 
 				</a>
-				(${package.contentCount})
+				(${package.numberOfClasses})
 			</td>
 			<td class="packageNumber_rows">
 				${package.positionIndex}
