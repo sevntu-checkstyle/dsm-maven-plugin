@@ -47,7 +47,10 @@
 			<name>Ivan Sopov</name>
 			<email>sopov.ivan@gmail.com</email>
 			<url>http://moradanen.sopovs.com</url>
-		</developer> 
+		</developer>
+		<developer>
+            <name>Ilja Dubinin</name>
+        </developer> 
 	</developers>
 
 	<dependencies>

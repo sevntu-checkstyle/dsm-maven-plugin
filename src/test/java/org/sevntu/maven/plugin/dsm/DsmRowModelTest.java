@@ -16,7 +16,7 @@ public class DsmRowModelTest {
 		numberOfDependencies.add("2");
 		DsmRowModel dsmRowData = new DsmRowModel(1, "row name", 2, numberOfDependencies);
 
-		assertTrue(dsmRowData.getContentCount() == 2);
+		assertTrue(dsmRowData.getnumberOfClasses() == 2);
 		assertTrue("row name".equals(dsmRowData.getName()));
 		assertTrue("1".equals(dsmRowData.getNumberOfDependencies().get(0)));
 		assertTrue("2".equals(dsmRowData.getNumberOfDependencies().get(1)));
