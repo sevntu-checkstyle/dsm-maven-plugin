@@ -90,7 +90,7 @@ public class DsmHtmlWriterTest {
 		DsmHtmlWriter dsmHtmlWriter = new DsmHtmlWriter("target/testDir");
 		Exception ex = null;
 		try {
-			dsmHtmlWriter.printNavigateDsmPackages(null);
+			dsmHtmlWriter.printDsmPackagesNavigation(null);
 		} catch (Exception e) {
 			ex = e;
 			assertEquals("List of package names should not be null", e.getMessage());
@@ -123,7 +123,7 @@ public class DsmHtmlWriterTest {
 		dataModel.put("headerIndexes", headerIndexes);
 		dataModel.put("rows", dsmRowDatas);
 		try {
-			result = dsmHtmlWriter.processTemplate(dataModel, templateName).toString();
+			result = dsmHtmlWriter.renderTemplate(dataModel, templateName).toString();
 		} catch (Exception e) {
 			assertNotNull(e);
 		}

@@ -19,10 +19,10 @@ public class DsmRowModel {
 	/**
 	 * Number of classes contained in the package
 	 */
-	private int contentCount;
+	private int numberOfClasses;
 
 	/**
-	 * Paccage or class index in dsm
+	 * Package or class index in dsm
 	 */
 	private int positionIndex;
 
@@ -31,7 +31,7 @@ public class DsmRowModel {
 			List<String> aNumberOfDependencies) {
 		positionIndex = aPositionIndex;
 		name = aName;
-		contentCount = aContentCount;
+		numberOfClasses = aContentCount;
 		numberOfDependencies = aNumberOfDependencies;
 	}
 
@@ -62,10 +62,10 @@ public class DsmRowModel {
 
 
 	/**
-	 * @return the depCount
+	 * @return number of classes contained in the package
 	 */
-	public int getContentCount() {
-		return contentCount;
+	public int getnumberOfClasses() {
+		return numberOfClasses;
 	}
 
 
