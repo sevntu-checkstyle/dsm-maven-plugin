@@ -1,0 +1,22 @@
+How to use plugin:
+
+Add <reporting> section to your pom.xml and <plugin> inside it.
+
+For example:
+
+    <reporting>
+    
+        <plugins>
+            <plugin>
+                <groupId>org.sevntu</groupId>
+                <artifactId>dsm-maven-plugin</artifactId>
+                <version>2.1</version>
+            </plugin>
+
+            <!--  other reportin plugins  -->
+
+        </plugins>
+
+    </reporting>
+    
+Run mvn site. Enjoy :)
