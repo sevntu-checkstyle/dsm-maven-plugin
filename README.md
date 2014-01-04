@@ -4,7 +4,7 @@
 Maven plugin to create HTML report to show dependecies in DSM view.
 
 
-How to use plugin:
+### How to use plugin:
 
 Add <reporting> section to your pom.xml and <plugin> inside it.
 
@@ -25,4 +25,4 @@ For example:
 
     </reporting>
     
-Run mvn site. Enjoy :)
+Run "mvn site". Enjoy :)
