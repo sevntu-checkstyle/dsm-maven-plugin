@@ -1,6 +1,5 @@
 # dsm-maven-plugin [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/sevntu-checkstyle/dsm-maven-plugin/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
-=================
 
 Maven plugin to create HTML report to show dependecies in DSM view.
 
