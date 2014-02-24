@@ -254,7 +254,7 @@ public class DsmReportEngine {
 		// check directory
 		if (aDirName != null && !aDirName.isEmpty()) {
 			new File(aSiteDirectory + aDirName).mkdirs();
-			fileName = aDirName + File.separator + aFileName;
+			fileName = aDirName + "/" + aFileName;
 		} else {
 			fileName = aFileName;
 		}
@@ -281,7 +281,7 @@ public class DsmReportEngine {
 			byte[] buffer = new byte[1024];
 
 			outputStream = new FileOutputStream(new File(aSiteDirectory + aFileName));
-			inputStream = DsmReportEngine.class.getResourceAsStream(File.separator + aFileName);
+			inputStream = DsmReportEngine.class.getResourceAsStream("/" + aFileName);
 
 			while ((numberOfBytes = inputStream.read(buffer)) > 0) {
 				outputStream.write(buffer, 0, numberOfBytes);
