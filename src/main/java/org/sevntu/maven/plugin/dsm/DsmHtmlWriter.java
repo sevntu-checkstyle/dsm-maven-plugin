@@ -8,8 +8,10 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.dtangler.core.analysisresult.AnalysisResult;
 import org.dtangler.core.analysisresult.Violation.Severity;
@@ -100,7 +102,7 @@ public class DsmHtmlWriter {
 	 * @param aPackageNames
 	 *            List of package names
 	 */
-	public void printDsmPackagesNavigation(final List<String> aPackageNames) throws Exception {
+	public void printDsmPackagesNavigation(final Set<String> aPackageNames) throws Exception {
 		if (aPackageNames == null) {
 			throw new IllegalArgumentException("List of package names should not be null");
 		}
@@ -136,22 +138,26 @@ public class DsmHtmlWriter {
 			throw new IllegalArgumentException("Title of DSM should not be empty");
 		}
 
-		List<DsmRowModel> dsmRowsData = new ArrayList<DsmRowModel>();
+		Set<DsmRowModel> dsmRowsData = new TreeSet<DsmRowModel>();
 
-		for (int packageIndex = 0; packageIndex < aDsm.getRows().size(); packageIndex++) {
-			DsmRow dsmRow = aDsm.getRows().get(packageIndex);
+		for (DsmRow dsmRow : aDsm.getRows()) {
+			String rowName = dsmRow.getDependee().getDisplayName();
+			int dependeeContentCount = dsmRow.getDependee().getContentCount();
 
-			String packageName = dsmRow.getDependee().getDisplayName();
-			int dependencyContentCount = dsmRow.getDependee().getContentCount();
-
-			List<String> dependenciesNumbers = new ArrayList<String>();
+			Map<String, String> dependenciesNumbers = new TreeMap<>();
 			for (DsmCell dep : dsmRow.getCells()) {
-				dependenciesNumbers.add(formatDependency(dep, aAnalysisResult, scope));
+				String cellName = dep.getDependency().getDependant().getDisplayName();
+				dependenciesNumbers.put(cellName, formatDependency(dep, aAnalysisResult, scope));
 			}
 
-			DsmRowModel rowData = new DsmRowModel(packageIndex + 1, packageName,
-					dependencyContentCount, dependenciesNumbers);
+			DsmRowModel rowData = new DsmRowModel(rowName, dependeeContentCount,
+					new ArrayList<String>(dependenciesNumbers.values()));
 			dsmRowsData.add(rowData);
+		}
+
+		int rowIndex = 0;
+		for (DsmRowModel dsmRowModel : dsmRowsData) {
+			dsmRowModel.setPositionIndex(++rowIndex);
 		}
 
 		Map<String, Object> dataModel = new HashMap<String, Object>();

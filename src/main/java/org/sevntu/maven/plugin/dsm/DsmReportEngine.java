@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.dtangler.core.analysis.configurableanalyzer.ConfigurableDependencyAnalyzer;
 import org.dtangler.core.analysisresult.AnalysisResult;
@@ -82,29 +83,13 @@ public class DsmReportEngine {
 	 *            DSM structure
 	 * @return List of package names
 	 */
-	private static List<String> getPackageNames(final Dsm aDsm) {
+	private static Set<String> getPackageNames(final Dsm aDsm) {
 		List<DsmRow> dsmRowList = aDsm.getRows();
-		List<String> packageNames = new ArrayList<String>();
+		Set<String> packageNames = new TreeSet<String>();
 		for (DsmRow dsmRow : dsmRowList) {
 			packageNames.add(dsmRow.getDependee().toString());
 		}
 		return packageNames;
-	}
-
-
-	/**
-	 * Get Set of dependables.
-	 * 
-	 * @param aDsm
-	 *            Dsm
-	 * @param aRow
-	 *            Index of row wich analysing
-	 * @return Set of Dependables
-	 */
-	private static Set<Dependable> getDependablesByRowIndex(final Dsm aDsm, final int aRow) {
-		Set<Dependable> result = new HashSet<Dependable>();
-		result.add(aDsm.getRows().get(aRow).getDependee());
-		return result;
 	}
 
 
@@ -156,7 +141,7 @@ public class DsmReportEngine {
 
 		printDsmNavigation(dsm);
 		printDsmForPackages(dsm, analysisResult, dependencies.getDefaultScope());
-		printDsmForClasses(dsm, dependencies, analysisResult, getPackageNames(dsm));
+		printDsmForClasses(dsm, dependencies, analysisResult);
 		printDsmBetweenClassesOfDifferentPackages(dependencies, analysisResult);
 
 		copySiteSource();
@@ -182,7 +167,8 @@ public class DsmReportEngine {
 				dependablePackages.add(depRow);
 
 				DependencyGraph dg = dependencies.getDependencyGraph(classScope,
-						dependablePackages, Dependencies.DependencyFilter.itemsContributingToTheParentDependencyWeight);
+						dependablePackages,
+						Dependencies.DependencyFilter.itemsContributingToTheParentDependencyWeight);
 
 				String dsmName = depCell.getDisplayName() + "-" + depRow.getDisplayName();
 				Dsm dsm = new DsmEngine(dg).createDsm();
@@ -229,7 +215,7 @@ public class DsmReportEngine {
 	 * @throws Exception
 	 */
 	private void printDsmNavigation(Dsm aDsm) throws Exception {
-		List<String> packageNames = getPackageNames(aDsm);
+		Set<String> packageNames = getPackageNames(aDsm);
 		dsmHtmlWriter.printDsmPackagesNavigation(packageNames);
 	}
 
@@ -249,19 +235,21 @@ public class DsmReportEngine {
 	 * @throws Exception
 	 */
 	private void printDsmForClasses(final Dsm aDsm, final Dependencies aDependencies,
-			final AnalysisResult aAnalysisResult, final List<String> aPackageNames)
-			throws Exception {
+			final AnalysisResult aAnalysisResult) throws Exception {
 		Scope scope = aDependencies.getChildScope(aDependencies.getDefaultScope());
 
-		for (int packageIndex = 0; packageIndex < aDsm.getRows().size(); packageIndex++) {
-			Set<Dependable> ependableSet = getDependablesByRowIndex(aDsm, packageIndex);
+		for (DsmRow depRow : aDsm.getRows()) {
+			Dependable dependable = depRow.getDependee();
+
+			Set<Dependable> ependableSet = new HashSet<>();
+			ependableSet.add(dependable);
 
 			DependencyGraph dependencyGraph = aDependencies.getDependencyGraph(scope, ependableSet,
 					Dependencies.DependencyFilter.none);
 
 			Dsm dsm = new DsmEngine(dependencyGraph).createDsm();
 
-			dsmHtmlWriter.printDsm(dsm, aAnalysisResult, scope, aPackageNames.get(packageIndex),
+			dsmHtmlWriter.printDsm(dsm, aAnalysisResult, scope, dependable.getDisplayName(),
 					DsmHtmlWriter.FTL_CLASSES_PAGE);
 		}
 	}
