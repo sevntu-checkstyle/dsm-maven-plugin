@@ -10,8 +10,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.dtangler.core.analysisresult.AnalysisResult;
 import org.dtangler.core.analysisresult.Violation;
+import org.dtangler.core.dependencies.Dependencies;
 import org.dtangler.core.dependencies.Dependency;
 import org.dtangler.core.dsm.Dsm;
 import org.dtangler.core.dsm.DsmRow;
@@ -56,7 +58,7 @@ public class DsmHtmlWriterTest {
 		DsmHtmlWriter dsmHtmlWriter = new DsmHtmlWriter("target/testDir");
 		Exception ex = null;
 		try {
-			dsmHtmlWriter.printDsm(null, null, null, null);
+			dsmHtmlWriter.printDsm(null, null, null, null, null);
 		} catch (Exception e) {
 			ex = e;
 			assertEquals("DSM structure should not be null", e.getMessage());
@@ -65,7 +67,7 @@ public class DsmHtmlWriterTest {
 
 		ex = null;
 		try {
-			dsmHtmlWriter.printDsm(new Dsm(new ArrayList<DsmRow>()), null, null, null);
+			dsmHtmlWriter.printDsm(new Dsm(new ArrayList<DsmRow>()), null, null, null, null);
 		} catch (Exception e) {
 			ex = e;
 			assertEquals("Analysis structure should not be null", e.getMessage());
@@ -76,7 +78,7 @@ public class DsmHtmlWriterTest {
 		try {
 			dsmHtmlWriter.printDsm(new Dsm(new ArrayList<DsmRow>()), new AnalysisResult(
 					new HashMap<Dependency, Set<Violation>>(), new HashSet<Violation>(), true),
-					null, null);
+					new Dependencies().getDefaultScope(), null, null);
 		} catch (Exception e) {
 			ex = e;
 			assertEquals("Title of DSM should not be empty", e.getMessage());

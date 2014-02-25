@@ -155,10 +155,41 @@ public class DsmReportEngine {
 		Dsm dsm = new DsmEngine(dependencyGraph).createDsm();
 
 		printDsmNavigation(dsm);
-		printDsmForPackages(dsm, analysisResult);
+		printDsmForPackages(dsm, analysisResult, dependencies.getDefaultScope());
 		printDsmForClasses(dsm, dependencies, analysisResult, getPackageNames(dsm));
+		printDsmBetweenClassesOfDifferentPackages(dependencies, analysisResult);
 
 		copySiteSource();
+	}
+
+
+	private void printDsmBetweenClassesOfDifferentPackages(final Dependencies dependencies,
+			final AnalysisResult ar) throws Exception {
+		Scope classScope = dependencies.getChildScope(dependencies.getDefaultScope());
+
+		DependencyGraph graph = dependencies.getDependencyGraph(dependencies.getDefaultScope());
+		Set<Dependable> set = graph.getAllItems();
+
+		for (Dependable depCell : set) {
+			for (Dependable depRow : set) {
+				if (depCell == depRow) {
+					// it is the same package
+					continue;
+				}
+
+				HashSet<Dependable> dependablePackages = new HashSet<>();
+				dependablePackages.add(depCell);
+				dependablePackages.add(depRow);
+
+				DependencyGraph dg = dependencies.getDependencyGraph(classScope,
+						dependablePackages, Dependencies.DependencyFilter.itemsContributingToTheParentDependencyWeight);
+
+				String dsmName = depCell.getDisplayName() + "-" + depRow.getDisplayName();
+				Dsm dsm = new DsmEngine(dg).createDsm();
+				dsmHtmlWriter
+						.printDsm(dsm, ar, classScope, dsmName, DsmHtmlWriter.FTL_CLASSES_PAGE);
+			}
+		}
 	}
 
 
@@ -184,9 +215,9 @@ public class DsmReportEngine {
 	 * @param aAnalysisResult
 	 *            Analysis result
 	 */
-	private void printDsmForPackages(final Dsm aDsm, final AnalysisResult aAnalysisResult)
-			throws Exception {
-		dsmHtmlWriter.printDsm(aDsm, aAnalysisResult, "all_packages",
+	private void printDsmForPackages(final Dsm aDsm, final AnalysisResult aAnalysisResult,
+			Scope scope) throws Exception {
+		dsmHtmlWriter.printDsm(aDsm, aAnalysisResult, scope, "all_packages",
 				DsmHtmlWriter.FTL_PACKAGES_PAGE);
 	}
 
@@ -219,7 +250,7 @@ public class DsmReportEngine {
 	 */
 	private void printDsmForClasses(final Dsm aDsm, final Dependencies aDependencies,
 			final AnalysisResult aAnalysisResult, final List<String> aPackageNames)
-			        throws Exception {
+			throws Exception {
 		Scope scope = aDependencies.getChildScope(aDependencies.getDefaultScope());
 
 		for (int packageIndex = 0; packageIndex < aDsm.getRows().size(); packageIndex++) {
@@ -230,7 +261,7 @@ public class DsmReportEngine {
 
 			Dsm dsm = new DsmEngine(dependencyGraph).createDsm();
 
-			dsmHtmlWriter.printDsm(dsm, aAnalysisResult, aPackageNames.get(packageIndex),
+			dsmHtmlWriter.printDsm(dsm, aAnalysisResult, scope, aPackageNames.get(packageIndex),
 					DsmHtmlWriter.FTL_CLASSES_PAGE);
 		}
 	}
