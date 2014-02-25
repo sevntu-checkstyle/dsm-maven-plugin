@@ -3,7 +3,7 @@ package org.sevntu.maven.plugin.dsm;
 import java.util.List;
 
 
-public class DsmRowModel {
+public class DsmRowModel implements Comparable<DsmRowModel> {
 
 	/**
 	 * Package or class name
@@ -27,12 +27,17 @@ public class DsmRowModel {
 	private int positionIndex;
 
 
-	public DsmRowModel(int aPositionIndex, String aName, int aContentCount,
-			List<String> aNumberOfDependencies) {
-		positionIndex = aPositionIndex;
+	public DsmRowModel(String aName, int aContentCount, List<String> aNumberOfDependencies) {
 		name = aName;
 		numberOfClasses = aContentCount;
 		numberOfDependencies = aNumberOfDependencies;
+	}
+
+
+	public DsmRowModel(int positionIndex, String aName, int aContentCount,
+			List<String> aNumberOfDependencies) {
+		this(aName, aContentCount, aNumberOfDependencies);
+		this.positionIndex = positionIndex;
 	}
 
 
@@ -78,6 +83,15 @@ public class DsmRowModel {
 
 
 	/**
+	 * 
+	 * @param positionIndex
+	 */
+	public void setPositionIndex(int positionIndex) {
+		this.positionIndex = positionIndex;
+	}
+
+
+	/**
 	 * Truncate package or class name
 	 * 
 	 * @param aName
@@ -91,5 +105,11 @@ public class DsmRowModel {
 			return aName;
 		}
 		return ".." + aName.substring(aName.length() - aLength - 2);
+	}
+
+
+	@Override
+	public int compareTo(DsmRowModel o) {
+		return name.compareTo(o.name);
 	}
 }
