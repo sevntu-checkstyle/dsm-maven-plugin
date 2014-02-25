@@ -186,7 +186,6 @@ public class DsmHtmlWriter {
 				dependencyType = dependencyType + "C";
 			}
 
-			System.out.println("scope.index: " + scope.index());
 			if (scope.index() != 2) {
 				Dependency dep = dsmCell.getDependency();
 				String dsmName = dep.getDependant().getDisplayName() + "-"
