@@ -15,7 +15,7 @@ For example:
             <plugin>
                 <groupId>org.sevntu</groupId>
                 <artifactId>dsm-maven-plugin</artifactId>
-                <version>2.2</version>
+                <version>2.3</version>
             </plugin>
 
             <!--  other reportin plugins  -->
