@@ -40,14 +40,33 @@ table {
 	font-family: Verdana, Helvetica, Arial, sans-serif;
 	font-size: 11px;
 }
+th {
+	padding: 2px;
+	margin: 0;
+	border: solid 0px #000000;
+	min-height: 18px;
+	min-width: 18px;
+	color: #444444
+}
+
 td {
 	padding: 2px;
 	margin: 0;
 	border: solid 0px #000000;
 	min-height: 18px;
 	min-width: 18px;
+	color: #444444
 }
 
+.cycle {
+	color: red;
+}
+
+#first-row {
+	height: 170px;
+	text-align: left;
+	vertical-align: bottom;
+}
 
 .packageName_rows {
 	color: black;
@@ -60,6 +79,14 @@ td {
 	white-space: nowrap;
 	font-family: Verdana, Helvetica, Arial, sans-serif;
 	font-size: 11px;
+}
+
+tr th {
+	color: black;
+	background-color: #ddd;
+	border-left:solid 1px #ffffff;
+	border-bottom:solid 1px #ffffff;
+	font-weight: bold;
 }
 
 tr td {
@@ -90,6 +117,18 @@ tr td {
 	border-left:solid 1px #000000;
 	border-bottom:solid 1px #000000;
 }
+
+.vertical_text {
+	-moz-transform: rotate(270deg);
+	-webkit-transform: rotate(270deg);
+	-o-transform: rotate(270deg);
+	-ms-transform: rotate(180deg);
+	writing-mode: tb-rl;
+	display: inline-block;
+	padding-bottom: 5px;
+	width: 20px;
+}
+
 
 
 

@@ -3,6 +3,7 @@ package org.sevntu.maven.plugin.dsm;
 import java.io.File;
 import java.util.Locale;
 import java.util.ResourceBundle;
+
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
@@ -10,108 +11,129 @@ import org.apache.maven.reporting.MavenReportException;
 
 /**
  * Initialising DSM plugin.
+ * 
  * @goal dsm
  * @phase site
+ * 
+ * @author Yuri Balakhonov
+ * @author Ilja Dubinin
  */
-public class DsmReportMojo extends AbstractMavenReport
-{
+public class DsmReportMojo extends AbstractMavenReport {
 
-    /**
-     * The output directory for the report.
-     * @parameter default-value="${project.reporting.outputDirectory}"
+	/**
+	 * Folder name of DSM report
+	 */
+	private final String dsmDirectory = "dsm";
+
+	/**
+	 * The output directory for the report.
+	 * 
+	 * @parameter default-value="${project.reporting.outputDirectory}"
+	 * @required
+	 */
+	private File reportingOutputDirectory;
+
+	/**
+	 * Specifies the directory where the report will be generated. Path to your "target/classes" dir
+	 * 
+	 * @parameter default-value="${project.build.outputDirectory}"
+	 * @required
+	 */
+	private File outputDirectory;
+
+	/**
+	 * Obfuscate package names.
+	 * 
+	 * @parameter expression="${obfuscatePackageNames}" default-value="false"
+	 */
+	private boolean obfuscatePackageNames;
+
+	/**
+     * @parameter default-value="${project}"
      * @required
+     * @readonly
      */
-    private File reportingOutputDirectory;
+    private MavenProject project;
 
     /**
-     * Specifies the directory where the report will be generated. Path to your
-     * "target/classes" dir
-     * @parameter default-value="${project.build.outputDirectory}"
+     * @component
      * @required
+     * @readonly
      */
-    private File outputDirectory;
+    private Renderer siteRenderer;
 
-    /**
-     * Folder name of DSM report
-     */
-    private String dsmDirectory = "dsm";
 
-    @Override
-    protected MavenProject getProject()
-    {
-        return null;
-    }
+	public void setObfuscatePackageNames(boolean aObfuscate) {
+		this.obfuscatePackageNames = aObfuscate;
+	}
 
-    @Override
-    protected Renderer getSiteRenderer()
-    {
-        return null;
-    }
+	@Override
+	protected MavenProject getProject() {
+		return project;
+	}
 
-    @Override
-    public String getOutputName()
-    {
-        return dsmDirectory + File.separator + "index";
-    }
+	@Override
+	protected Renderer getSiteRenderer() {
+		return siteRenderer;
+	}
 
-    @Override
-    public String getName(final Locale aLocale)
-    {
-        return getBundle(aLocale).getString("report.dsm-report.name");
-    }
+	@Override
+	public String getOutputName() {
+		return dsmDirectory + File.separator + "index";
+	}
 
-    @Override
-    public String getDescription(final Locale aLocale)
-    {
-        return getBundle(aLocale).getString("report.dsm-report.description");
-    }
+	@Override
+	public String getName(final Locale aLocale) {
+		return getBundle(aLocale).getString("report.dsm-report.name");
+	}
 
-    @Override
-    protected String getOutputDirectory()
-    {
-        return reportingOutputDirectory.getAbsolutePath() + File.separator + dsmDirectory;
-    }
+	@Override
+	public String getDescription(final Locale aLocale) {
+		return getBundle(aLocale).getString("report.dsm-report.description");
+	}
 
-    /**
-     * @return project output directory
-     */
-    private String getSourseDir()
-    {
-        return outputDirectory.getAbsolutePath();
-    }
+	@Override
+	protected String getOutputDirectory() {
+		return reportingOutputDirectory.getAbsolutePath() + File.separator + dsmDirectory;
+	}
 
-    /**
-     * Gets the resource bundle for the specified locale.
-     * @param aLocale
-     *        The locale of the currently generated report.
-     * @return The resource bundle for the requested locale.
-     */
-    private ResourceBundle getBundle(final Locale aLocale)
-    {
-        return ResourceBundle.getBundle("dsm-report", aLocale, getClass().getClassLoader());
-    }
+	/**
+	 * @return project output directory
+	 */
+	private String getSourseDir() {
+		return outputDirectory.getAbsolutePath();
+	}
 
-    @Override
-    protected void executeReport(final Locale aLocale)
-            throws MavenReportException
-    {
-        DsmReportEngine dsmReport = new DsmReportEngine();
+	/**
+	 * Gets the resource bundle for the specified locale.
+	 * 
+	 * @param aLocale
+	 *            The locale of the currently generated report.
+	 * @return The resource bundle for the requested locale.
+	 */
+	private ResourceBundle getBundle(final Locale aLocale) {
+		return ResourceBundle.getBundle("dsm-report", aLocale, getClass().getClassLoader());
+	}
 
-        dsmReport.setSourceDirectory(getSourseDir());
-        dsmReport.setOutputDirectory(getOutputDirectory());
+	@Override
+	protected void executeReport(final Locale aLocale)
+			throws MavenReportException {
+		DsmReportEngine dsmReport = new DsmReportEngine();
 
-        try {
-            dsmReport.startReport();
-        }
-        catch (Exception e) {
-            getLog().error("Error in Dsm Report generation: " + e.getMessage(), e);
-        }
-    }
+		dsmReport.setObfuscatePackageNames(obfuscatePackageNames);
+		dsmReport.setSourceDirectory(getSourseDir());
+		dsmReport.setOutputDirectory(getOutputDirectory());
 
-    @Override
-    public boolean isExternalReport()
-    {
-        return true;
-    }
+		try {
+			dsmReport.report();
+		} catch (Exception e) {
+			throw new MavenReportException( "Error in DSM Report generation.", e);
+		}
+	}
+
+	@Override
+	public boolean isExternalReport() {
+		return true;
+	}
 
 }

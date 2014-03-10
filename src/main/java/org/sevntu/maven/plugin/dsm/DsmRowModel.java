@@ -2,7 +2,11 @@ package org.sevntu.maven.plugin.dsm;
 
 import java.util.List;
 
-
+/**
+ * 
+ * @author Yuri Balakhonov
+ * @author Ilja Dubinin
+ */
 public class DsmRowModel {
 
 	/**
@@ -10,31 +14,25 @@ public class DsmRowModel {
 	 */
 	private String name;
 
-	/**
-	 * List of dependencies. Contain number of dependencies with other
-	 * classes/packages
-	 */
-	private List<String> numberOfDependencies;
+	private String obfuscatedPackageName;
 
 	/**
-	 * Number of classes contained in the package
+	 * List of dependencies. Contain number of dependencies with other classes/packages
 	 */
-	private int numberOfClasses;
+	private List<String> numberOfDependencies;
 
 	/**
 	 * Package or class index in dsm
 	 */
 	private int positionIndex;
 
-
-	public DsmRowModel(int aPositionIndex, String aName, int aContentCount,
+	public DsmRowModel(int aPositionIndex, String aName, String obfuscatedPackageName,
 			List<String> aNumberOfDependencies) {
 		positionIndex = aPositionIndex;
 		name = aName;
-		numberOfClasses = aContentCount;
+		this.obfuscatedPackageName = obfuscatedPackageName;
 		numberOfDependencies = aNumberOfDependencies;
 	}
-
 
 	/**
 	 * @return the name
@@ -43,15 +41,12 @@ public class DsmRowModel {
 		return name;
 	}
 
-
 	/**
-	 * 
 	 * @return truncated name
 	 */
-	public String getTruncatedName() {
-		return formatName(name, 40);
+	public String getObfuscatedPackageName() {
+		return obfuscatedPackageName;
 	}
-
 
 	/**
 	 * @return the numberOfDependencies
@@ -60,15 +55,6 @@ public class DsmRowModel {
 		return numberOfDependencies;
 	}
 
-
-	/**
-	 * @return number of classes contained in the package
-	 */
-	public int getnumberOfClasses() {
-		return numberOfClasses;
-	}
-
-
 	/**
 	 * @return the positionIndex
 	 */
@@ -76,20 +62,4 @@ public class DsmRowModel {
 		return positionIndex;
 	}
 
-
-	/**
-	 * Truncate package or class name
-	 * 
-	 * @param aName
-	 *            Package or class name
-	 * @param aLength
-	 *            Maximum length of name
-	 * @return Truncated name
-	 */
-	public String formatName(final String aName, final int aLength) {
-		if (aName.length() - 2 <= aLength) {
-			return aName;
-		}
-		return ".." + aName.substring(aName.length() - aLength - 2);
-	}
 }

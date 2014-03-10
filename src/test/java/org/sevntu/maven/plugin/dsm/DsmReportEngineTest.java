@@ -2,6 +2,7 @@ package org.sevntu.maven.plugin.dsm;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import junit.framework.Assert;
 
 import org.junit.Test;
 
@@ -14,6 +15,7 @@ public class DsmReportEngineTest {
 		DsmReportEngine dsmReport = new DsmReportEngine();
 		try {
 			dsmReport.setOutputDirectory(null);
+			Assert.fail();
 		} catch (IllegalArgumentException e) {
 			ex = e;
 			assertEquals("Dsm directory is empty.", e.getMessage());
@@ -28,14 +30,22 @@ public class DsmReportEngineTest {
 		DsmReportEngine dsmReport = new DsmReportEngine();
 		try {
 			dsmReport.setSourceDirectory(null);
+			Assert.fail();
 		} catch (IllegalArgumentException e) {
-			ex = e;
-			assertEquals("Source directory is empty.", e.getMessage());
+			assertEquals("Source directory path can't be empty.", e.getMessage());
+		}
+
+		try {
+			dsmReport.setSourceDirectory("");
+			Assert.fail();
+		} catch (IllegalArgumentException e) {
+			assertEquals("Source directory path can't be empty.", e.getMessage());
 		}
 
 		try {
 			dsmReport.setSourceDirectory("/not/exists/directory");
-		} catch (RuntimeException e) {
+			Assert.fail();
+		} catch (IllegalArgumentException e) {
 			ex = e;
 			assertEquals("Source directory '/not/exists/directory' not exists", e.getMessage());
 		}
