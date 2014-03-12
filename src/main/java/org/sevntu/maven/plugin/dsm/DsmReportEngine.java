@@ -11,11 +11,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.maven.reporting.MavenReportException;
 import org.dtangler.core.analysis.configurableanalyzer.ConfigurableDependencyAnalyzer;
 import org.dtangler.core.analysisresult.AnalysisResult;
 import org.dtangler.core.configuration.Arguments;
-import org.dtangler.core.dependencies.Dependencies;
 import org.dtangler.core.dependencies.Dependable;
+import org.dtangler.core.dependencies.Dependencies;
 import org.dtangler.core.dependencies.DependencyGraph;
 import org.dtangler.core.dependencies.Scope;
 import org.dtangler.core.dependencyengine.DependencyEngine;
@@ -24,12 +25,13 @@ import org.dtangler.core.dsm.Dsm;
 import org.dtangler.core.dsm.DsmRow;
 import org.dtangler.core.dsmengine.DsmEngine;
 
+import com.google.common.base.Strings;
 
 /**
  * This class begins dependency analysis of input files
  * 
  * @author Yuri Balakhonov
- * 
+ * @author Ilja Dubinin
  */
 public class DsmReportEngine {
 
@@ -45,22 +47,26 @@ public class DsmReportEngine {
 	 */
 	private String sourceDirectory;
 
+	/**
+	 * Obfuscate packages names.
+	 */
+	private boolean obfuscatePackageNames;
 
 	/**
 	 * 
 	 * @param aSourceDirectory
 	 *            Full output directory path
+	 * @throws MavenReportException 
 	 */
-	public void setSourceDirectory(final String aSourceDirectory) {
-		if (DsmHtmlWriter.isNullOrEmpty(aSourceDirectory)) {
-			throw new IllegalArgumentException("Source directory is empty.");
+	public void setSourceDirectory(final String aSourceDirectory) throws IllegalArgumentException {
+		if (Strings.isNullOrEmpty(aSourceDirectory)) {
+			throw new IllegalArgumentException("Source directory path can't be empty.");
 		}
 		if (!new File(aSourceDirectory).exists()) {
-			throw new RuntimeException("Source directory '" + aSourceDirectory + "' not exists");
+			throw new IllegalArgumentException("Source directory '" + aSourceDirectory + "' not exists");
 		}
 		sourceDirectory = aSourceDirectory;
 	}
-
 
 	/**
 	 * 
@@ -68,12 +74,18 @@ public class DsmReportEngine {
 	 *            Name of DSM report folder
 	 */
 	public void setOutputDirectory(final String aOutputDirectory) {
-		if (DsmHtmlWriter.isNullOrEmpty(aOutputDirectory)) {
+		if (Strings.isNullOrEmpty(aOutputDirectory)) {
 			throw new IllegalArgumentException("Dsm directory is empty.");
 		}
 		outputDirectory = aOutputDirectory + File.separator;
 	}
 
+	/**
+	 * @param obfuscate
+	 */
+	public void setObfuscatePackageNames(boolean obfuscate) {
+		this.obfuscatePackageNames = obfuscate;
+	}
 
 	/**
 	 * Get name list of project packages
@@ -91,7 +103,6 @@ public class DsmReportEngine {
 		return packageNames;
 	}
 
-
 	/**
 	 * Get Set of dependables.
 	 * 
@@ -107,7 +118,6 @@ public class DsmReportEngine {
 		return result;
 	}
 
-
 	/**
 	 * Analisyng dependencies by arguments
 	 * 
@@ -122,20 +132,18 @@ public class DsmReportEngine {
 		return new ConfigurableDependencyAnalyzer(aArguments).analyze(aDependencies);
 	}
 
-
 	/**
 	 * 
 	 * @throws Exception
 	 */
-	public void startReport() throws Exception {
-		dsmHtmlWriter = new DsmHtmlWriter(outputDirectory);
+	public void report() throws Exception {
+		dsmHtmlWriter = new DsmHtmlWriter(outputDirectory, obfuscatePackageNames);
 
 		List<String> sourcePathList = new ArrayList<String>();
 		sourcePathList.add(sourceDirectory);
 
-		startReport(sourcePathList);
+		report(sourcePathList);
 	}
-
 
 	/**
 	 * Parse dependencies from target.
@@ -144,7 +152,8 @@ public class DsmReportEngine {
 	 *            path list of project source
 	 * @throws Exception
 	 */
-	private void startReport(final List<String> aSourcePathList) throws Exception {
+	private void report(final List<String> aSourcePathList)
+			throws Exception {
 		Arguments arguments = new Arguments();
 		arguments.setInput(aSourcePathList);
 
@@ -161,7 +170,6 @@ public class DsmReportEngine {
 		copySiteSource();
 	}
 
-
 	/**
 	 * Move source files from project source folder to the site folder.
 	 * 
@@ -175,7 +183,6 @@ public class DsmReportEngine {
 		copyFileToSiteFolder(outputDirectory, DsmHtmlWriter.IMAGE_FOLDER_NAME, "packages.png");
 	}
 
-
 	/**
 	 * Print dsm for packages
 	 * 
@@ -186,10 +193,14 @@ public class DsmReportEngine {
 	 */
 	private void printDsmForPackages(final Dsm aDsm, final AnalysisResult aAnalysisResult)
 			throws Exception {
-		dsmHtmlWriter.printDsm(aDsm, aAnalysisResult, "all_packages",
-				DsmHtmlWriter.FTL_PACKAGES_PAGE);
+		if (obfuscatePackageNames) {
+			dsmHtmlWriter.printDsm(aDsm, aAnalysisResult, "all_packages",
+					DsmHtmlWriter.FTL_PACKAGES_PAGE_TRUNC);
+		} else {
+			dsmHtmlWriter.printDsm(aDsm, aAnalysisResult, "all_packages",
+					DsmHtmlWriter.FTL_PACKAGES_PAGE);
+		}
 	}
-
 
 	/**
 	 * Print DSM navigation
@@ -201,7 +212,6 @@ public class DsmReportEngine {
 		List<String> packageNames = getPackageNames(aDsm);
 		dsmHtmlWriter.printDsmPackagesNavigation(packageNames);
 	}
-
 
 	/**
 	 * 
@@ -219,13 +229,13 @@ public class DsmReportEngine {
 	 */
 	private void printDsmForClasses(final Dsm aDsm, final Dependencies aDependencies,
 			final AnalysisResult aAnalysisResult, final List<String> aPackageNames)
-			        throws Exception {
+			throws Exception {
 		Scope scope = aDependencies.getChildScope(aDependencies.getDefaultScope());
 
 		for (int packageIndex = 0; packageIndex < aDsm.getRows().size(); packageIndex++) {
-			Set<Dependable> ependableSet = getDependablesByRowIndex(aDsm, packageIndex);
+			Set<Dependable> dependableSet = getDependablesByRowIndex(aDsm, packageIndex);
 
-			DependencyGraph dependencyGraph = aDependencies.getDependencyGraph(scope, ependableSet,
+			DependencyGraph dependencyGraph = aDependencies.getDependencyGraph(scope, dependableSet,
 					Dependencies.DependencyFilter.none);
 
 			Dsm dsm = new DsmEngine(dependencyGraph).createDsm();
@@ -234,7 +244,6 @@ public class DsmReportEngine {
 					DsmHtmlWriter.FTL_CLASSES_PAGE);
 		}
 	}
-
 
 	/**
 	 * Copy file to the site directory
@@ -262,7 +271,6 @@ public class DsmReportEngine {
 		copyFileToSiteFolder(aSiteDirectory, fileName);
 	}
 
-
 	/**
 	 * Copy file to the site directory
 	 * 
@@ -277,20 +285,21 @@ public class DsmReportEngine {
 		InputStream inputStream = null;
 		OutputStream outputStream = null;
 		try {
+			inputStream = DsmReportEngine.class.getResourceAsStream(File.separator + aFileName);
+			outputStream = new FileOutputStream(new File(aSiteDirectory + aFileName));
+
 			int numberOfBytes;
 			byte[] buffer = new byte[1024];
-
-			outputStream = new FileOutputStream(new File(aSiteDirectory + aFileName));
-			inputStream = DsmReportEngine.class.getResourceAsStream(File.separator + aFileName);
-
 			while ((numberOfBytes = inputStream.read(buffer)) > 0) {
 				outputStream.write(buffer, 0, numberOfBytes);
 			}
-		} catch (FileNotFoundException e) {
-			throw new RuntimeException("Can't find " + aSiteDirectory + aFileName + " file. "
-					+ e.getMessage(), e);
 		} catch (IOException e) {
-			throw new RuntimeException("Unable to copy source file. " + e.getMessage(), e);
+			if (e instanceof FileNotFoundException) {
+				throw new RuntimeException("Can't find " + aSiteDirectory + aFileName + " file. "
+						+ e.getMessage(), e);
+			} else {
+				throw new RuntimeException("Unable to copy source file. " + e.getMessage(), e);
+			}
 		} finally {
 			inputStream.close();
 			outputStream.close();

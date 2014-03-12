@@ -10,188 +10,221 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.dtangler.core.analysisresult.AnalysisResult;
 import org.dtangler.core.analysisresult.Violation.Severity;
 import org.dtangler.core.dsm.Dsm;
 import org.dtangler.core.dsm.DsmCell;
 import org.dtangler.core.dsm.DsmRow;
+
+import com.google.common.base.Strings;
+
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 
 /**
  * Generate site content and write to HTML file.
- * @author yuriy
+ * 
+ * @author Yuri Balakhonov
+ * @author Ilja Dubinin
  */
-public class DsmHtmlWriter
-{
+public class DsmHtmlWriter {
 
-    public final static String FILE_FORMAT = ".html";
-    public final static String IMAGE_FOLDER_NAME = "images";
-    public final static String CSS_FOLDER_NAME = "css";
-    public final static String FTL_CLASSES_PAGE = "classes_page.ftl";
-    public final static String FTL_PACKAGES_PAGE = "packages_page.ftl";
-    public final static String FTL_PACKAGES_MENU = "packages_menu.ftl";
+	public final static String FILE_FORMAT = ".html";
+	public final static String IMAGE_FOLDER_NAME = "images";
+	public final static String CSS_FOLDER_NAME = "css";
+	public final static String FTL_CLASSES_PAGE = "classes_page.ftl";
+	public final static String FTL_PACKAGES_PAGE = "packages_page.ftl";
+	public final static String FTL_PACKAGES_PAGE_TRUNC = "packages_page_truncated.ftl";
+	public final static String FTL_PACKAGES_MENU = "packages_menu.ftl";
 
-    /**
-     * Path to your site report dir
-     */
-    private final String reportSiteDirectory;
+	/**
+	 * Path to your site report dir
+	 */
+	private final String reportSiteDirectory;
 
-    /**
-     * @param aReportSiteDirectory
-     */
-    public DsmHtmlWriter(String aReportSiteDirectory)
-    {
-        if (aReportSiteDirectory == null || DsmHtmlWriter.isNullOrEmpty(aReportSiteDirectory)) {
-            throw new IllegalArgumentException(
-                    "Path to the report directory should not be null or empty");
-        }
-        reportSiteDirectory = aReportSiteDirectory;
+	/**
+	 * Obfuscate package names.
+	 */
+	private final boolean obfuscatePackageNames;
 
-        new File(reportSiteDirectory).mkdirs();
-    }
+	/**
+	 * @param aReportSiteDirectory
+	 */
+	public DsmHtmlWriter(String aReportSiteDirectory, boolean obfuscate) {
+		if (Strings.isNullOrEmpty(aReportSiteDirectory)) {
+			throw new IllegalArgumentException(
+					"Path to the report directory should not be null or empty");
+		}
+		this.obfuscatePackageNames = obfuscate;
+		reportSiteDirectory = aReportSiteDirectory;
 
-    /**
-     * @param aDataModel
-     * @param aTemplateName
-     * @return
-     * @throws Exception
-     */
-    public ByteArrayOutputStream renderTemplate(Map<String, Object> aDataModel,
-            String aTemplateName)
-            throws Exception
-    {
+		new File(reportSiteDirectory).mkdirs();
+	}
 
-        Configuration cfg = new Configuration();
-        cfg.setClassForTemplateLoading(DsmHtmlWriter.class, File.separator + "templates");
+	/**
+	 * @param aDataModel
+	 * @param aTemplateName
+	 * @return
+	 * @throws Exception
+	 */
+	private static ByteArrayOutputStream renderTemplate(Map<String, Object> aDataModel,
+			String aTemplateName)
+			throws Exception {
 
-        Template tpl = cfg.getTemplate(aTemplateName);
+		Configuration cfg = new Configuration();
+		cfg.setClassForTemplateLoading(DsmHtmlWriter.class, File.separator + "templates");
 
-        ByteArrayOutputStream outputStrem = new ByteArrayOutputStream();
-        Writer outputStreamWriter = new OutputStreamWriter(outputStrem);
+		Template tpl = cfg.getTemplate(aTemplateName);
 
-        tpl.process(aDataModel, outputStreamWriter);
-        return outputStrem;
-    }
+		ByteArrayOutputStream outputStrem = new ByteArrayOutputStream();
+		Writer outputStreamWriter = new OutputStreamWriter(outputStrem);
 
-    /**
-     * @param byteOutputStream
-     * @param aFileName
-     * @throws Exception
-     */
-    private void writeStreamToFile(ByteArrayOutputStream byteOutputStream, String aFileName)
-            throws Exception
-    {
-        String filePath = reportSiteDirectory + File.separator + aFileName + FILE_FORMAT;
+		tpl.process(aDataModel, outputStreamWriter);
+		return outputStrem;
+	}
 
-        OutputStream outputStream = new FileOutputStream(filePath);
-        outputStream.write(byteOutputStream.toByteArray());
-        outputStream.close();
-    }
+	/**
+	 * @param byteOutputStream
+	 * @param aFileName
+	 * @throws Exception
+	 */
+	private void writeStreamToFile(ByteArrayOutputStream byteOutputStream, String aFileName)
+			throws Exception {
+		String filePath = reportSiteDirectory + File.separator + aFileName + FILE_FORMAT;
 
-    /**
-     * Print navigation on site by packages
-     * @param aPackageNames
-     *        List of package names
-     */
-    public void printDsmPackagesNavigation(final List<String> aPackageNames)
-            throws Exception
-    {
-        if (aPackageNames == null) {
-            throw new IllegalArgumentException("List of package names should not be null");
-        }
+		OutputStream outputStream = new FileOutputStream(filePath);
+		outputStream.write(byteOutputStream.toByteArray());
+		outputStream.close();
+	}
 
-        Map<String, Object> dataModel = new HashMap<String, Object>();
-        dataModel.put("aPackageNames", aPackageNames);
+	/**
+	 * Print navigation on site by packages
+	 * 
+	 * @param aPackageNames
+	 *            List of package names
+	 */
+	public void printDsmPackagesNavigation(final List<String> aPackageNames)
+			throws Exception {
+		if (aPackageNames == null) {
+			throw new IllegalArgumentException("List of package names should not be null");
+		}
 
-        ByteArrayOutputStream outputStream = renderTemplate(dataModel, FTL_PACKAGES_MENU);
-        writeStreamToFile(outputStream, "packages");
-        outputStream.close();
-    }
+		Map<String, Object> dataModel = new HashMap<String, Object>();
+		dataModel.put("aPackageNames", aPackageNames);
 
-    /**
-     * Print dependency structure matrix
-     * @param aDsm
-     *        Dsm structure
-     * @param aAnalysisResult
-     *        Analysis structure
-     * @param aName
-     *        Name of package
-     */
-    public void printDsm(final Dsm aDsm, final AnalysisResult aAnalysisResult, final String aName,
-            final String templateName)
-            throws Exception
-    {
-        if (aDsm == null) {
-            throw new IllegalArgumentException("DSM structure should not be null");
-        }
-        if (aAnalysisResult == null) {
-            throw new IllegalArgumentException("Analysis structure should not be null");
-        }
-        if (isNullOrEmpty(aName)) {
-            throw new IllegalArgumentException("Title of DSM should not be empty");
-        }
+		writeModelToFile("packages", FTL_PACKAGES_MENU, dataModel);
 
-        List<DsmRowModel> dsmRowsData = new ArrayList<DsmRowModel>();
+		ByteArrayOutputStream outputStream = renderTemplate(dataModel, FTL_PACKAGES_MENU);
+		writeStreamToFile(outputStream, "packages");
+		outputStream.close();
+	}
 
-        for (int packageIndex = 0; packageIndex < aDsm.getRows().size(); packageIndex++) {
-            DsmRow dsmRow = aDsm.getRows().get(packageIndex);
+	/**
+	 * Print dependency structure matrix
+	 * 
+	 * @param aDsm
+	 *            Dsm structure
+	 * @param aAnalysisResult
+	 *            Analysis structure
+	 * @param aName
+	 *            Name of package
+	 */
+	public void printDsm(final Dsm aDsm, final AnalysisResult aAnalysisResult, final String aName,
+			final String templateName)
+			throws Exception {
+		if (aDsm == null) {
+			throw new IllegalArgumentException("DSM structure should not be null");
+		}
+		if (aAnalysisResult == null) {
+			throw new IllegalArgumentException("Analysis structure should not be null");
+		}
+		if (Strings.isNullOrEmpty(aName)) {
+			throw new IllegalArgumentException("Title of DSM should not be empty");
+		}
 
-            String packageName = dsmRow.getDependee().getDisplayName();
-            int dependencyContentCount = dsmRow.getDependee().getContentCount();
+		List<DsmRowModel> dsmRowsData = new ArrayList<DsmRowModel>();
+		List<String> names = new ArrayList<String>();
+		int[] numberOfClassesInPackage = new int[aDsm.getRows().size()];
 
-            List<String> dependenciesNumbers = new ArrayList<String>();
-            for (DsmCell dep : dsmRow.getCells()) {
-                dependenciesNumbers.add(formatDependency(dep, aAnalysisResult));
-            }
+		for (int packageIndex = 0; packageIndex < aDsm.getRows().size(); packageIndex++) {
+			DsmRow dsmRow = aDsm.getRows().get(packageIndex);
 
-            DsmRowModel rowData = new DsmRowModel(packageIndex + 1, packageName,
-                    dependencyContentCount, dependenciesNumbers);
-            dsmRowsData.add(rowData);
-        }
+			String packageName = dsmRow.getDependee().getDisplayName();
+			names.add(packageName);
+			numberOfClassesInPackage[packageIndex] = dsmRow.getDependee().getContentCount();
 
-        Map<String, Object> dataModel = new HashMap<String, Object>();
-        dataModel.put("title", aName);
-        dataModel.put("rows", dsmRowsData);
+			String truncatedPackageName = truncatePackageName(packageName, 20);
+			List<String> dependenciesNumbers = new ArrayList<String>();
+			for (DsmCell dep : dsmRow.getCells()) {
+				dependenciesNumbers.add(formatDependency(dep, aAnalysisResult));
+			}
 
-        ByteArrayOutputStream outputStream = renderTemplate(dataModel, templateName);
-        writeStreamToFile(outputStream, aName);
-        outputStream.close();
-    }
+			DsmRowModel rowData = new DsmRowModel(packageIndex + 1, packageName,
+					truncatedPackageName, dependenciesNumbers);
+			dsmRowsData.add(rowData);
+		}
 
-    /**
-     * Analyzing dependency
-     * @param aDep
-     *        Count of dependency (number, 'x', or cycle)
-     * @param aAnalysisResult
-     *        Analysis structure
-     * @return Count of dependency
-     */
-    private static String formatDependency(final DsmCell aDep, final AnalysisResult aAnalysisResult)
-    {
-        String dependencyType;
-        if (!aDep.isValid()) {
-            dependencyType = "x";
-        }
-        else if (aDep.getDependencyWeight() == 0) {
-            dependencyType = "";
-        }
-        else {
-            dependencyType = Integer.toString(aDep.getDependencyWeight());
-            if (!aAnalysisResult.getViolations(aDep.getDependency(), Severity.error).isEmpty()) {
-                dependencyType = dependencyType + "C";
-            }
-        }
-        return dependencyType;
-    }
+		Map<String, Object> dataModel = new HashMap<String, Object>();
+		dataModel.put("title", aName);
+		dataModel.put("rows", dsmRowsData);
+		dataModel.put("names", names);
+		dataModel.put("numberOfClasses", numberOfClassesInPackage);
+		writeModelToFile(aName, templateName, dataModel);
+	}
 
-    /**
-     * @param aText
-     * @return
-     */
-    public final static boolean isNullOrEmpty(String aText)
-    {
-        return aText == null || aText.trim().isEmpty();
-    }
+	/**
+	 * Write model to output file.
+	 * @param aFileName
+	 * @param aTemplateName
+	 * @param aDataModel
+	 * @throws Exception
+	 */
+	private void writeModelToFile(String aFileName, String aTemplateName, Map<String, Object> aDataModel) throws Exception {
+		ByteArrayOutputStream outputStream = renderTemplate(aDataModel, aTemplateName);
+		writeStreamToFile(outputStream, aFileName);
+		outputStream.close();
+	}
+
+	/**
+	 * Analyzing dependency
+	 * 
+	 * @param aDep
+	 *            Count of dependency (number, 'x', or cycle)
+	 * @param aAnalysisResult
+	 *            Analysis structure
+	 * @return Count of dependency
+	 */
+	private static String formatDependency(final DsmCell aDep, final AnalysisResult aAnalysisResult) {
+		String dependencyType;
+		if (!aDep.isValid()) {
+			dependencyType = "x";
+		} else if (aDep.getDependencyWeight() == 0) {
+			dependencyType = "";
+		} else {
+			dependencyType = Integer.toString(aDep.getDependencyWeight());
+			if (!aAnalysisResult.getViolations(aDep.getDependency(), Severity.error).isEmpty()) {
+				dependencyType = dependencyType + "C";
+			}
+		}
+		return dependencyType;
+	}
+
+	private String truncatePackageName(String name, int length) {
+		String truncatedName = name;
+		if (obfuscatePackageNames) {
+			String[] nameTokens = name.split("\\.");
+			for (int numberOfToken = 0; numberOfToken < nameTokens.length
+					&& truncatedName.length() > length; numberOfToken++) {
+				String currentToken = nameTokens[numberOfToken];
+				truncatedName = truncatedName.replace(currentToken + ".", currentToken.substring(0, 1) + ".");
+			}
+		} else {
+			if (name.length() - 2 > length) {
+				truncatedName = ".." + name.substring(name.length() - length - 2);
+			}
+		}
+		return truncatedName;
+	}
 
 }

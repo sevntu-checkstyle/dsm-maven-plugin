@@ -20,7 +20,7 @@
 		<li>
 			<a title="" target="summary" href="./all_packages.html"	class=""> 
 				<img src="./images/package.png" alt="" class="" /> 
-				All
+				all_packages
 			</a>
 		</li>
 		<#list aPackageNames as package>

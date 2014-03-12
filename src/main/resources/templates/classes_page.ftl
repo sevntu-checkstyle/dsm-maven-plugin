@@ -16,7 +16,9 @@
 </head>
 <body>
 	<h1>
-		<a href="./all_packages.html" title="" target="summary" class="">DSM Report</a> - 
+		DSM Report - 
+		<img src="./images/package.png" alt="" class="" />
+		<a href="./all_packages.html" title="" target="summary" class="">all_packages</a> -
 		<img src="./images/package.png" alt="" class="" />
 		${title} 
 	</h1>
@@ -25,21 +27,41 @@
 			<td></td>
 			<td></td>
 			<#list rows as i>
-			<td class="packageName_cols">${i.positionIndex}</td>
+			<td class="packageName_cols" title="${i.name}">${i.positionIndex}</td>
   			</#list>
 		</tr>
-		
+
+		<#assign rowIndex=0>
 		<#list rows as class>
-		<tr>
-			<td class="packageName_rows">
-				<img src="./images/class.png" alt="${class.name}" class="" />
-				${class.name}
-			</td>
-			<td class="packageNumber_rows">${class.positionIndex}</td>
-			<#list class.numberOfDependencies as dependCount>
-				<td>${dependCount}</td>
-  			</#list>
-		</tr>
+			<tr>
+				<td class="packageName_rows">
+					<img src="./images/class.png" alt="${class.name}" class="" />
+					${class.name}
+				</td>
+				<td class="packageNumber_rows">${class.positionIndex}</td>
+
+				<#assign columnIndex=0>
+
+				<#list class.numberOfDependencies as dependCount>
+					<#if ("${dependCount}"?length > 0)>
+						<#if "${dependCount}"?ends_with("C")>
+							<td class="cycle" title="${names[columnIndex]} has cycle dependency with ${names[rowIndex]}">
+								${dependCount}
+							</td> 
+						<#else>
+							<td title="${names[columnIndex]} uses ${names[rowIndex]}">
+								${dependCount}
+							</td>
+						</#if>
+					<#else>
+						<td>
+							${dependCount}
+						</td>
+					</#if>
+					<#assign columnIndex=columnIndex +1>
+	  			</#list>
+			</tr>
+			<#assign rowIndex=rowIndex + 1>
   		</#list>
 
 	</table>
