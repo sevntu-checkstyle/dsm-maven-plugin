@@ -7,6 +7,7 @@ Maven plugin to create HTML report to show dependecies in DSM view.
 ### How to use plugin:
 
 1) Edit your pom.xml like this:
+```
     <project>
         ...
         <reporting>
@@ -21,18 +22,20 @@ Maven plugin to create HTML report to show dependecies in DSM view.
         </reporting>
         ...
     </project>
+```
 
 2) Then execute following commands:
-    
+```    
     mvn clean install site
-
+```
 Instead of install you can use copmile, package or other stage, that generates class files.
 
 DSM site part will be placed in target/site/dsm directory
 
 3) You can run only this plugin instead of all site plugins:
-    
+```
     mvn org.sevntu:dsm-maven-plugin:dsm
+```
 
 4) Also you can use option obfuscatePackageNames, that truncates package names to more short form
 (com.mysite.oneproject.somemodule.package -> c.m.o.somemodule.package for example). It is switched off by default.
@@ -40,7 +43,7 @@ DSM site part will be placed in target/site/dsm directory
 There are two way to use it:
 
     a) Edit yours pom.xml and add configuration section:
-
+```
      <project>
             ...
             <reporting>
@@ -58,10 +61,13 @@ There are two way to use it:
             </reporting>
             ...
         </project>
+```
 
     b) Run maven with -DobfuscatePackageNames=true (false)
-        
+    
+```
          mvn org.sevntu:dsm-maven-plugin:dsm -DobfuscatePackageNames=true
+```
 
 If you don't use it and have long package name they will be just cutted
 (com.mysite.oneproject.somemodule.package -> ..project.somemodule.package)
