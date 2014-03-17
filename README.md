@@ -42,7 +42,7 @@ DSM site part will be placed in target/site/dsm directory
 
 There are two way to use it:
 
-    a) Edit yours pom.xml and add configuration section:
+a) Edit yours pom.xml and add configuration section:
 ```
      <project>
             ...
@@ -63,7 +63,7 @@ There are two way to use it:
         </project>
 ```
 
-    b) Run maven with -DobfuscatePackageNames=true (false)
+b) Run maven with -DobfuscatePackageNames=true (false)
     
 ```
          mvn org.sevntu:dsm-maven-plugin:dsm -DobfuscatePackageNames=true
