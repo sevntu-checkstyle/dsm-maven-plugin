@@ -6,23 +6,64 @@ Maven plugin to create HTML report to show dependecies in DSM view.
 
 ### How to use plugin:
 
-Add <reporting> section to your pom.xml and <plugin> inside it.
+1) Edit your pom.xml like this:
+    <project>
+        ...
+        <reporting>
+            <plugins>
+                <plugin>
+                    <groupId>org.sevntu</groupId>
+                    <artifactId>dsm-maven-plugin</artifactId>
+                    <version>2.1</version>
+                </plugin>
+                <!--  other reportin plugins  -->
+            </plugins>
+        </reporting>
+        ...
+    </project>
 
-For example:
-
-    <reporting>
+2) Then execute following commands:
     
-        <plugins>
-            <plugin>
-                <groupId>org.sevntu</groupId>
-                <artifactId>dsm-maven-plugin</artifactId>
-                <version>2.1</version>
-            </plugin>
+    mvn clean install site
 
-            <!--  other reportin plugins  -->
+Instead of install you can use copmile, package or other stage, that generates class files.
 
-        </plugins>
+DSM site part will be placed in target/site/dsm directory
 
-    </reporting>
+3) You can run only this plugin instead of all site plugins:
     
-Run "mvn site". Enjoy :)
+    mvn org.sevntu:dsm-maven-plugin:dsm
+
+4) Also you can use option obfuscatePackageNames, that truncates package names to more short form
+(com.mysite.oneproject.somemodule.package -> c.m.o.somemodule.package for example). It is switched off by default.
+
+There are two way to use it:
+
+    a) Edit yours pom.xml and add configuration section:
+
+     <project>
+            ...
+            <reporting>
+                <plugins>
+                    <plugin>
+                        <groupId>org.sevntu</groupId>
+                        <artifactId>dsm-maven-plugin</artifactId>
+                        <version>2.1</version>
+                        <configurations>
+                            <obfuscatePackageNames>true</obfuscatePackageNames>
+                        </configurations>
+                    </plugin>
+                    <!--  other reportin plugins  -->
+                </plugins>
+            </reporting>
+            ...
+        </project>
+
+    b) Run maven with -DobfuscatePackageNames=true (false)
+        
+         mvn org.sevntu:dsm-maven-plugin:dsm -DobfuscatePackageNames=true
+
+If you don't use it and have long package name they will be just cutted
+(com.mysite.oneproject.somemodule.package -> ..project.somemodule.package)
+
+Enjoy :)
