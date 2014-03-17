@@ -13,6 +13,8 @@ import java.util.Map;
 
 import org.dtangler.core.analysisresult.AnalysisResult;
 import org.dtangler.core.analysisresult.Violation.Severity;
+import org.dtangler.core.dependencies.Dependency;
+import org.dtangler.core.dependencies.Scope;
 import org.dtangler.core.dsm.Dsm;
 import org.dtangler.core.dsm.DsmCell;
 import org.dtangler.core.dsm.DsmRow;
@@ -21,6 +23,7 @@ import com.google.common.base.Strings;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
+
 
 /**
  * Generate site content and write to HTML file.
@@ -48,6 +51,7 @@ public class DsmHtmlWriter {
 	 */
 	private final boolean obfuscatePackageNames;
 
+
 	/**
 	 * @param aReportSiteDirectory
 	 */
@@ -62,6 +66,7 @@ public class DsmHtmlWriter {
 		new File(reportSiteDirectory).mkdirs();
 	}
 
+
 	/**
 	 * @param aDataModel
 	 * @param aTemplateName
@@ -69,8 +74,7 @@ public class DsmHtmlWriter {
 	 * @throws Exception
 	 */
 	private static ByteArrayOutputStream renderTemplate(Map<String, Object> aDataModel,
-			String aTemplateName)
-			throws Exception {
+			String aTemplateName) throws Exception {
 
 		Configuration cfg = new Configuration();
 		cfg.setClassForTemplateLoading(DsmHtmlWriter.class, File.separator + "templates");
@@ -83,6 +87,7 @@ public class DsmHtmlWriter {
 		tpl.process(aDataModel, outputStreamWriter);
 		return outputStrem;
 	}
+
 
 	/**
 	 * @param byteOutputStream
@@ -98,14 +103,14 @@ public class DsmHtmlWriter {
 		outputStream.close();
 	}
 
+
 	/**
 	 * Print navigation on site by packages
 	 * 
 	 * @param aPackageNames
 	 *            List of package names
 	 */
-	public void printDsmPackagesNavigation(final List<String> aPackageNames)
-			throws Exception {
+	public void printDsmPackagesNavigation(final List<String> aPackageNames) throws Exception {
 		if (aPackageNames == null) {
 			throw new IllegalArgumentException("List of package names should not be null");
 		}
@@ -120,6 +125,7 @@ public class DsmHtmlWriter {
 		outputStream.close();
 	}
 
+
 	/**
 	 * Print dependency structure matrix
 	 * 
@@ -127,20 +133,25 @@ public class DsmHtmlWriter {
 	 *            Dsm structure
 	 * @param aAnalysisResult
 	 *            Analysis structure
-	 * @param aName
+	 * @param aTitle
 	 *            Name of package
 	 */
-	public void printDsm(final Dsm aDsm, final AnalysisResult aAnalysisResult, final String aName,
-			final String templateName)
-			throws Exception {
+	public void printDsm(final Dsm aDsm, final AnalysisResult aAnalysisResult, final Scope scope,
+			final String aTitle, final String templateName) throws Exception {
 		if (aDsm == null) {
 			throw new IllegalArgumentException("DSM structure should not be null");
 		}
 		if (aAnalysisResult == null) {
 			throw new IllegalArgumentException("Analysis structure should not be null");
 		}
-		if (Strings.isNullOrEmpty(aName)) {
+		if (scope == null) {
+			throw new IllegalArgumentException("Scope should not be null");
+		}
+		if (Strings.isNullOrEmpty(aTitle)) {
 			throw new IllegalArgumentException("Title of DSM should not be empty");
+		}
+		if (Strings.isNullOrEmpty(templateName)) {
+			throw new IllegalArgumentException("Template name should not be empty");
 		}
 
 		List<DsmRowModel> dsmRowsData = new ArrayList<DsmRowModel>();
@@ -157,7 +168,7 @@ public class DsmHtmlWriter {
 			String truncatedPackageName = truncatePackageName(packageName, 20);
 			List<String> dependenciesNumbers = new ArrayList<String>();
 			for (DsmCell dep : dsmRow.getCells()) {
-				dependenciesNumbers.add(formatDependency(dep, aAnalysisResult));
+				dependenciesNumbers.add(formatDependency(dep, aAnalysisResult, scope));
 			}
 
 			DsmRowModel rowData = new DsmRowModel(packageIndex + 1, packageName,
@@ -166,25 +177,29 @@ public class DsmHtmlWriter {
 		}
 
 		Map<String, Object> dataModel = new HashMap<String, Object>();
-		dataModel.put("title", aName);
+		dataModel.put("title", aTitle);
 		dataModel.put("rows", dsmRowsData);
 		dataModel.put("names", names);
 		dataModel.put("numberOfClasses", numberOfClassesInPackage);
-		writeModelToFile(aName, templateName, dataModel);
+		writeModelToFile(aTitle, templateName, dataModel);
 	}
+
 
 	/**
 	 * Write model to output file.
+	 * 
 	 * @param aFileName
 	 * @param aTemplateName
 	 * @param aDataModel
 	 * @throws Exception
 	 */
-	private void writeModelToFile(String aFileName, String aTemplateName, Map<String, Object> aDataModel) throws Exception {
+	private void writeModelToFile(String aFileName, String aTemplateName,
+			Map<String, Object> aDataModel) throws Exception {
 		ByteArrayOutputStream outputStream = renderTemplate(aDataModel, aTemplateName);
 		writeStreamToFile(outputStream, aFileName);
 		outputStream.close();
 	}
+
 
 	/**
 	 * Analyzing dependency
@@ -195,20 +210,32 @@ public class DsmHtmlWriter {
 	 *            Analysis structure
 	 * @return Count of dependency
 	 */
-	private static String formatDependency(final DsmCell aDep, final AnalysisResult aAnalysisResult) {
+	private static String formatDependency(final DsmCell aDsmCell,
+			final AnalysisResult aAnalysisResult, final Scope scope) {
 		String dependencyType;
-		if (!aDep.isValid()) {
+		if (!aDsmCell.isValid()) {
 			dependencyType = "x";
-		} else if (aDep.getDependencyWeight() == 0) {
+		} else if (aDsmCell.getDependencyWeight() == 0) {
 			dependencyType = "";
 		} else {
-			dependencyType = Integer.toString(aDep.getDependencyWeight());
-			if (!aAnalysisResult.getViolations(aDep.getDependency(), Severity.error).isEmpty()) {
+			dependencyType = Integer.toString(aDsmCell.getDependencyWeight());
+			if (!aAnalysisResult.getViolations(aDsmCell.getDependency(), Severity.error).isEmpty()) {
 				dependencyType = dependencyType + "C";
+			}
+
+			if (scope.index() != 2) {
+				Dependency dep = aDsmCell.getDependency();
+				String dependantName = dep.getDependant().getDisplayName();
+				String ependeeName = dep.getDependee().getDisplayName();
+				String dsmName = dependantName + "-" + ependeeName;
+
+				dependencyType = String
+						.format("<a href='%s.html' >%s</a>", dsmName, dependencyType);
 			}
 		}
 		return dependencyType;
 	}
+
 
 	private String truncatePackageName(String name, int length) {
 		String truncatedName = name;
@@ -217,7 +244,8 @@ public class DsmHtmlWriter {
 			for (int numberOfToken = 0; numberOfToken < nameTokens.length
 					&& truncatedName.length() > length; numberOfToken++) {
 				String currentToken = nameTokens[numberOfToken];
-				truncatedName = truncatedName.replace(currentToken + ".", currentToken.substring(0, 1) + ".");
+				truncatedName = truncatedName.replace(currentToken + ".",
+						currentToken.substring(0, 1) + ".");
 			}
 		} else {
 			if (name.length() - 2 > length) {
