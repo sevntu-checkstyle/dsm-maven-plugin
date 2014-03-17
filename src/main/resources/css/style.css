@@ -16,6 +16,7 @@ a:visited  {
 }
 a:active, a:hover {
 	color:#69c;
+	text-decoration: underline;
 }
 
 ul {
@@ -58,8 +59,12 @@ td {
 	color: #444444
 }
 
-.cycle {
+.cycle,.cycle a {
 	color: red;
+}
+
+.cycle a:active,.cycle a:hover {
+	color: #ff5555;;
 }
 
 #first-row {

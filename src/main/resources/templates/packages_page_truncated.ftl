@@ -49,7 +49,7 @@
 				<#assign columnIndex=0>
 				<#list package.numberOfDependencies as dependCount>
 					<#if ("${dependCount}"?length > 0)>
-						<#if "${dependCount}"?ends_with("C")>
+						<#if "${dependCount}"?contains("C")>
 							<th class="cycle" title="${names[columnIndex]} have cycle dependency with ${names[rowIndex]}">
 								${dependCount}
 							</th> 

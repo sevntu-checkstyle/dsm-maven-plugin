@@ -1,7 +1,6 @@
 package org.sevntu.maven.plugin.dsm;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,8 +12,10 @@ import junit.framework.Assert;
 import org.dtangler.core.analysisresult.AnalysisResult;
 import org.dtangler.core.analysisresult.Violation;
 import org.dtangler.core.dependencies.Dependency;
+import org.dtangler.core.dependencies.Scope;
 import org.dtangler.core.dsm.Dsm;
 import org.dtangler.core.dsm.DsmRow;
+import org.dtangler.javaengine.types.JavaScope;
 import org.junit.Test;
 
 
@@ -22,75 +23,76 @@ public class DsmHtmlWriterTest {
 
 	@Test
 	public void dsmHtmlWriterTest() {
-		Exception ex = null;
 		try {
-            new DsmHtmlWriter(null, false);
+			new DsmHtmlWriter(null, false);
 			Assert.fail();
 		} catch (Exception e) {
-			ex = e;
 			assertEquals("Path to the report directory should not be null or empty", e.getMessage());
 		}
-		assertNotNull(ex);
 
-		ex = null;
 		try {
 			new DsmHtmlWriter("", false);
 			Assert.fail();
 		} catch (Exception e) {
-			ex = e;
 			assertEquals("Path to the report directory should not be null or empty", e.getMessage());
 		}
-		assertNotNull(ex);
 	}
+
 
 	@Test
 	public void printDsmTest() {
-        DsmHtmlWriter dsmHtmlWriter = new DsmHtmlWriter("target/testDir", false);
-		Exception ex = null;
+		DsmHtmlWriter dsmHtmlWriter = new DsmHtmlWriter("target/testDir", false);
+		Dsm dsm = new Dsm(new ArrayList<DsmRow>());
+		AnalysisResult ar = new AnalysisResult(new HashMap<Dependency, Set<Violation>>(),
+				new HashSet<Violation>(), true);
+		Scope scope = JavaScope.packages;
+		String title = "Title";
+
 		try {
-			dsmHtmlWriter.printDsm(null, null, null, null);
+			dsmHtmlWriter.printDsm(null, null, null, null, null);
 			Assert.fail();
 		} catch (Exception e) {
-			ex = e;
 			assertEquals("DSM structure should not be null", e.getMessage());
 		}
-		assertNotNull(ex);
 
-		ex = null;
 		try {
-			dsmHtmlWriter.printDsm(new Dsm(new ArrayList<DsmRow>()), null, null, null);
+			dsmHtmlWriter.printDsm(dsm, null, null, null, null);
 			Assert.fail();
 		} catch (Exception e) {
-			ex = e;
 			assertEquals("Analysis structure should not be null", e.getMessage());
 		}
-		assertNotNull(ex);
 
-		ex = null;
 		try {
-			dsmHtmlWriter.printDsm(new Dsm(new ArrayList<DsmRow>()), new AnalysisResult(
-					new HashMap<Dependency, Set<Violation>>(), new HashSet<Violation>(), true),
-					null, null);
+			dsmHtmlWriter.printDsm(dsm, ar, null, null, null);
 			Assert.fail();
 		} catch (Exception e) {
-			ex = e;
+			assertEquals("Scope should not be null", e.getMessage());
+		}
+
+		try {
+			dsmHtmlWriter.printDsm(dsm, ar, scope, null, null);
+			Assert.fail();
+		} catch (Exception e) {
 			assertEquals("Title of DSM should not be empty", e.getMessage());
 		}
-		assertNotNull(ex);
+
+		try {
+			dsmHtmlWriter.printDsm(dsm, ar, scope, title, null);
+			Assert.fail();
+		} catch (Exception e) {
+			assertEquals("Template name should not be empty", e.getMessage());
+		}
 	}
 
 
 	@Test
 	public void printNavigateDsmPackagesTest() {
-        DsmHtmlWriter dsmHtmlWriter = new DsmHtmlWriter("target/testDir", false);
-		Exception ex = null;
+		DsmHtmlWriter dsmHtmlWriter = new DsmHtmlWriter("target/testDir", false);
 		try {
 			dsmHtmlWriter.printDsmPackagesNavigation(null);
 			Assert.fail();
 		} catch (Exception e) {
-			ex = e;
 			assertEquals("List of package names should not be null", e.getMessage());
 		}
-		assertNotNull(ex);
 	}
 }

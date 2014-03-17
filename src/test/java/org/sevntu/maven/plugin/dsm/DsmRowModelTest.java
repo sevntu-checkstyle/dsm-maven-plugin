@@ -10,7 +10,6 @@ import java.util.List;
 import org.junit.Test;
 
 
-
 public class DsmRowModelTest {
 
 	@Test
@@ -25,18 +24,20 @@ public class DsmRowModelTest {
 		assertTrue("2".equals(dsmRowData.getNumberOfDependencies().get(1)));
 	}
 
-    @Test
+
+	@Test
 	public void testObfuscation() {
-		DsmRowModel rowModel = new DsmRowModel(1, "com.puppycrawl.tools.checkstyle.checks.coding", "c.p.t.c.c.coding",
-				Collections.EMPTY_LIST);
+		DsmRowModel rowModel = new DsmRowModel(1, "com.puppycrawl.tools.checkstyle.checks.coding",
+				"c.p.t.c.c.coding", Collections.<String> emptyList());
 		assertEquals("c.p.t.c.c.coding", rowModel.getObfuscatedPackageName());
-    }
+	}
+
 
 	@Test
 	public void testCutNames() {
 		DsmRowModel rowModel = new DsmRowModel(1, "com.puppycrawl.tools.checkstyle.checks.coding",
-				"...puppycrawl.tools.checkstyle.checks.coding",
-				Collections.EMPTY_LIST);
-		assertEquals("...puppycrawl.tools.checkstyle.checks.coding", rowModel.getObfuscatedPackageName());
+				"...puppycrawl.tools.checkstyle.checks.coding", Collections.<String> emptyList());
+		assertEquals("...puppycrawl.tools.checkstyle.checks.coding",
+				rowModel.getObfuscatedPackageName());
 	}
 }

@@ -2,6 +2,7 @@ package org.sevntu.maven.plugin.dsm;
 
 import java.util.List;
 
+
 /**
  * 
  * @author Yuri Balakhonov
@@ -17,7 +18,8 @@ public class DsmRowModel {
 	private String obfuscatedPackageName;
 
 	/**
-	 * List of dependencies. Contain number of dependencies with other classes/packages
+	 * List of dependencies. Contain number of dependencies with other
+	 * classes/packages
 	 */
 	private List<String> numberOfDependencies;
 
@@ -25,6 +27,7 @@ public class DsmRowModel {
 	 * Package or class index in dsm
 	 */
 	private int positionIndex;
+
 
 	public DsmRowModel(int aPositionIndex, String aName, String obfuscatedPackageName,
 			List<String> aNumberOfDependencies) {
@@ -34,12 +37,14 @@ public class DsmRowModel {
 		numberOfDependencies = aNumberOfDependencies;
 	}
 
+
 	/**
 	 * @return the name
 	 */
 	public String getName() {
 		return name;
 	}
+
 
 	/**
 	 * @return truncated name
@@ -48,12 +53,14 @@ public class DsmRowModel {
 		return obfuscatedPackageName;
 	}
 
+
 	/**
 	 * @return the numberOfDependencies
 	 */
 	public List<String> getNumberOfDependencies() {
 		return numberOfDependencies;
 	}
+
 
 	/**
 	 * @return the positionIndex
