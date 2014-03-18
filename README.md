@@ -51,7 +51,7 @@ a) Edit yours pom.xml and add configuration section:
                     <plugin>
                         <groupId>org.sevntu</groupId>
                         <artifactId>dsm-maven-plugin</artifactId>
-                        <version>2.1</version>
+                        <version>2.3</version>
                         <configurations>
                             <obfuscatePackageNames>true</obfuscatePackageNames>
                         </configurations>
