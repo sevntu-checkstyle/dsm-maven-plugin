@@ -15,7 +15,7 @@ Maven plugin to create HTML report to show dependecies in [DSM view](http://en.w
                 <plugin>
                     <groupId>org.sevntu</groupId>
                     <artifactId>dsm-maven-plugin</artifactId>
-                    <version>2.1</version>
+                    <version>2.2</version>
                 </plugin>
                 <!--  other reportin plugins  -->
             </plugins>
