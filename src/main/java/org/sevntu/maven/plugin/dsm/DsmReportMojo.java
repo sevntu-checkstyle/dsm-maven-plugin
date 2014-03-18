@@ -9,6 +9,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
 
+
 /**
  * Initialising DSM plugin.
  * 
@@ -34,7 +35,8 @@ public class DsmReportMojo extends AbstractMavenReport {
 	private File reportingOutputDirectory;
 
 	/**
-	 * Specifies the directory where the report will be generated. Path to your "target/classes" dir
+	 * Specifies the directory where the report will be generated. Path to your
+	 * "target/classes" dir
 	 * 
 	 * @parameter default-value="${project.build.outputDirectory}"
 	 * @required
@@ -49,53 +51,60 @@ public class DsmReportMojo extends AbstractMavenReport {
 	private boolean obfuscatePackageNames;
 
 	/**
-     * @parameter default-value="${project}"
-     * @required
-     * @readonly
-     */
-    private MavenProject project;
+	 * @parameter default-value="${project}"
+	 * @required
+	 * @readonly
+	 */
+	private MavenProject project;
 
-    /**
-     * @component
-     * @required
-     * @readonly
-     */
-    private Renderer siteRenderer;
+	/**
+	 * @component
+	 * @required
+	 * @readonly
+	 */
+	private Renderer siteRenderer;
 
 
 	public void setObfuscatePackageNames(boolean aObfuscate) {
 		this.obfuscatePackageNames = aObfuscate;
 	}
 
+
 	@Override
 	protected MavenProject getProject() {
 		return project;
 	}
+
 
 	@Override
 	protected Renderer getSiteRenderer() {
 		return siteRenderer;
 	}
 
+
 	@Override
 	public String getOutputName() {
 		return dsmDirectory + File.separator + "index";
 	}
+
 
 	@Override
 	public String getName(final Locale aLocale) {
 		return getBundle(aLocale).getString("report.dsm-report.name");
 	}
 
+
 	@Override
 	public String getDescription(final Locale aLocale) {
 		return getBundle(aLocale).getString("report.dsm-report.description");
 	}
 
+
 	@Override
 	protected String getOutputDirectory() {
 		return reportingOutputDirectory.getAbsolutePath() + File.separator + dsmDirectory;
 	}
+
 
 	/**
 	 * @return project output directory
@@ -103,6 +112,7 @@ public class DsmReportMojo extends AbstractMavenReport {
 	private String getSourseDir() {
 		return outputDirectory.getAbsolutePath();
 	}
+
 
 	/**
 	 * Gets the resource bundle for the specified locale.
@@ -115,9 +125,9 @@ public class DsmReportMojo extends AbstractMavenReport {
 		return ResourceBundle.getBundle("dsm-report", aLocale, getClass().getClassLoader());
 	}
 
+
 	@Override
-	protected void executeReport(final Locale aLocale)
-			throws MavenReportException {
+	protected void executeReport(final Locale aLocale) throws MavenReportException {
 		DsmReportEngine dsmReport = new DsmReportEngine();
 
 		dsmReport.setObfuscatePackageNames(obfuscatePackageNames);
@@ -127,9 +137,10 @@ public class DsmReportMojo extends AbstractMavenReport {
 		try {
 			dsmReport.report();
 		} catch (Exception e) {
-			throw new MavenReportException( "Error in DSM Report generation.", e);
+			throw new MavenReportException("Error in DSM Report generation.", e);
 		}
 	}
+
 
 	@Override
 	public boolean isExternalReport() {

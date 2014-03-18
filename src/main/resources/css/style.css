@@ -2,20 +2,26 @@ h1 {
 	font-family: Verdana, Helvetica, Arial, sans-serif;
 	font-size: 18px;
 }
+
 img {
-	border:0;
+	border: 0;
 }
+
 a {
 	text-decoration: none;
 }
+
 a:link {
-	color:#36a;
+	color: #36a;
 }
-a:visited  {
-	color:#47a;
+
+a:visited {
+	color: #47a;
 }
-a:active, a:hover {
-	color:#69c;
+
+a:active,a:hover {
+	color: #69c;
+	text-decoration: underline;
 }
 
 ul {
@@ -28,8 +34,8 @@ li {
 	padding: 1px;
 	font-family: Verdana, Helvetica, Arial, sans-serif;
 	font-size: 12px;
-	white-space:nowrap;
-	list-style:none;
+	white-space: nowrap;
+	list-style: none;
 }
 
 table {
@@ -40,6 +46,7 @@ table {
 	font-family: Verdana, Helvetica, Arial, sans-serif;
 	font-size: 11px;
 }
+
 th {
 	padding: 2px;
 	margin: 0;
@@ -58,8 +65,12 @@ td {
 	color: #444444
 }
 
-.cycle {
+.cycle,.cycle a {
 	color: red;
+}
+
+.cycle a:active,.cycle a:hover {
+	color: #ff5555;;
 }
 
 #first-row {
@@ -75,7 +86,7 @@ td {
 	font-weight: bold;
 	border: 0px;
 	border-top: solid 1px #000000;
-	border-right:solid 1px #000000;
+	border-right: solid 1px #000000;
 	white-space: nowrap;
 	font-family: Verdana, Helvetica, Arial, sans-serif;
 	font-size: 11px;
@@ -84,16 +95,16 @@ td {
 tr th {
 	color: black;
 	background-color: #ddd;
-	border-left:solid 1px #ffffff;
-	border-bottom:solid 1px #ffffff;
+	border-left: solid 1px #ffffff;
+	border-bottom: solid 1px #ffffff;
 	font-weight: bold;
 }
 
 tr td {
 	color: black;
 	background-color: #ddd;
-	border-left:solid 1px #ffffff;
-	border-bottom:solid 1px #ffffff;
+	border-left: solid 1px #ffffff;
+	border-bottom: solid 1px #ffffff;
 	font-weight: bold;
 	text-align: center;
 }
@@ -114,8 +125,8 @@ tr td {
 	text-align: center;
 	font-weight: bold;
 	border: 0px;
-	border-left:solid 1px #000000;
-	border-bottom:solid 1px #000000;
+	border-left: solid 1px #000000;
+	border-bottom: solid 1px #000000;
 }
 
 .vertical_text {
@@ -128,8 +139,3 @@ tr td {
 	padding-bottom: 5px;
 	width: 20px;
 }
-
-
-
-
-
