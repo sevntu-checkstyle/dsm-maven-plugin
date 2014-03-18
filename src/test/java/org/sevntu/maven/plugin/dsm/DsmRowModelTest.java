@@ -28,7 +28,7 @@ public class DsmRowModelTest {
 	@Test
 	public void testObfuscation() {
 		DsmRowModel rowModel = new DsmRowModel(1, "com.puppycrawl.tools.checkstyle.checks.coding",
-				"c.p.t.c.c.coding", Collections.EMPTY_LIST);
+				"c.p.t.c.c.coding", Collections.<String> emptyList());
 		assertEquals("c.p.t.c.c.coding", rowModel.getObfuscatedPackageName());
 	}
 
@@ -36,7 +36,7 @@ public class DsmRowModelTest {
 	@Test
 	public void testCutNames() {
 		DsmRowModel rowModel = new DsmRowModel(1, "com.puppycrawl.tools.checkstyle.checks.coding",
-				"...puppycrawl.tools.checkstyle.checks.coding", Collections.EMPTY_LIST);
+				"...puppycrawl.tools.checkstyle.checks.coding", Collections.<String> emptyList());
 		assertEquals("...puppycrawl.tools.checkstyle.checks.coding",
 				rowModel.getObfuscatedPackageName());
 	}

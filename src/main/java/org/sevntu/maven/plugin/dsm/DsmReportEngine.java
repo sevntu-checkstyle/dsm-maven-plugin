@@ -3,7 +3,6 @@ package org.sevntu.maven.plugin.dsm;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -111,22 +110,6 @@ public class DsmReportEngine {
 
 
 	/**
-	 * Get Set of dependables.
-	 * 
-	 * @param aDsm
-	 *            Dsm
-	 * @param aRow
-	 *            Index of row wich analysing
-	 * @return Set of Dependables
-	 */
-	private static Set<Dependable> getDependablesByRowIndex(final Dsm aDsm, final int aRow) {
-		Set<Dependable> result = new HashSet<Dependable>();
-		result.add(aDsm.getRows().get(aRow).getDependee());
-		return result;
-	}
-
-
-	/**
 	 * Analisyng dependencies by arguments
 	 * 
 	 * @param aArguments
@@ -173,8 +156,9 @@ public class DsmReportEngine {
 		Dsm dsm = new DsmEngine(dependencyGraph).createDsm();
 
 		printDsmNavigation(dsm);
-		printDsmForPackages(dsm, analysisResult);
-		printDsmForClasses(dsm, dependencies, analysisResult, getPackageNames(dsm));
+		printDsmForPackages(dsm, analysisResult, dependencies.getDefaultScope());
+		printDsmForClasses(dsm, dependencies, analysisResult);
+		printDsmBetweenClassesOfDifferentPackages(dependencies, analysisResult);
 
 		copySiteSource();
 	}
@@ -202,13 +186,13 @@ public class DsmReportEngine {
 	 * @param aAnalysisResult
 	 *            Analysis result
 	 */
-	private void printDsmForPackages(final Dsm aDsm, final AnalysisResult aAnalysisResult)
-			throws Exception {
+	private void printDsmForPackages(final Dsm aDsm, final AnalysisResult aAnalysisResult,
+			final Scope scope) throws Exception {
 		if (obfuscatePackageNames) {
-			dsmHtmlWriter.printDsm(aDsm, aAnalysisResult, "all_packages",
+			dsmHtmlWriter.printDsm(aDsm, aAnalysisResult, scope, "all_packages",
 					DsmHtmlWriter.FTL_PACKAGES_PAGE_TRUNC);
 		} else {
-			dsmHtmlWriter.printDsm(aDsm, aAnalysisResult, "all_packages",
+			dsmHtmlWriter.printDsm(aDsm, aAnalysisResult, scope, "all_packages",
 					DsmHtmlWriter.FTL_PACKAGES_PAGE);
 		}
 	}
@@ -241,20 +225,61 @@ public class DsmReportEngine {
 	 * @throws Exception
 	 */
 	private void printDsmForClasses(final Dsm aDsm, final Dependencies aDependencies,
-			final AnalysisResult aAnalysisResult, final List<String> aPackageNames)
-			throws Exception {
+			final AnalysisResult aAnalysisResult) throws Exception {
 		Scope scope = aDependencies.getChildScope(aDependencies.getDefaultScope());
 
-		for (int packageIndex = 0; packageIndex < aDsm.getRows().size(); packageIndex++) {
-			Set<Dependable> dependableSet = getDependablesByRowIndex(aDsm, packageIndex);
+		for (DsmRow depRow : aDsm.getRows()) {
+			Dependable dependable = depRow.getDependee();
 
-			DependencyGraph dependencyGraph = aDependencies.getDependencyGraph(scope,
-					dependableSet, Dependencies.DependencyFilter.none);
+			Set<Dependable> ependableSet = new HashSet<>();
+			ependableSet.add(dependable);
+
+			DependencyGraph dependencyGraph = aDependencies.getDependencyGraph(scope, ependableSet,
+					Dependencies.DependencyFilter.none);
 
 			Dsm dsm = new DsmEngine(dependencyGraph).createDsm();
 
-			dsmHtmlWriter.printDsm(dsm, aAnalysisResult, aPackageNames.get(packageIndex),
+			dsmHtmlWriter.printDsm(dsm, aAnalysisResult, scope, dependable.getDisplayName(),
 					DsmHtmlWriter.FTL_CLASSES_PAGE);
+		}
+	}
+
+
+	/**
+	 * 
+	 * @param dependencies
+	 *            Dependencies
+	 * @param ar
+	 *            Analysis result
+	 * @throws Exception
+	 */
+	private void printDsmBetweenClassesOfDifferentPackages(final Dependencies dependencies,
+			final AnalysisResult ar) throws Exception {
+		Scope classScope = dependencies.getChildScope(dependencies.getDefaultScope());
+
+		DependencyGraph graph = dependencies.getDependencyGraph(dependencies.getDefaultScope());
+		Set<Dependable> set = graph.getAllItems();
+
+		for (Dependable depCell : set) {
+			for (Dependable depRow : set) {
+				if (depCell == depRow) {
+					// it is the same package
+					continue;
+				}
+
+				HashSet<Dependable> dependablePackages = new HashSet<>();
+				dependablePackages.add(depCell);
+				dependablePackages.add(depRow);
+
+				DependencyGraph dg = dependencies.getDependencyGraph(classScope,
+						dependablePackages,
+						Dependencies.DependencyFilter.itemsContributingToTheParentDependencyWeight);
+
+				String dsmName = depCell.getDisplayName() + "-" + depRow.getDisplayName();
+				Dsm dsm = new DsmEngine(dg).createDsm();
+				dsmHtmlWriter
+						.printDsm(dsm, ar, classScope, dsmName, DsmHtmlWriter.FTL_CLASSES_PAGE);
+			}
 		}
 	}
 
@@ -308,16 +333,18 @@ public class DsmReportEngine {
 			while ((numberOfBytes = inputStream.read(buffer)) > 0) {
 				outputStream.write(buffer, 0, numberOfBytes);
 			}
-		} catch (IOException e) {
-			if (e instanceof FileNotFoundException) {
-				throw new RuntimeException("Can't find " + aSiteDirectory + aFileName + " file. "
-						+ e.getMessage(), e);
-			} else {
-				throw new RuntimeException("Unable to copy source file. " + e.getMessage(), e);
-			}
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException("Can't find " + aSiteDirectory + aFileName + " file. "
+					+ e.getMessage(), e);
+		} catch (Exception e) {
+			throw new RuntimeException("Unable to copy source file. " + e.getMessage(), e);
 		} finally {
-			inputStream.close();
-			outputStream.close();
+			if (inputStream != null) {
+				inputStream.close();
+			}
+			if (outputStream != null) {
+				outputStream.close();
+			}
 		}
 	}
 }
