@@ -231,7 +231,7 @@ public class DsmReportEngine {
 		for (DsmRow depRow : aDsm.getRows()) {
 			Dependable dependable = depRow.getDependee();
 
-			Set<Dependable> ependableSet = new HashSet<>();
+			Set<Dependable> ependableSet = new HashSet<Dependable>();
 			ependableSet.add(dependable);
 
 			DependencyGraph dependencyGraph = aDependencies.getDependencyGraph(scope, ependableSet,
@@ -267,7 +267,7 @@ public class DsmReportEngine {
 					continue;
 				}
 
-				HashSet<Dependable> dependablePackages = new HashSet<>();
+				HashSet<Dependable> dependablePackages = new HashSet<Dependable>();
 				dependablePackages.add(depCell);
 				dependablePackages.add(depRow);
 
