@@ -22,6 +22,7 @@ import com.google.common.base.Strings;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 
+
 /**
  * Generate site content and write to HTML file.
  * 
@@ -48,6 +49,7 @@ public class DsmHtmlWriter {
 	 */
 	private final boolean obfuscatePackageNames;
 
+
 	/**
 	 * @param aReportSiteDirectory
 	 */
@@ -62,6 +64,7 @@ public class DsmHtmlWriter {
 		new File(reportSiteDirectory).mkdirs();
 	}
 
+
 	/**
 	 * @param aDataModel
 	 * @param aTemplateName
@@ -69,8 +72,7 @@ public class DsmHtmlWriter {
 	 * @throws Exception
 	 */
 	private static ByteArrayOutputStream renderTemplate(Map<String, Object> aDataModel,
-			String aTemplateName)
-			throws Exception {
+			String aTemplateName) throws Exception {
 
 		Configuration cfg = new Configuration();
 		cfg.setClassForTemplateLoading(DsmHtmlWriter.class, File.separator + "templates");
@@ -83,6 +85,7 @@ public class DsmHtmlWriter {
 		tpl.process(aDataModel, outputStreamWriter);
 		return outputStrem;
 	}
+
 
 	/**
 	 * @param byteOutputStream
@@ -98,14 +101,14 @@ public class DsmHtmlWriter {
 		outputStream.close();
 	}
 
+
 	/**
 	 * Print navigation on site by packages
 	 * 
 	 * @param aPackageNames
 	 *            List of package names
 	 */
-	public void printDsmPackagesNavigation(final List<String> aPackageNames)
-			throws Exception {
+	public void printDsmPackagesNavigation(final List<String> aPackageNames) throws Exception {
 		if (aPackageNames == null) {
 			throw new IllegalArgumentException("List of package names should not be null");
 		}
@@ -120,6 +123,7 @@ public class DsmHtmlWriter {
 		outputStream.close();
 	}
 
+
 	/**
 	 * Print dependency structure matrix
 	 * 
@@ -131,8 +135,7 @@ public class DsmHtmlWriter {
 	 *            Name of package
 	 */
 	public void printDsm(final Dsm aDsm, final AnalysisResult aAnalysisResult, final String aName,
-			final String templateName)
-			throws Exception {
+			final String templateName) throws Exception {
 		if (aDsm == null) {
 			throw new IllegalArgumentException("DSM structure should not be null");
 		}
@@ -173,18 +176,22 @@ public class DsmHtmlWriter {
 		writeModelToFile(aName, templateName, dataModel);
 	}
 
+
 	/**
 	 * Write model to output file.
+	 * 
 	 * @param aFileName
 	 * @param aTemplateName
 	 * @param aDataModel
 	 * @throws Exception
 	 */
-	private void writeModelToFile(String aFileName, String aTemplateName, Map<String, Object> aDataModel) throws Exception {
+	private void writeModelToFile(String aFileName, String aTemplateName,
+			Map<String, Object> aDataModel) throws Exception {
 		ByteArrayOutputStream outputStream = renderTemplate(aDataModel, aTemplateName);
 		writeStreamToFile(outputStream, aFileName);
 		outputStream.close();
 	}
+
 
 	/**
 	 * Analyzing dependency
@@ -210,6 +217,7 @@ public class DsmHtmlWriter {
 		return dependencyType;
 	}
 
+
 	private String truncatePackageName(String name, int length) {
 		String truncatedName = name;
 		if (obfuscatePackageNames) {
@@ -217,7 +225,8 @@ public class DsmHtmlWriter {
 			for (int numberOfToken = 0; numberOfToken < nameTokens.length
 					&& truncatedName.length() > length; numberOfToken++) {
 				String currentToken = nameTokens[numberOfToken];
-				truncatedName = truncatedName.replace(currentToken + ".", currentToken.substring(0, 1) + ".");
+				truncatedName = truncatedName.replace(currentToken + ".",
+						currentToken.substring(0, 1) + ".");
 			}
 		} else {
 			if (name.length() - 2 > length) {

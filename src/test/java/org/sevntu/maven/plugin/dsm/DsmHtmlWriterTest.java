@@ -24,7 +24,7 @@ public class DsmHtmlWriterTest {
 	public void dsmHtmlWriterTest() {
 		Exception ex = null;
 		try {
-            new DsmHtmlWriter(null, false);
+			new DsmHtmlWriter(null, false);
 			Assert.fail();
 		} catch (Exception e) {
 			ex = e;
@@ -43,9 +43,10 @@ public class DsmHtmlWriterTest {
 		assertNotNull(ex);
 	}
 
+
 	@Test
 	public void printDsmTest() {
-        DsmHtmlWriter dsmHtmlWriter = new DsmHtmlWriter("target/testDir", false);
+		DsmHtmlWriter dsmHtmlWriter = new DsmHtmlWriter("target/testDir", false);
 		Exception ex = null;
 		try {
 			dsmHtmlWriter.printDsm(null, null, null, null);
@@ -82,7 +83,7 @@ public class DsmHtmlWriterTest {
 
 	@Test
 	public void printNavigateDsmPackagesTest() {
-        DsmHtmlWriter dsmHtmlWriter = new DsmHtmlWriter("target/testDir", false);
+		DsmHtmlWriter dsmHtmlWriter = new DsmHtmlWriter("target/testDir", false);
 		Exception ex = null;
 		try {
 			dsmHtmlWriter.printDsmPackagesNavigation(null);
