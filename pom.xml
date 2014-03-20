@@ -55,7 +55,7 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>dtangler</groupId>
+			<groupId>org.dtangler</groupId>
 			<artifactId>dtangler-core</artifactId>
 			<version>2.0.0</version>
 		</dependency>
@@ -125,12 +125,11 @@
 		</plugins>
 	</build>
 
-	<!-- TODO publish dtangler to maven-central -->
 	<repositories>
 		<repository>
 			<id>lib-repo</id>
 			<name>lib-repository</name>
-			<url>file://${basedir}/lib</url>
+			<url>http://dl.bintray.com/sabaka/maven/</url>
 			<releases>
 				<checksumPolicy>ignore</checksumPolicy>
 			</releases>
