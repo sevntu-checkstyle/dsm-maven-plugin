@@ -263,7 +263,7 @@ public class DsmReportEngine {
 		// check directory
 		if (aDirName != null && !aDirName.isEmpty()) {
 			new File(aSiteDirectory + aDirName).mkdirs();
-			fileName = aDirName + File.separator + aFileName;
+			fileName = aDirName + "/" + aFileName;
 		} else {
 			fileName = aFileName;
 		}
@@ -285,7 +285,7 @@ public class DsmReportEngine {
 		InputStream inputStream = null;
 		OutputStream outputStream = null;
 		try {
-			inputStream = DsmReportEngine.class.getResourceAsStream(File.separator + aFileName);
+			inputStream = DsmReportEngine.class.getResourceAsStream("/" + aFileName);
 			outputStream = new FileOutputStream(new File(aSiteDirectory + aFileName));
 
 			int numberOfBytes;
