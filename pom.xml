@@ -22,7 +22,7 @@
 
 	<licenses>
 		<license>
-			<!-- TODO EPL - is the license of dtangler itself. We may choose any other license. -->
+			<!-- EPL - is the license of dtangler itself. We depend too much on that library-->
 			<name>Eclipse Public License</name>
 			<url>http://www.eclipse.org/legal/epl-v10.html</url>
 		</license>
@@ -46,8 +46,8 @@
 			<url>http://moradanen.sopovs.com</url>
 		</developer>
 		<developer>
-            <name>Ilja Dubinin</name>
-        </developer> 
+            		<name>Ilja Dubinin</name>
+        	</developer> 
 	</developers>
 
 	<dependencies>
