@@ -31,10 +31,10 @@
 		</license>
 	</licenses>
 
-	<!-- <scm> -->
-	<!-- <connection>git://github.com/sevntu-checkstyle/maven-dsm-report.git</connection> -->
-	<!-- <url>https://github.com/sevntu-checkstyle/maven-dsm-report</url> -->
-	<!-- </scm> -->
+	<scm>
+		<connection>git://github.com/sevntu-checkstyle/maven-dsm-report.git</connection>
+		<url>https://github.com/sevntu-checkstyle/maven-dsm-report</url>
+	</scm>
 
 	<developers>
 		<developer>
@@ -55,7 +55,7 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>dtangler</groupId>
+			<groupId>org.dtangler</groupId>
 			<artifactId>dtangler-core</artifactId>
 			<version>2.0.0</version>
 		</dependency>
@@ -125,15 +125,4 @@
 		</plugins>
 	</build>
 
-	<!-- TODO publish dtangler to maven-central -->
-	<repositories>
-		<repository>
-			<id>lib-repo</id>
-			<name>lib-repository</name>
-			<url>file://${basedir}/lib</url>
-			<releases>
-				<checksumPolicy>ignore</checksumPolicy>
-			</releases>
-		</repository>
-	</repositories>
 </project>
