@@ -15,9 +15,9 @@ We use [Dtangler](https://github.com/sysart/dtangler) library to generate DSM ma
         <reporting>
             <plugins>
                 <plugin>
-                    <groupId>org.sevntu</groupId>
+                    <groupId>com.github.sevntu-checkstyle</groupId>
                     <artifactId>dsm-maven-plugin</artifactId>
-                    <version>2.1</version>
+                    <version>2.1.1</version>
                 </plugin>
                 <!--  other reportin plugins  -->
             </plugins>
@@ -36,7 +36,7 @@ DSM site part will be placed in target/site/dsm directory
 
 3) You can run only this plugin instead of all site plugins:
 ```
-    mvn org.sevntu:dsm-maven-plugin:dsm
+    mvn com.github.sevntu-checkstyle:dsm-maven-plugin:dsm
 ```
 
 4) Also you can use option obfuscatePackageNames, that truncates package names to more short form
@@ -51,9 +51,9 @@ a) Edit yours pom.xml and add configuration section:
             <reporting>
                 <plugins>
                     <plugin>
-                        <groupId>org.sevntu</groupId>
+                        <groupId>com.github.sevntu-checkstyle</groupId>
                         <artifactId>dsm-maven-plugin</artifactId>
-                        <version>2.1</version>
+                        <version>2.1.1</version>
                         <configurations>
                             <obfuscatePackageNames>true</obfuscatePackageNames>
                         </configurations>
@@ -68,7 +68,7 @@ a) Edit yours pom.xml and add configuration section:
 b) Run maven with -DobfuscatePackageNames=true (false)
     
 ```
-         mvn org.sevntu:dsm-maven-plugin:dsm -DobfuscatePackageNames=true
+         mvn com.github.sevntu-checkstyle:dsm-maven-plugin:dsm -DobfuscatePackageNames=true
 ```
 
 If you don't use it and have long package name they will be just cutted
