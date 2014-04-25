@@ -5,6 +5,8 @@ Maven plugin to create HTML report to show dependecies in [DSM view](http://en.w
 
 We use [Dtangler](https://github.com/sysart/dtangler) library to generate DSM matrix.
 
+Example of report for [Checkstyle](http://checkstyle.sourceforge.net/project-reports.html) project: http://checkstyle.sourceforge.net/dsm/index.html
+
 
 ### How to use plugin:
 
