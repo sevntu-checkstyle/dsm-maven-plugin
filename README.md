@@ -80,4 +80,4 @@ If you don't use it and have long package name they will be just cutted
 Enjoy :)
 
 
-Related projects: [DSM Eclipse plugin](https://github.com/EclipseDSM/Eclipse-DSM-viewer)
+Related projects: [Eclipse Design Structure Matrix plugin](https://github.com/EclipseDSM/Eclipse-DSM-viewer)
