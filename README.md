@@ -78,3 +78,6 @@ If you don't use it and have long package name they will be just cutted
 (com.mysite.oneproject.somemodule.package -> ..project.somemodule.package)
 
 Enjoy :)
+
+
+Related projects: [DSM Eclipse plugin](https://github.com/EclipseDSM/Eclipse-DSM-viewer)
