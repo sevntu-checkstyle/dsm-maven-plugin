@@ -16,10 +16,10 @@
 
 	<packaging>maven-plugin</packaging>
 	<name>DSM maven plugin</name>
-	<url>https://github.com/sevntu-checkstyle/maven-dsm-report</url>
+	<url>https://github.com/sevntu-checkstyle/dsm-maven-report</url>
 	<issueManagement>
 		<system>GitHub</system>
-		<url>https://github.com/sevntu-checkstyle/maven-dsm-report/issues</url>
+		<url>https://github.com/sevntu-checkstyle/dsm-maven-report/issues</url>
 	</issueManagement>
 	<inceptionYear>2011</inceptionYear>
 
@@ -51,8 +51,8 @@
 			<url>http://moradanen.sopovs.com</url>
 		</developer>
 		<developer>
-            <name>Ilja Dubinin</name>
-        </developer> 
+                        <name>Ilja Dubinin</name>
+                </developer> 
 	</developers>
 
 	<dependencies>
@@ -156,7 +156,7 @@
 	        </plugin>
 
 	        <plugin>
-				<groupId>org.apache.maven.plugins</groupId>
+	            <groupId>org.apache.maven.plugins</groupId>
 	            <artifactId>maven-gpg-plugin</artifactId>
 	            <version>1.4</version>
 	            <executions>
