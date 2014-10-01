@@ -4,7 +4,8 @@ jdk:
   - openjdk6
   - openjdk7
   - oraclejdk7
-  
+  - oraclejdk8
+
 install: mvn install -Dgpg.skip=true
 
 after_success:

@@ -55,6 +55,11 @@
                 </developer> 
 	</developers>
 
+	<properties>
+                <!-- that is required to suppress javadoc genration problem by java8 "error: unknown tag: goal [ERROR] * @goal dsm"-->
+                <additionalparam>-Xdoclint:none</additionalparam>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.dtangler</groupId>
