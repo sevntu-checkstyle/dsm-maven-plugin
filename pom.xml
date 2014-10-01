@@ -16,10 +16,10 @@
 
 	<packaging>maven-plugin</packaging>
 	<name>DSM maven plugin</name>
-	<url>https://github.com/sevntu-checkstyle/dsm-maven-report</url>
+	<url>https://github.com/sevntu-checkstyle/dsm-maven-plugin</url>
 	<issueManagement>
 		<system>GitHub</system>
-		<url>https://github.com/sevntu-checkstyle/dsm-maven-report/issues</url>
+		<url>https://github.com/sevntu-checkstyle/dsm-maven-plugin/issues</url>
 	</issueManagement>
 	<inceptionYear>2011</inceptionYear>
 
