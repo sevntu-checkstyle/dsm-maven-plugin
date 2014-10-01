@@ -61,7 +61,7 @@ a) Edit yours pom.xml and add configuration section:
                             <obfuscatePackageNames>true</obfuscatePackageNames>
                         </configurations>
                     </plugin>
-                    <!--  other reportin plugins  -->
+                    <!--  other reporting plugins  -->
                 </plugins>
             </reporting>
             ...
