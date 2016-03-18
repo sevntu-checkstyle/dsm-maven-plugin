@@ -1,4 +1,5 @@
 # dsm-maven-plugin [![Coverage Status](https://coveralls.io/repos/sevntu-checkstyle/dsm-maven-plugin/badge.png)](https://coveralls.io/r/sevntu-checkstyle/dsm-maven-plugin) [![Travis](https://secure.travis-ci.org/sevntu-checkstyle/dsm-maven-plugin.png)](http://travis-ci.org/sevntu-checkstyle/dsm-maven-plugin)
+[![][mavenbadge img]][mavenbadge]
 
 
 Maven plugin to create HTML report to show dependecies in [DSM view](http://en.wikipedia.org/wiki/Design_structure_matrix).
@@ -22,7 +23,7 @@ Example of report for [Checkstyle](http://checkstyle.sourceforge.net/project-rep
                     <artifactId>dsm-maven-plugin</artifactId>
                     <version>2.1.3</version>
                 </plugin>
-                <!--  other reportin plugins  -->
+                <!--  other reporting plugins  -->
             </plugins>
         </reporting>
         ...
@@ -56,7 +57,7 @@ a) Edit yours pom.xml and add configuration section:
                     <plugin>
                         <groupId>com.github.sevntu-checkstyle</groupId>
                         <artifactId>dsm-maven-plugin</artifactId>
-                        <version>2.1.3</version>
+                        <version>2.1.4</version>
                         <configurations>
                             <obfuscatePackageNames>true</obfuscatePackageNames>
                         </configurations>
@@ -81,3 +82,6 @@ Enjoy :)
 
 
 Related projects: [Eclipse Design Structure Matrix plugin](https://github.com/EclipseDSM/Eclipse-DSM-viewer)
+
+[mavenbadge]:http://search.maven.org/#search|gav|1|g%3A%22com.github.sevntu-checkstyle%22%20AND%20a%3A%22dsm-maven-plugin%22
+[mavenbadge img]:https://maven-badges.herokuapp.com/maven-central/com.github.sevntu-checkstyle/dsm-maven-plugin/badge.svg
