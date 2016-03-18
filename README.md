@@ -30,10 +30,10 @@ Example of report for [Checkstyle](http://checkstyle.sourceforge.net/project-rep
 ```
 
 2) Then execute following commands:
-```    
+```
     mvn clean install site
 ```
-Instead of install you can use copmile, package or other stage, that generates class files.
+Instead of install you can use compile, package or other stage, that generates class files.
 
 DSM site part will be placed in target/site/dsm directory
 
@@ -69,7 +69,7 @@ a) Edit yours pom.xml and add configuration section:
 ```
 
 b) Run maven with -DobfuscatePackageNames=true (false)
-    
+
 ```
          mvn com.github.sevntu-checkstyle:dsm-maven-plugin:dsm -DobfuscatePackageNames=true
 ```
