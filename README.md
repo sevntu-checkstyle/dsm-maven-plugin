@@ -8,7 +8,8 @@ We use [Dtangler](https://github.com/sysart/dtangler) library to generate DSM ma
 
 Example of report for [Checkstyle](http://checkstyle.sourceforge.net/project-reports.html) project: http://checkstyle.sourceforge.net/dsm/index.html
 
-![dsm example](https://cloud.githubusercontent.com/assets/812984/2748676/54d3af4c-c7cf-11e3-8c8b-0dc93617e8b8.png "dsm maven plugin report example")
+![dsm example for packages](https://cloud.githubusercontent.com/assets/812984/2748676/54d3af4c-c7cf-11e3-8c8b-0dc93617e8b8.png "dsm maven plugin report for package example")
+![dsm example inside package](https://cloud.githubusercontent.com/assets/812984/14018891/48d199ea-f18d-11e5-9504-7e5b9f20a7f4.png "dsm maven plugin report inside package example")
 
 ### How to use plugin:
 
