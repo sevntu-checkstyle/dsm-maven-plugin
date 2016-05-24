@@ -41,7 +41,7 @@ DSM site part will be placed in target/site/dsm directory
 
 3) You can run only this plugin instead of all site plugins:
 ```
-    mvn com.github.sevntu-checkstyle:dsm-maven-plugin:dsm
+    mvn compile com.github.sevntu-checkstyle:dsm-maven-plugin:dsm
 ```
 
 4) Also you can use option obfuscatePackageNames, that truncates package names to more short form
@@ -59,9 +59,9 @@ a) Edit yours pom.xml and add configuration section:
                         <groupId>com.github.sevntu-checkstyle</groupId>
                         <artifactId>dsm-maven-plugin</artifactId>
                         <version>2.1.4</version>
-                        <configurations>
+                        <configuration>
                             <obfuscatePackageNames>true</obfuscatePackageNames>
-                        </configurations>
+                        </configuration>
                     </plugin>
                     <!--  other reporting plugins  -->
                 </plugins>
@@ -73,7 +73,7 @@ a) Edit yours pom.xml and add configuration section:
 b) Run maven with -DobfuscatePackageNames=true (false)
 
 ```
-         mvn com.github.sevntu-checkstyle:dsm-maven-plugin:dsm -DobfuscatePackageNames=true
+         mvn compile com.github.sevntu-checkstyle:dsm-maven-plugin:dsm -DobfuscatePackageNames=true
 ```
 
 If you don't use it and have long package name they will be just cutted
