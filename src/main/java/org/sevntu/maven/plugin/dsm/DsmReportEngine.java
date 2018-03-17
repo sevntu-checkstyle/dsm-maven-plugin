@@ -12,18 +12,18 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.maven.reporting.MavenReportException;
-import org.dtangler.core.analysis.configurableanalyzer.ConfigurableDependencyAnalyzer;
-import org.dtangler.core.analysisresult.AnalysisResult;
-import org.dtangler.core.configuration.Arguments;
-import org.dtangler.core.dependencies.Dependable;
-import org.dtangler.core.dependencies.Dependencies;
-import org.dtangler.core.dependencies.DependencyGraph;
-import org.dtangler.core.dependencies.Scope;
-import org.dtangler.core.dependencyengine.DependencyEngine;
-import org.dtangler.core.dependencyengine.DependencyEngineFactory;
-import org.dtangler.core.dsm.Dsm;
-import org.dtangler.core.dsm.DsmRow;
-import org.dtangler.core.dsmengine.DsmEngine;
+import org.hjug.dtangler.core.analysis.configurableanalyzer.ConfigurableDependencyAnalyzer;
+import org.hjug.dtangler.core.analysisresult.AnalysisResult;
+import org.hjug.dtangler.core.configuration.Arguments;
+import org.hjug.dtangler.core.dependencies.Dependable;
+import org.hjug.dtangler.core.dependencies.Dependencies;
+import org.hjug.dtangler.core.dependencies.DependencyGraph;
+import org.hjug.dtangler.core.dependencies.Scope;
+import org.hjug.dtangler.core.dependencyengine.DependencyEngine;
+import org.hjug.dtangler.core.dependencyengine.DependencyEngineFactory;
+import org.hjug.dtangler.core.dsm.Dsm;
+import org.hjug.dtangler.core.dsm.DsmRow;
+import org.hjug.dtangler.core.dsmengine.DsmEngine;
 
 import com.google.common.base.Strings;
 
@@ -96,7 +96,7 @@ public class DsmReportEngine {
 	 */
 	private static List<String> getPackageNames(final Dsm aDsm) {
 		List<DsmRow> dsmRowList = aDsm.getRows();
-		List<String> packageNames = new ArrayList<String>();
+		List<String> packageNames = new ArrayList<>();
 		for (DsmRow dsmRow : dsmRowList) {
 			packageNames.add(dsmRow.getDependee().toString());
 		}
@@ -113,7 +113,7 @@ public class DsmReportEngine {
 	 * @return Set of Dependables
 	 */
 	private static Set<Dependable> getDependablesByRowIndex(final Dsm aDsm, final int aRow) {
-		Set<Dependable> result = new HashSet<Dependable>();
+		Set<Dependable> result = new HashSet<>();
 		result.add(aDsm.getRows().get(aRow).getDependee());
 		return result;
 	}
@@ -139,7 +139,7 @@ public class DsmReportEngine {
 	public void report() throws Exception {
 		dsmHtmlWriter = new DsmHtmlWriter(outputDirectory, obfuscatePackageNames);
 
-		List<String> sourcePathList = new ArrayList<String>();
+		List<String> sourcePathList = new ArrayList<>();
 		sourcePathList.add(sourceDirectory);
 
 		report(sourcePathList);
@@ -257,7 +257,7 @@ public class DsmReportEngine {
 	 * @throws Exception
 	 */
 	private static void copyFileToSiteFolder(final String aSiteDirectory, final String aDirName,
-			final String aFileName) throws Exception {
+			final String aFileName) {
 		String fileName;
 
 		// check directory
@@ -280,14 +280,9 @@ public class DsmReportEngine {
 	 *            File name
 	 * @throws Exception
 	 */
-	private static void copyFileToSiteFolder(final String aSiteDirectory, final String aFileName)
-			throws Exception {
-		InputStream inputStream = null;
-		OutputStream outputStream = null;
-		try {
-			inputStream = DsmReportEngine.class.getResourceAsStream("/" + aFileName);
-			outputStream = new FileOutputStream(new File(aSiteDirectory + aFileName));
-
+	private static void copyFileToSiteFolder(final String aSiteDirectory, final String aFileName) {
+		try (InputStream inputStream = DsmReportEngine.class.getResourceAsStream("/" + aFileName);
+			 OutputStream outputStream = new FileOutputStream(new File(aSiteDirectory + aFileName))) {
 			int numberOfBytes;
 			byte[] buffer = new byte[1024];
 			while ((numberOfBytes = inputStream.read(buffer)) > 0) {
@@ -300,9 +295,6 @@ public class DsmReportEngine {
 			} else {
 				throw new RuntimeException("Unable to copy source file. " + e.getMessage(), e);
 			}
-		} finally {
-			inputStream.close();
-			outputStream.close();
 		}
 	}
 }
