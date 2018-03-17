@@ -11,11 +11,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.dtangler.core.analysisresult.AnalysisResult;
-import org.dtangler.core.analysisresult.Violation.Severity;
-import org.dtangler.core.dsm.Dsm;
-import org.dtangler.core.dsm.DsmCell;
-import org.dtangler.core.dsm.DsmRow;
+import org.hjug.dtangler.core.analysisresult.AnalysisResult;
+import org.hjug.dtangler.core.analysisresult.Violation.Severity;
+import org.hjug.dtangler.core.dsm.Dsm;
+import org.hjug.dtangler.core.dsm.DsmCell;
+import org.hjug.dtangler.core.dsm.DsmRow;
 
 import com.google.common.base.Strings;
 
@@ -110,7 +110,7 @@ public class DsmHtmlWriter {
 			throw new IllegalArgumentException("List of package names should not be null");
 		}
 
-		Map<String, Object> dataModel = new HashMap<String, Object>();
+		Map<String, Object> dataModel = new HashMap<>();
 		dataModel.put("aPackageNames", aPackageNames);
 
 		writeModelToFile("packages", FTL_PACKAGES_MENU, dataModel);

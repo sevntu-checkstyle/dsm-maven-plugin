@@ -10,11 +10,11 @@ import java.util.Set;
 
 import junit.framework.Assert;
 
-import org.dtangler.core.analysisresult.AnalysisResult;
-import org.dtangler.core.analysisresult.Violation;
-import org.dtangler.core.dependencies.Dependency;
-import org.dtangler.core.dsm.Dsm;
-import org.dtangler.core.dsm.DsmRow;
+import org.hjug.dtangler.core.analysisresult.AnalysisResult;
+import org.hjug.dtangler.core.analysisresult.Violation;
+import org.hjug.dtangler.core.dependencies.Dependency;
+import org.hjug.dtangler.core.dsm.Dsm;
+import org.hjug.dtangler.core.dsm.DsmRow;
 import org.junit.Test;
 
 
