@@ -22,7 +22,7 @@ Example of report for [Checkstyle](http://checkstyle.sourceforge.net/project-rep
                 <plugin>
                     <groupId>com.github.sevntu-checkstyle</groupId>
                     <artifactId>dsm-maven-plugin</artifactId>
-                    <version>2.1.3</version>
+                    <version>2.2.0<version>
                 </plugin>
                 <!--  other reporting plugins  -->
             </plugins>
@@ -58,7 +58,7 @@ a) Edit yours pom.xml and add configuration section:
                     <plugin>
                         <groupId>com.github.sevntu-checkstyle</groupId>
                         <artifactId>dsm-maven-plugin</artifactId>
-                        <version>2.1.4</version>
+                        <version>2.2.0version>
                         <configuration>
                             <obfuscatePackageNames>true</obfuscatePackageNames>
                         </configuration>
