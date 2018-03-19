@@ -22,7 +22,7 @@ Example of report for [Checkstyle](http://checkstyle.sourceforge.net/project-rep
                 <plugin>
                     <groupId>com.github.sevntu-checkstyle</groupId>
                     <artifactId>dsm-maven-plugin</artifactId>
-                    <version>2.2.0<version>
+                    <version>2.2.0</version>
                 </plugin>
                 <!--  other reporting plugins  -->
             </plugins>
