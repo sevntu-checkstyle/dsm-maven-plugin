@@ -53,6 +53,11 @@ public class DsmReportEngine {
 	private boolean obfuscatePackageNames;
 
 	/**
+	 * Sort packages and classes by name.
+	 */
+	private boolean sortByName;
+
+	/**
 	 * 
 	 * @param aSourceDirectory
 	 *            Full output directory path
@@ -85,6 +90,14 @@ public class DsmReportEngine {
 	 */
 	public void setObfuscatePackageNames(boolean obfuscate) {
 		this.obfuscatePackageNames = obfuscate;
+	}
+
+	/**
+	 * @param sort
+	 *            true to sort packages and classes by name, false to keep the order of Dtangler
+	 */
+	public void setSortByName(boolean sort) {
+		this.sortByName = sort;
 	}
 
 	/**
@@ -133,6 +146,22 @@ public class DsmReportEngine {
 	}
 
 	/**
+	 * Create DSM for dependency graph. Rows and columns are in the order of Dtangler, or sorted
+	 * by name if it is switched on.
+	 *
+	 * @param aDependencyGraph
+	 *            Dependency graph of packages or classes
+	 * @return Dsm structure
+	 */
+	private Dsm createDsm(final DependencyGraph aDependencyGraph) {
+		Dsm dsm = new DsmEngine(aDependencyGraph).createDsm();
+		if (sortByName) {
+			dsm = DsmSorter.sortByName(dsm);
+		}
+		return dsm;
+	}
+
+	/**
 	 * 
 	 * @throws Exception
 	 */
@@ -161,7 +190,7 @@ public class DsmReportEngine {
 		Dependencies dependencies = engine.getDependencies(arguments);
 		DependencyGraph dependencyGraph = dependencies.getDependencyGraph();
 		AnalysisResult analysisResult = getAnalysisResult(arguments, dependencies);
-		Dsm dsm = new DsmEngine(dependencyGraph).createDsm();
+		Dsm dsm = createDsm(dependencyGraph);
 
 		printDsmNavigation(dsm);
 		printDsmForPackages(dsm, analysisResult);
@@ -238,7 +267,7 @@ public class DsmReportEngine {
 			DependencyGraph dependencyGraph = aDependencies.getDependencyGraph(scope, dependableSet,
 					Dependencies.DependencyFilter.none);
 
-			Dsm dsm = new DsmEngine(dependencyGraph).createDsm();
+			Dsm dsm = createDsm(dependencyGraph);
 
 			dsmHtmlWriter.printDsm(dsm, aAnalysisResult, aPackageNames.get(packageIndex),
 					DsmHtmlWriter.FTL_CLASSES_PAGE);

@@ -1,0 +1,14 @@
+<project>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>dsm-maven-plugin</artifactId>
+				<configuration>
+					<outputDirectory>${basedir}</outputDirectory>
+					<reportingOutputDirectory>${basedir}/target/test-harness/report-sort-by-name/site</reportingOutputDirectory>
+					<sortByName>true</sortByName>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

@@ -79,6 +79,34 @@ b) Run maven with -DobfuscatePackageNames=true (false)
 If you don't use it and have long package name they will be just cutted
 (com.mysite.oneproject.somemodule.package -> ..project.somemodule.package)
 
+5) Also you can use option sortByName, that sorts packages and classes by name (case is ignored).
+It is switched off by default.
+
+Without it packages and classes are shown in the order calculated by Dtangler: those that depend on others go first
+and those that others depend on go last. In a well layered project the numbers then tend to stay below the diagonal,
+but it is not easy to find a package in a long list.
+
+With sortByName the list of packages and the rows and columns of every matrix are sorted by name, so packages
+with the same prefix stay together and it is easier to compare two reports. Numbers and cycles are the same,
+but they can be on both sides of the diagonal.
+
+There are two ways to use it:
+
+a) Edit your pom.xml and add it to the configuration section of the plugin (as in item 4):
+```
+    <configuration>
+        <sortByName>true</sortByName>
+    </configuration>
+```
+
+b) Run maven with -Ddsm.sortByName=true
+```
+    mvn compile com.github.sevntu-checkstyle:dsm-maven-plugin:dsm -Ddsm.sortByName=true
+```
+
+Packages are compared by full name, also when the names in the matrix are cut.
+It can be used together with obfuscatePackageNames.
+
 Enjoy :)
 
 

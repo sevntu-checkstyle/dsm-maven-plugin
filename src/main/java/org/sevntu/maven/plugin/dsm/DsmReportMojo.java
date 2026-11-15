@@ -49,6 +49,20 @@ public class DsmReportMojo extends AbstractMavenReport {
 	private boolean obfuscatePackageNames;
 
 	/**
+	 * Sort packages and classes by name. It is applied to the list of packages and to rows and
+	 * columns of every matrix. Names are compared ignoring case.
+	 * <p>
+	 * By default it is switched off and the order calculated by Dtangler is kept: packages and
+	 * classes that depend on others go first, those that others depend on go last. In a well
+	 * layered project the numbers then tend to stay below the diagonal. Order by name makes it
+	 * easier to find a package or a class and to compare two reports, but the numbers can be
+	 * on both sides of the diagonal.
+	 *
+	 * @parameter property="dsm.sortByName" default-value="false"
+	 */
+	private boolean sortByName;
+
+	/**
      * @parameter default-value="${project}"
      * @required
      * @readonly
@@ -121,6 +135,7 @@ public class DsmReportMojo extends AbstractMavenReport {
 		DsmReportEngine dsmReport = new DsmReportEngine();
 
 		dsmReport.setObfuscatePackageNames(obfuscatePackageNames);
+		dsmReport.setSortByName(sortByName);
 		dsmReport.setSourceDirectory(getSourseDir());
 		dsmReport.setOutputDirectory(getOutputDirectory());
 
